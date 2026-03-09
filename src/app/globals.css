@@ -1,26 +1,222 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+@plugin "@tailwindcss/typography";
+/* ============================================
+   Design System — Custom Theme Tokens
+   ============================================ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Brand Colors */
+  --color-deep-navy: #1a365d;
+  --color-warm-terracotta: #c05621;
+  --color-soft-sage: #68d391;
+  --color-cool-gray: #718096;
+  --color-warm-white: #fefefe;
+
+  /* Dark Mode Variants */
+  --color-dark-bg: #0f172a;
+  --color-dark-surface: #1e293b;
+  --color-dark-border: #334155;
+  --color-dark-text: #e2e8f0;
+  --color-dark-muted: #94a3b8;
+
+  /* Fonts */
+  --font-poppins: var(--font-poppins-var);
+  --font-roboto: var(--font-roboto-var);
+  --font-playfair: var(--font-playfair-var);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================
+   Light / Dark Mode CSS Variables
+   ============================================ */
+:root {
+  --background: #fefefe;
+  --foreground: #718096;
+  --heading: #1a365d;
+  --surface: #ffffff;
+  --surface-alt: #f7fafc;
+  --border: #e2e8f0;
+  --accent: #c05621;
+  --accent-hover: #a0461a;
+  --highlight: #68d391;
 }
 
+.dark {
+  --background: #0f172a;
+  --foreground: #94a3b8;
+  --heading: #e2e8f0;
+  --surface: #1e293b;
+  --surface-alt: #1a2332;
+  --border: #334155;
+  --accent: #e07a42;
+  --accent-hover: #f59e6b;
+  --highlight: #68d391;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-roboto), 'Roboto', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================
+   Hero Background
+   ============================================ */
+.hero-bg {
+  background: linear-gradient(135deg, rgba(26, 54, 93, 0.08) 0%, rgba(104, 211, 145, 0.08) 100%);
+}
+
+.dark .hero-bg {
+  background: linear-gradient(135deg, rgba(26, 54, 93, 0.3) 0%, rgba(104, 211, 145, 0.1) 100%);
+}
+
+/* ============================================
+   Text Gradient
+   ============================================ */
+.text-gradient {
+  background: linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   Card Hover Effect
+   ============================================ */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) rotateX(5deg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================
+   Value Card 3D Flip
+   ============================================ */
+.value-card {
+  perspective: 1000px;
+}
+
+.value-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.value-card:hover .value-card-inner {
+  transform: rotateY(180deg);
+}
+
+.value-card-front,
+.value-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+}
+
+.value-card-back {
+  transform: rotateY(180deg);
+}
+
+/* ============================================
+   Form Field Focus Animation
+   ============================================ */
+.form-field {
+  transition: all 0.3s ease;
+}
+
+.form-field:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(192, 86, 33, 0.15);
+}
+
+.dark .form-field:focus {
+  box-shadow: 0 8px 25px rgba(224, 122, 66, 0.2);
+}
+
+/* ============================================
+   Particle Canvas
+   ============================================ */
+.particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* ============================================
+   Scroll Reveal
+   ============================================ */
+.reveal-text {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-text.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   Timeline Item
+   ============================================ */
+.timeline-item {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.timeline-item.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   Smooth Scrolling
+   ============================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================
+   Typed.js Cursor
+   ============================================ */
+.typed-cursor {
+  color: var(--accent);
+  font-weight: 100;
+}
+
+/* ============================================
+   Custom Scrollbar
+   ============================================ */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
 }

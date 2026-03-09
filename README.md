@@ -1,36 +1,182 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Saithavy - Next.js 16 Personal Website
 
-## Getting Started
+A modern, performant personal website built with Next.js 16, featuring dark mode, blog functionality, resource hub, and contact form with rate limiting.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Core Features
+
+- **Next.js 16** with App Router and Turbopack
+- **TypeScript** for type safety
+- **Tailwind CSS v4** for styling
+- **Dark/Light Mode** with system detection via `next-themes`
+- **Responsive Design** (375px to 1440px+)
+
+### Pages
+
+| Route                        | Description                                              |
+| ---------------------------- | -------------------------------------------------------- |
+| `/`                          | Home landing page with hero, services preview, CTAs      |
+| `/about`                     | Full about page with timeline, values, services, contact |
+| `/blog`                      | Blog listing page                                        |
+| `/blog/[slug]`               | Individual blog posts with reading progress              |
+| `/resources`                 | Resource hub with downloadable content                   |
+| `/resources/category/[slug]` | Filtered resources by category                           |
+
+### Components
+
+- **Navigation** - Scroll-aware, theme toggle, mobile hamburger menu
+- **Footer** - Static server component
+- **HeroSection** - Typed.js typewriter effect, p5.js particles
+- **TimelineSection** - Tab navigation, anime.js animations
+- **ValuesSection** - 6 flip cards with hover effects
+- **ServicesSection** - 3 service cards with stagger animations
+- **ContactSection** - React Hook Form + Zod validation
+
+### Technical Implementation
+
+- **Clean Architecture** - Separation of concerns with domain, use cases, adapters
+- **Rate Limiting** - Upstash Redis (5 submissions/hour/IP)
+- **Form Validation** - Shared Zod schemas (client + server)
+- **SEO** - Sitemap, robots.txt, JSON-LD, Open Graph
+- **Analytics** - Vercel Analytics + Speed Insights
+- **PWA Ready** - Manifest configured
+
+## 📁 Project Structure
+
+```
+saithavy-nextjs/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── layout.tsx          # Root layout with providers
+│   │   ├── page.tsx            # Home page
+│   │   ├── globals.css         # Tailwind v4 + CSS variables
+│   │   ├── about/page.tsx      # About page
+│   │   ├── blog/               # Blog pages
+│   │   ├── resources/          # Resource hub
+│   │   ├── api/contact/        # Contact API route
+│   │   ├── sitemap.ts          # Dynamic sitemap
+│   │   └── robots.ts           # Robots.txt
+│   ├── components/
+│   │   ├── Navigation.tsx      # Nav with theme toggle
+│   │   ├── Footer.tsx
+│   │   ├── ThemeProvider.tsx   # next-themes wrapper
+│   │   ├── ReadingProgress.tsx # Blog reading progress
+│   │   └── sections/           # Page sections
+│   ├── hooks/
+│   │   └── useScrollReveal.ts  # Scroll animation hook
+│   ├── lib/
+│   │   ├── ratelimit.ts        # Upstash rate limiter
+│   │   ├── validators.ts       # Zod schemas
+│   │   ├── blog.ts             # MDX parsing
+│   │   └── resourcesData.tsx   # Resources data
+│   ├── domain/                 # Domain entities & interfaces
+│   ├── adapters/               # External service adapters
+│   └── use_cases/              # Business logic
+├── public/
+│   ├── images/                 # Optimized images
+│   └── manifest.json           # PWA manifest
+├── next.config.ts
+├── vercel.json                 # Vercel deployment config
+└── .env.local                  # Environment variables
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Category      | Technology                        |
+| ------------- | --------------------------------- |
+| Framework     | Next.js 16.1.6                    |
+| Language      | TypeScript 5                      |
+| Styling       | Tailwind CSS v4                   |
+| Animations    | Anime.js, Typed.js, p5.js         |
+| Forms         | React Hook Form + Zod             |
+| Theme         | next-themes                       |
+| Rate Limiting | Upstash Redis                     |
+| CMS           | MDX (next-mdx-remote)             |
+| Analytics     | Vercel Analytics + Speed Insights |
+| Icons         | Lucide React                      |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏃 Getting Started
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js 18+
+- npm, yarn, or pnpm
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Clone the repository
+git clone <repository-url>
+cd saithavy-nextjs
 
-## Deploy on Vercel
+# Install dependencies
+npm install
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Create environment file
+cp .env.example .env.local
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Environment Variables
+
+Create a `.env.local` file with:
+
+```env
+# Upstash Redis (for rate limiting)
+UPSTASH_REDIS_REST_URL=your_upstash_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_token
+```
+
+### Development
+
+```bash
+# Start development server
+npm run dev
+
+# Open http://localhost:3000
+```
+
+### Production Build
+
+```bash
+# Run linting
+npm run lint
+
+# Build for production
+npm run build
+
+# Start production server
+npm run start
+```
+
+## 📦 Deployment
+
+### Vercel (Recommended)
+
+1. Push to GitHub
+2. Import project in Vercel
+3. Add environment variables:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
+4. Deploy
+
+The `vercel.json` configures:
+
+- Region: `iad1` (US East)
+- Immutable caching for images and fonts
+
+## ✅ Verification Checklist
+
+| Check           | Status                                     |
+| --------------- | ------------------------------------------ |
+| `npm run build` | ✅ Zero errors                             |
+| `npm run lint`  | ✅ Clean                                   |
+| Dark mode       | ✅ Toggle + system detection + persistence |
+| Contact form    | ✅ Validation + rate limiting (5/hr)       |
+| Images          | ✅ Local, optimized                        |
+| Responsive      | ✅ 375px - 1440px+                         |
+| SEO             | ✅ Sitemap, robots, meta tags              |
+
+## 📄 License
+
+MIT License - feel free to use this as a template for your own site.
