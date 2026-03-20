@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SubmitContactUseCase } from "@/use_cases/SubmitContactUseCase";
-import { UpstashRateLimiterAdapter } from "@/adapters/gateways/UpstashRateLimiterAdapter";
-import { LoggerContactRepository } from "@/adapters/repositories/LoggerContactRepository";
+import { resolveContactRepository, resolveRateLimiter } from "@/lib/di/services";
 
-// Initialize adapters and use case
-// In a full DI setup, this would be injected or retrieved from a container.
-const rateLimiter = new UpstashRateLimiterAdapter();
-const contactRepository = new LoggerContactRepository();
-const submitContactUseCase = new SubmitContactUseCase(rateLimiter, contactRepository);
+// Initialize use case with dependencies from DI container
+const submitContactUseCase = new SubmitContactUseCase(
+  resolveRateLimiter,
+  resolveContactRepository
+);
 
 export async function POST(request: NextRequest) {
   try {
