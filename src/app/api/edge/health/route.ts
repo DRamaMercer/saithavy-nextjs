@@ -17,12 +17,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
 
   try {
-    // Simulate health checks
+    // Health check status
+    // TODO: Implement actual health checks when services are ready:
+    // - cache: await checkCacheHealth()
+    // - database: await checkDatabaseConnection()
+    // - redis: await checkUpstashConnection()
     const checks = {
       edge: true,
-      cache: Math.random() > 0.1, // 90% uptime simulation
-      database: 'not_implemented', // Future: check database connection
-      redis: 'not_implemented', // Future: check Upstash connection
+      cache: true, // Deterministic: assume healthy until implemented
+      database: 'not_implemented',
+      redis: 'not_implemented',
     };
 
     const isHealthy = Object.values(checks).every(

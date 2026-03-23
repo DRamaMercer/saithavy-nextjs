@@ -6,6 +6,42 @@
  * - Transient lifecycle (new instance each time)
  * - Type-safe service registration and resolution
  * - Circular dependency detection
+ *
+ * Usage Patterns:
+ *
+ * 1. Production (Global Container):
+ * ```typescript
+ * import { getContainer, ServiceKeys } from './di/Container';
+ *
+ * const container = getContainer();
+ * const rateLimiter = await container.resolve(ServiceKeys.RateLimiter);
+ * ```
+ *
+ * 2. Testing (Isolated Containers):
+ * ```typescript
+ * import { DIContainer, ServiceKeys, resetContainer } from './di/Container';
+ *
+ * beforeEach(() => {
+ *   // Create isolated container for each test
+ *   const container = new DIContainer();
+ *   container.register(ServiceKeys.RateLimiter, () => mockRateLimiter);
+ * });
+ *
+ * afterAll(() => {
+ *   // Clean up global state
+ *   resetContainer();
+ * });
+ * ```
+ *
+ * 3. Request-Scoped (Advanced):
+ * ```typescript
+ * // For each request, create a new container instance
+ * export async function bootstrapContainer(): Promise<DIContainer> {
+ *   const container = new DIContainer();
+ *   await registerServices(container);
+ *   return container;
+ * }
+ * ```
  */
 
 type ServiceLifetime = 'singleton' | 'transient';
@@ -191,13 +227,36 @@ export function getContainer(): DIContainer {
 }
 
 /**
- * Reset the global container (useful for testing)
+ * Reset the global container
+ *
+ * Usage:
+ * - Testing: Call in beforeEach/afterEach to create isolated test environments
+ * - Development: Reset state when needed
+ *
+ * WARNING: Do not call in production code as it clears all singleton instances
  */
 export function resetContainer(): void {
   if (globalContainer) {
     globalContainer.clear();
   }
   globalContainer = null;
+}
+
+/**
+ * Create a new isolated container instance
+ *
+ * Preferred for testing and request-scoped scenarios.
+ * Each call creates a completely independent container.
+ *
+ * @example
+ * ```typescript
+ * // In tests
+ * const testContainer = createContainer();
+ * testContainer.register(ServiceKeys.RateLimiter, () => mockRateLimiter);
+ * ```
+ */
+export function createContainer(): DIContainer {
+  return new DIContainer();
 }
 
 /**

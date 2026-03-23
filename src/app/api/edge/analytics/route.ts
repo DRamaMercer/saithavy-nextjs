@@ -66,15 +66,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         'unknown',
     };
 
-    // In production, send to analytics platform
+    // TODO: Send to analytics platform (e.g., Vercel Analytics, PostHog)
+    // Tracking issue: Implement analytics service integration
     // await sendToAnalytics(event);
 
-    // For now, just log the event (remove in production)
-    console.log('[Analytics] Event:', {
-      name: event.name,
-      category: event.category,
-      geo: event.geo.country,
-    });
+    // Development-only logging (disabled in production)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Analytics] Event:', {
+        name: event.name,
+        category: event.category,
+        geo: event.geo.country,
+      });
+    }
 
     // Return success response
     return NextResponse.json(
