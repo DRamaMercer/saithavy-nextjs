@@ -1,0 +1,1277 @@
+openapi: 3.0.3
+info:
+  title: Saithavy API
+  version: 1.0.0
+  description: |
+    Comprehensive API for the Saithavy mindful leadership and remote work resources platform.
+
+    **Features:**
+    - Resource discovery and filtering
+    - Contact form submission with rate limiting
+    - PDF generation and downloads
+    - Edge-optimized endpoints for global performance
+    - Geolocation-based content delivery
+    - Analytics tracking
+    - Health monitoring
+
+  contact:
+    name: API Support
+    email: support@saithavy.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://saithavy.com
+    description: Production server
+  - url: https://staging.saithavy.com
+    description: Staging server
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Resources
+    description: Resource management and discovery
+  - name: Contact
+    description: Contact form and support
+  - name: Downloads
+    description: Resource downloads and PDF generation
+  - name: Edge
+    description: Edge-optimized endpoints
+  - name: Health
+    description: System health monitoring
+  - name: Analytics
+    description: Event tracking and analytics
+
+paths:
+  /api/resources:
+    get:
+      tags:
+        - Resources
+      summary: List all resources
+      description: |
+        Retrieve a paginated list of resources with filtering, sorting, and search capabilities.
+
+        **Rate Limit:** 100 requests per 5 minutes per IP
+
+        **Cache:** 5 minutes (300 seconds)
+      operationId: listResources
+      parameters:
+        - name: category
+          in: query
+          description: Filter by category slug
+          required: false
+          schema:
+            type: string
+            example: "mindful-leadership"
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 12
+            example: 12
+        - name: type
+          in: query
+          description: Filter by resource type
+          required: false
+          schema:
+            type: string
+            enum: [guide, checklist, template, video, audio, workbook]
+            example: "guide"
+        - name: sort
+          in: query
+          description: Sort order
+          required: false
+          schema:
+            type: string
+            enum: [newest, popular, relevance]
+            default: newest
+            example: "newest"
+        - name: q
+          in: query
+          description: Search query string
+          required: false
+          schema:
+            type: string
+            example: "leadership"
+        - name: tags
+          in: query
+          description: Comma-separated tag list
+          required: false
+          schema:
+            type: string
+            example: "productivity,remote-work"
+      responses:
+        '200':
+          description: Successful response with paginated resources
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceListResponse'
+              examples:
+                default:
+                  value:
+                    resources:
+                      - id: "1"
+                        slug: "mindful-leadership-reflection-journal"
+                        title: "Mindful Leadership Reflection Journal"
+                        description: "A comprehensive journal for cultivating mindful leadership practices"
+                        category: "mindful-leadership"
+                        type: "workbook"
+                        difficulty: "beginner"
+                        timeToRead: "15 min"
+                        featured: true
+                        downloads: 1234
+                    totalCount: 45
+                    totalPages: 4
+                    currentPage: 1
+                    categories:
+                      - id: "mindful-leadership"
+                        name: "Mindful Leadership"
+                        slug: "mindful-leadership"
+                        icon: "🧘"
+                        resourceCount: 15
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      headers:
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+
+  /api/categories:
+    get:
+      tags:
+        - Resources
+      summary: List all categories
+      description: |
+        Retrieve all resource categories with current resource counts.
+
+        **Rate Limit:** 100 requests per 5 minutes per IP
+
+        **Cache:** 10 minutes (600 seconds)
+      operationId: listCategories
+      responses:
+        '200':
+          description: Successful response with categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+              examples:
+                default:
+                  value:
+                    - id: "mindful-leadership"
+                      name: "Mindful Leadership"
+                      slug: "mindful-leadership"
+                      icon: "🧘"
+                      resourceCount: 15
+                    - id: "remote-work"
+                      name: "Remote Work"
+                      slug: "remote-work"
+                      icon: "💼"
+                      resourceCount: 12
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/contact:
+    post:
+      tags:
+        - Contact
+      summary: Submit contact form
+      description: |
+        Submit a contact form message with rate limiting and validation.
+
+        **Rate Limit:** 3 requests per hour per IP
+
+        **Validation:**
+        - Email must be valid
+        - Name required (min 2 characters)
+        - Message required (min 10 characters)
+      operationId: submitContact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+            examples:
+              default:
+                value:
+                  email: "user@example.com"
+                  name: "John Doe"
+                  message: "I'd like to learn more about your leadership programs."
+      responses:
+        '200':
+          description: Message submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Thank you! Your message has been received."
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation:
+                  value:
+                    error: "Validation failed"
+                    issues:
+                      - field: "email"
+                        message: "Invalid email format"
+                      - field: "message"
+                        message: "Message must be at least 10 characters"
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/download:
+    post:
+      tags:
+        - Downloads
+      summary: Request resource download
+      description: |
+        Request a resource download with email capture and rate limiting.
+
+        **Rate Limit:** 5 downloads per hour per IP
+
+        **Process:**
+        1. Validate email and resource ID
+        2. Check rate limits
+        3. Capture lead information
+        4. Return download URL
+      operationId: requestDownload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadRequest'
+            examples:
+              pdf:
+                value:
+                  email: "user@example.com"
+                  resourceId: "1"
+                  format: "pdf"
+                  firstName: "John"
+              web:
+                value:
+                  email: "user@example.com"
+                  resourceId: "1"
+                  format: "web"
+      responses:
+        '200':
+          description: Download initiated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Download started"
+                  downloadUrl:
+                    type: string
+                    example: "/resources/mindful-leadership-reflection-journal/download?format=pdf"
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/pdf:
+    post:
+      tags:
+        - Downloads
+      summary: Generate PDF for resource
+      description: |
+        Generate a PDF version of a resource for offline reading.
+
+        **Note:** This endpoint currently returns HTML formatted for printing.
+        Full PDF generation will be implemented with puppeteer or similar.
+      operationId: generatePDF
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - resourceId
+              properties:
+                resourceId:
+                  type: string
+                  description: Resource ID or slug
+                  example: "1"
+                title:
+                  type: string
+                  description: Optional custom title
+                  example: "My Custom Resource Title"
+      responses:
+        '200':
+          description: PDF generated successfully (returns HTML for now)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  html:
+                    type: string
+                    description: HTML formatted for PDF generation
+                  title:
+                    type: string
+                    example: "Mindful Leadership Reflection Journal"
+                  message:
+                    type: string
+                    example: "PDF generation endpoint - integrate with puppeteer or similar for actual PDF generation"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/edge/health:
+    get:
+      tags:
+        - Health
+      summary: Health check endpoint
+      description: |
+        Check system health including database, cache, and Redis status.
+
+        **Runtime:** Edge (Vercel Edge Network)
+
+        **Cache:** No cache (real-time status)
+      operationId: healthCheck
+      responses:
+        '200':
+          description: System is healthy or degraded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              examples:
+                healthy:
+                  value:
+                    status: "healthy"
+                    checks:
+                      edge:
+                        status: "pass"
+                        latency: 0
+                        timestamp: "2026-03-28T12:00:00.000Z"
+                      cache:
+                        status: "pass"
+                        latency: 5
+                        timestamp: "2026-03-28T12:00:00.000Z"
+                      database:
+                        status: "pass"
+                        latency: 15
+                        timestamp: "2026-03-28T12:00:00.000Z"
+                      redis:
+                        status: "pass"
+                        latency: 3
+                        timestamp: "2026-03-28T12:00:00.000Z"
+                    metadata:
+                      region: "us-east-1"
+                      country: "US"
+                      responseTime: "15ms"
+                      timestamp: "2026-03-28T12:00:00.000Z"
+                      version: "1.0.0"
+                degraded:
+                  value:
+                    status: "degraded"
+                    checks:
+                      edge:
+                        status: "pass"
+                        latency: 0
+                        timestamp: "2026-03-28T12:00:00.000Z"
+                      cache:
+                        status: "degraded"
+                        latency: 150
+                        timestamp: "2026-03-28T12:00:00.000Z"
+                      database:
+                        status: "pass"
+                        latency: 25
+                        timestamp: "2026-03-28T12:00:00.000Z"
+                      redis:
+                        status: "pass"
+                        latency: 5
+                        timestamp: "2026-03-28T12:00:00.000Z"
+                    metadata:
+                      region: "us-east-1"
+                      country: "US"
+                      responseTime: "150ms"
+                      timestamp: "2026-03-28T12:00:00.000Z"
+                      version: "1.0.0"
+        '503':
+          description: System is unhealthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "unhealthy"
+                  error:
+                    type: string
+                    example: "Health check failed"
+                  timestamp:
+                    type: string
+                    format: date-time
+              example:
+                status: "unhealthy"
+                error: "Health check failed"
+                timestamp: "2026-03-28T12:00:00.000Z"
+
+  /api/edge/geo-lookup:
+    get:
+      tags:
+        - Edge
+      summary: Get client geolocation
+      description: |
+        Returns geolocation information based on client IP.
+
+        **Runtime:** Edge (Vercel Edge Network)
+
+        **Cache:** 5 minutes with stale-while-revalidate
+      operationId: geoLookup
+      responses:
+        '200':
+          description: Geolocation data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoLookupResponse'
+              examples:
+                default:
+                  value:
+                    ip: "192.168.1.1"
+                    geo:
+                      country: "US"
+                      country_code: "US"
+                      region: "California"
+                      city: "San Francisco"
+                      latitude: null
+                      longitude: null
+                    timestamp: "2026-03-28T12:00:00.000Z"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/edge/geo-content:
+    get:
+      tags:
+        - Edge
+      summary: Get localized content
+      description: |
+        Returns localized content based on client's geolocation.
+
+        **Runtime:** Edge (Vercel Edge Network)
+
+        **Cache:** 1 hour with stale-while-revalidate (24h)
+      operationId: getGeoContent
+      responses:
+        '200':
+          description: Localized content retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoContentResponse'
+              examples:
+                us:
+                  value:
+                    country: "US"
+                    city: "San Francisco"
+                    region: "California"
+                    currency: "USD"
+                    language: "en-US"
+                    dateFormat: "MM/DD/YYYY"
+                    pricingMultiplier: 1.0
+                    message: "Welcome! Check out our resources for mindful leadership and remote work."
+                    availableCountries: ["US", "GB", "DE", "FR", "CA", "AU"]
+                    timestamp: "2026-03-28T12:00:00.000Z"
+                de:
+                  value:
+                    country: "DE"
+                    city: "Berlin"
+                    region: "Berlin"
+                    currency: "EUR"
+                    language: "de-DE"
+                    dateFormat: "DD.MM.YYYY"
+                    pricingMultiplier: 0.92
+                    message: "Willkommen! Entdecken Sie unsere Ressourcen für achtsame Führung und Remote-Arbeit."
+                    availableCountries: ["US", "GB", "DE", "FR", "CA", "AU"]
+                    timestamp: "2026-03-28T12:00:00.000Z"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/edge/analytics:
+    post:
+      tags:
+        - Analytics
+      summary: Track analytics event
+      description: |
+        Track analytics events at the edge for optimal performance.
+
+        **Runtime:** Edge (Vercel Edge Network)
+
+        **Cache:** No cache (events must be tracked immediately)
+      operationId: trackEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyticsEvent'
+            examples:
+                pageView:
+                  value:
+                    name: "page_view"
+                    category: "engagement"
+                    label: "Resources Page"
+                    value: 1
+                    properties:
+                      page: "/resources"
+                      referrer: "https://google.com"
+                    url: "https://saithavy.com/resources"
+                    userAgent: "Mozilla/5.0..."
+                resourceDownload:
+                  value:
+                    name: "resource_download"
+                    category: "conversion"
+                    label: "Mindful Leadership Journal"
+                    value: 1
+                    properties:
+                      resourceId: "1"
+                      format: "pdf"
+                    url: "https://saithavy.com/resources/mindful-leadership-reflection-journal"
+                    userAgent: "Mozilla/5.0..."
+      responses:
+        '202':
+          description: Event accepted for processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Event tracked"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      tags:
+        - Analytics
+      summary: Get analytics status
+      description: Check if analytics tracking is operational
+      operationId: getAnalyticsStatus
+      responses:
+        '200':
+          description: Analytics status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "operational"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /api/edge/proxy:
+    get:
+      tags:
+        - Edge
+      summary: Proxy external API with caching
+      description: |
+        Proxy requests to external APIs with edge caching.
+
+        **Runtime:** Edge (Vercel Edge Network)
+
+        **Supported Types:**
+        - `blog`: Proxy blog posts (5min cache)
+        - `user`: Proxy user data (1min cache)
+
+        **Cache:** Configurable per proxy type
+      operationId: proxyRequest
+      parameters:
+        - name: type
+          in: query
+          required: true
+          description: Proxy type
+          schema:
+            type: string
+            enum: [blog, user]
+          example: "blog"
+        - name: path
+          in: query
+          description: Path to append to target URL
+          schema:
+            type: string
+            example: "/1"
+      responses:
+        '200':
+          description: Successful proxy response
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                blog:
+                  value:
+                    id: 1
+                    title: "Sample Blog Post"
+                    body: "Post content..."
+                    userId: 1
+                    _proxied:
+                      timestamp: "2026-03-28T12:00:00.000Z"
+                      location: "US"
+        '400':
+          description: Invalid proxy type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid proxy type"
+                  availableTypes:
+                    type: array
+                    items:
+                      type: string
+                    example: ["blog", "user"]
+        '502':
+          description: Upstream server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Upstream server error"
+                  status:
+                    type: integer
+                    example: 502
+                  statusText:
+                    type: string
+                    example: "Bad Gateway"
+
+  /api/edge/resources:
+    get:
+      tags:
+        - Edge
+      summary: Get available resources by region
+      description: |
+        Returns resources available for the user's region with geolocation-based filtering.
+
+        **Runtime:** Edge (Vercel Edge Network)
+
+        **Cache:** 1 hour with stale-while-revalidate (2h)
+      operationId: getAvailableResources
+      responses:
+        '200':
+          description: Available resources for region
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  country:
+                    type: string
+                    example: "US"
+                  region:
+                    type: string
+                    example: "California"
+                  total:
+                    type: integer
+                    example: 45
+                  restricted:
+                    type: integer
+                    example: 0
+                  resources:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ResourceSummary'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    rateLimit:
+      type: apiKey
+      in: header
+      name: X-RateLimit-Key
+      description: Optional rate limit key for increased quotas
+
+  schemas:
+    ResourceListResponse:
+      type: object
+      required:
+        - resources
+        - totalCount
+        - totalPages
+        - currentPage
+        - categories
+      properties:
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+        totalCount:
+          type: integer
+          description: Total number of resources matching filters
+          example: 45
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 4
+        currentPage:
+          type: integer
+          description: Current page number
+          example: 1
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+
+    Resource:
+      type: object
+      required:
+        - id
+        - slug
+        - title
+        - description
+        - category
+        - type
+        - difficulty
+        - timeToRead
+      properties:
+        id:
+          type: string
+          description: Unique resource identifier
+          example: "1"
+        slug:
+          type: string
+          description: URL-friendly resource identifier
+          example: "mindful-leadership-reflection-journal"
+        title:
+          type: string
+          description: Resource title
+          example: "Mindful Leadership Reflection Journal"
+        description:
+          type: string
+          description: Resource description
+          example: "A comprehensive journal for cultivating mindful leadership practices"
+        category:
+          type: string
+          description: Resource category slug
+          example: "mindful-leadership"
+        type:
+          type: string
+          enum: [guide, checklist, template, video, audio, workbook]
+          description: Resource type
+          example: "workbook"
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          description: Difficulty level
+          example: "beginner"
+        timeToRead:
+          type: string
+          description: Estimated time to complete
+          example: "15 min"
+        featured:
+          type: boolean
+          description: Whether resource is featured
+          example: true
+        downloads:
+          type: integer
+          description: Number of downloads
+          example: 1234
+
+    ResourceSummary:
+      type: object
+      required:
+        - id
+        - slug
+        - title
+        - description
+        - category
+        - type
+      properties:
+        id:
+          type: string
+          example: "1"
+        slug:
+          type: string
+          example: "mindful-leadership-reflection-journal"
+        title:
+          type: string
+          example: "Mindful Leadership Reflection Journal"
+        description:
+          type: string
+          example: "A comprehensive journal for cultivating mindful leadership practices"
+        category:
+          type: string
+          example: "mindful-leadership"
+        type:
+          type: string
+          example: "workbook"
+        difficulty:
+          type: string
+          example: "beginner"
+        timeToRead:
+          type: string
+          example: "15 min"
+        featured:
+          type: boolean
+          example: true
+        downloads:
+          type: integer
+          example: 1234
+
+    Category:
+      type: object
+      required:
+        - id
+        - name
+        - slug
+        - icon
+      properties:
+        id:
+          type: string
+          description: Category slug
+          example: "mindful-leadership"
+        name:
+          type: string
+          description: Category display name
+          example: "Mindful Leadership"
+        slug:
+          type: string
+          description: URL-friendly category identifier
+          example: "mindful-leadership"
+        icon:
+          type: string
+          description: Category icon emoji
+          example: "🧘"
+        resourceCount:
+          type: integer
+          description: Number of resources in category
+          example: 15
+
+    ContactRequest:
+      type: object
+      required:
+        - email
+        - name
+        - message
+      properties:
+        email:
+          type: string
+          format: email
+          description: Contact email address
+          example: "user@example.com"
+        name:
+          type: string
+          minLength: 2
+          description: Contact name
+          example: "John Doe"
+        message:
+          type: string
+          minLength: 10
+          description: Contact message
+          example: "I'd like to learn more about your leadership programs."
+
+    DownloadRequest:
+      type: object
+      required:
+        - email
+        - resourceId
+        - format
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address for lead capture
+          example: "user@example.com"
+        resourceId:
+          type: string
+          description: Resource ID to download
+          example: "1"
+        format:
+          type: string
+          enum: [pdf, web, print]
+          description: Download format
+          example: "pdf"
+        firstName:
+          type: string
+          description: Optional first name for personalization
+          example: "John"
+
+    AnalyticsEvent:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Event name
+          example: "page_view"
+        category:
+          type: string
+          description: Event category
+          example: "engagement"
+        label:
+          type: string
+          description: Event label
+          example: "Resources Page"
+        value:
+          type: number
+          description: Event value
+          example: 1
+        properties:
+          type: object
+          description: Additional event properties
+          additionalProperties: true
+          example:
+            page: "/resources"
+            referrer: "https://google.com"
+        url:
+          type: string
+          format: uri
+          description: Page URL where event occurred
+          example: "https://saithavy.com/resources"
+        userAgent:
+          type: string
+          description: User agent string
+          example: "Mozilla/5.0..."
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - checks
+        - metadata
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          description: Overall system health status
+          example: "healthy"
+        checks:
+          type: object
+          required:
+            - edge
+            - cache
+            - database
+            - redis
+          properties:
+            edge:
+              $ref: '#/components/schemas/HealthCheckResult'
+            cache:
+              $ref: '#/components/schemas/HealthCheckResult'
+            database:
+              $ref: '#/components/schemas/HealthCheckResult'
+            redis:
+              $ref: '#/components/schemas/HealthCheckResult'
+        metadata:
+          type: object
+          required:
+            - region
+            - country
+            - responseTime
+            - timestamp
+            - version
+          properties:
+            region:
+              type: string
+              example: "us-east-1"
+            country:
+              type: string
+              example: "US"
+            responseTime:
+              type: string
+              example: "15ms"
+            timestamp:
+              type: string
+              format: date-time
+            version:
+              type: string
+              example: "1.0.0"
+
+    HealthCheckResult:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: [pass, fail, degraded]
+          example: "pass"
+        latency:
+          type: number
+          description: Response time in milliseconds
+          example: 5
+        error:
+          type: string
+          description: Error message if check failed
+          example: "Connection timeout"
+        timestamp:
+          type: string
+          format: date-time
+
+    GeoLookupResponse:
+      type: object
+      required:
+        - ip
+        - geo
+        - timestamp
+      properties:
+        ip:
+          type: string
+          description: Client IP address
+          example: "192.168.1.1"
+        geo:
+          type: object
+          properties:
+            country:
+              type: string
+              example: "US"
+            country_code:
+              type: string
+              example: "US"
+            region:
+              type: string
+              example: "California"
+            city:
+              type: string
+              example: "San Francisco"
+            latitude:
+              type: number
+              nullable: true
+              example: null
+            longitude:
+              type: number
+              nullable: true
+              example: null
+        timestamp:
+          type: string
+          format: date-time
+
+    GeoContentResponse:
+      type: object
+      required:
+        - country
+        - city
+        - region
+        - currency
+        - language
+        - dateFormat
+        - pricingMultiplier
+        - message
+        - availableCountries
+        - timestamp
+      properties:
+        country:
+          type: string
+          example: "US"
+        city:
+          type: string
+          example: "San Francisco"
+        region:
+          type: string
+          example: "California"
+        currency:
+          type: string
+          example: "USD"
+        language:
+          type: string
+          example: "en-US"
+        dateFormat:
+          type: string
+          example: "MM/DD/YYYY"
+        pricingMultiplier:
+          type: number
+          format: float
+          example: 1.0
+        message:
+          type: string
+          example: "Welcome! Check out our resources for mindful leadership and remote work."
+        availableCountries:
+          type: array
+          items:
+            type: string
+          example: ["US", "GB", "DE", "FR", "CA", "AU"]
+        timestamp:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Validation failed"
+        issues:
+          type: array
+          description: List of validation issues
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "email"
+              message:
+                type: string
+                example: "Invalid email format"
+
+  headers:
+    X-RateLimit-Limit:
+      description: Rate limit quota
+      schema:
+        type: integer
+        example: 100
+    X-RateLimit-Remaining:
+      description: Remaining requests in current window
+      schema:
+        type: integer
+        example: 95
+    X-RateLimit-Reset:
+      description: Unix timestamp when rate limit resets
+      schema:
+        type: integer
+        example: 1711641600
+    Retry-After:
+      description: Seconds until retry is allowed
+      schema:
+        type: integer
+        example: 3600
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Invalid request data"
+            issues:
+              - field: "email"
+                message: "Invalid email format"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Resource not found"
+
+    RateLimitExceeded:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Too many requests. Please try again later."
+              retryAfter:
+                type: integer
+                description: Seconds until retry is allowed
+                example: 3600
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/Retry-After'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "An unexpected error occurred. Please try again."
