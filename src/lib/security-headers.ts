@@ -101,11 +101,11 @@ export interface SecurityHeaderConfig {
 export const defaultSecurityHeaders: SecurityHeaderConfig = {
   contentSecurityPolicy: {
     defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://va.vercel-scripts.com"],
     styleSrc: ["'self'", "'unsafe-inline'"],
     imgSrc: ["'self'", "data:", "https:", "blob:"],
     fontSrc: ["'self'", "data:"],
-    connectSrc: ["'self'"],
+    connectSrc: ["'self'", "https://vitals.vercel-analytics.com", "https://va.vercel-scripts.com"],
     frameSrc: ["'none'"],
     objectSrc: ["'none'"],
     baseUri: ["'self'"],
@@ -138,11 +138,11 @@ export const defaultSecurityHeaders: SecurityHeaderConfig = {
 export const developmentSecurityHeaders: SecurityHeaderConfig = {
   contentSecurityPolicy: {
     defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://va.vercel-scripts.com"],
     styleSrc: ["'self'", "'unsafe-inline'"],
     imgSrc: ["'self'", "data:", "https:", "blob:", "http://localhost:*"],
     fontSrc: ["'self'", "data:"],
-    connectSrc: ["'self'", "http://localhost:*", "ws://localhost:*", "ws://localhost:*"],
+    connectSrc: ["'self'", "http://localhost:*", "ws://localhost:*", "ws://localhost:*", "https://vitals.vercel-analytics.com", "https://va.vercel-scripts.com"],
     frameSrc: ["'none'"],
     objectSrc: ["'none'"],
     baseUri: ["'self'"],
