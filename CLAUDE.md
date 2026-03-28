@@ -1,188 +1,274 @@
-# Claude Code Configuration - RuFlo V3
+# CLAUDE.md
 
-## Behavioral Rules (Always Enforced)
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-- Do what has been asked; nothing more, nothing less
-- NEVER create files unless they're absolutely necessary for achieving your goal
-- ALWAYS prefer editing an existing file to creating a new one
-- NEVER proactively create documentation files (*.md) or README files unless explicitly requested
-- NEVER save working files, text/mds, or tests to the root folder
-- Never continuously check status after spawning a swarm — wait for results
-- ALWAYS read a file before editing it
-- NEVER commit secrets, credentials, or .env files
+## Common Commands
 
-## File Organization
-
-- NEVER save to root folder — use the directories below
-- Use `/src` for source code files
-- Use `/tests` for test files
-- Use `/docs` for documentation and markdown files
-- Use `/config` for configuration files
-- Use `/scripts` for utility scripts
-- Use `/examples` for example code
-
-## Project Architecture
-
-- Follow Domain-Driven Design with bounded contexts
-- Keep files under 500 lines
-- Use typed interfaces for all public APIs
-- Prefer TDD London School (mock-first) for new code
-- Use event sourcing for state changes
-- Ensure input validation at system boundaries
-
-### Project Config
-
-- **Topology**: hierarchical-mesh
-- **Max Agents**: 15
-- **Memory**: hybrid
-- **HNSW**: Enabled
-- **Neural**: Enabled
-
-## Build & Test
-
+### Development
 ```bash
-# Build
-npm run build
-
-# Test
-npm test
-
-# Lint
-npm run lint
+npm run dev              # Start dev server (http://localhost:3000)
+npm run build           # Production build
+npm run start           # Start production server
+npm run lint            # Run ESLint
 ```
 
-- ALWAYS run tests after making code changes
-- ALWAYS verify build succeeds before committing
-
-## Security Rules
-
-- NEVER hardcode API keys, secrets, or credentials in source files
-- NEVER commit .env files or any file containing secrets
-- Always validate user input at system boundaries
-- Always sanitize file paths to prevent directory traversal
-- Run `npx @claude-flow/cli@latest security scan` after security-related changes
-
-## Concurrency: 1 MESSAGE = ALL RELATED OPERATIONS
-
-- All operations MUST be concurrent/parallel in a single message
-- Use Claude Code's Task tool for spawning agents, not just MCP
-- ALWAYS batch ALL todos in ONE TodoWrite call (5-10+ minimum)
-- ALWAYS spawn ALL agents in ONE message with full instructions via Task tool
-- ALWAYS batch ALL file reads/writes/edits in ONE message
-- ALWAYS batch ALL Bash commands in ONE message
-
-## Swarm Orchestration
-
-- MUST initialize the swarm using CLI tools when starting complex tasks
-- MUST spawn concurrent agents using Claude Code's Task tool
-- Never use CLI tools alone for execution — Task tool agents do the actual work
-- MUST call CLI tools AND Task tool in ONE message for complex work
-
-### 3-Tier Model Routing (ADR-026)
-
-| Tier | Handler | Latency | Cost | Use Cases |
-|------|---------|---------|------|-----------|
-| **1** | Agent Booster (WASM) | <1ms | $0 | Simple transforms (var→const, add types) — Skip LLM |
-| **2** | Haiku | ~500ms | $0.0002 | Simple tasks, low complexity (<30%) |
-| **3** | Sonnet/Opus | 2-5s | $0.003-0.015 | Complex reasoning, architecture, security (>30%) |
-
-- Always check for `[AGENT_BOOSTER_AVAILABLE]` or `[TASK_MODEL_RECOMMENDATION]` before spawning agents
-- Use Edit tool directly when `[AGENT_BOOSTER_AVAILABLE]`
-
-## Swarm Configuration & Anti-Drift
-
-- ALWAYS use hierarchical topology for coding swarms
-- Keep maxAgents at 6-8 for tight coordination
-- Use specialized strategy for clear role boundaries
-- Use `raft` consensus for hive-mind (leader maintains authoritative state)
-- Run frequent checkpoints via `post-task` hooks
-- Keep shared memory namespace for all agents
-
+### Testing
 ```bash
-npx @claude-flow/cli@latest swarm init --topology hierarchical --max-agents 8 --strategy specialized
+npm test                # Run all Vitest tests
+npm run test:ui         # Run tests with UI
+npm run test:coverage   # Run tests with coverage report
 ```
 
-## Swarm Execution Rules
-
-- ALWAYS use `run_in_background: true` for all agent Task calls
-- ALWAYS put ALL agent Task calls in ONE message for parallel execution
-- After spawning, STOP — do NOT add more tool calls or check status
-- Never poll TaskOutput or check swarm status — trust agents to return
-- When agent results arrive, review ALL results before proceeding
-
-## V3 CLI Commands
-
-### Core Commands
-
-| Command | Subcommands | Description |
-|---------|-------------|-------------|
-| `init` | 4 | Project initialization |
-| `agent` | 8 | Agent lifecycle management |
-| `swarm` | 6 | Multi-agent swarm coordination |
-| `memory` | 11 | AgentDB memory with HNSW search |
-| `task` | 6 | Task creation and lifecycle |
-| `session` | 7 | Session state management |
-| `hooks` | 17 | Self-learning hooks + 12 workers |
-| `hive-mind` | 6 | Byzantine fault-tolerant consensus |
-
-### Quick CLI Examples
-
+### Single Test
 ```bash
-npx @claude-flow/cli@latest init --wizard
-npx @claude-flow/cli@latest agent spawn -t coder --name my-coder
-npx @claude-flow/cli@latest swarm init --v3-mode
-npx @claude-flow/cli@latest memory search --query "authentication patterns"
-npx @claude-flow/cli@latest doctor --fix
+# Run specific test file
+npx vitest tests/api/contact.test.ts
+
+# Run tests matching pattern
+npx vitest --grep "contact form"
 ```
 
-## Available Agents (60+ Types)
-
-### Core Development
-`coder`, `reviewer`, `tester`, `planner`, `researcher`
-
-### Specialized
-`security-architect`, `security-auditor`, `memory-specialist`, `performance-engineer`
-
-### Swarm Coordination
-`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`
-
-### GitHub & Repository
-`pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`
-
-### SPARC Methodology
-`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`
-
-## Memory Commands Reference
-
+### Bundle Analysis
 ```bash
-# Store (REQUIRED: --key, --value; OPTIONAL: --namespace, --ttl, --tags)
-npx @claude-flow/cli@latest memory store --key "pattern-auth" --value "JWT with refresh" --namespace patterns
-
-# Search (REQUIRED: --query; OPTIONAL: --namespace, --limit, --threshold)
-npx @claude-flow/cli@latest memory search --query "authentication patterns"
-
-# List (OPTIONAL: --namespace, --limit)
-npx @claude-flow/cli@latest memory list --namespace patterns --limit 10
-
-# Retrieve (REQUIRED: --key; OPTIONAL: --namespace)
-npx @claude-flow/cli@latest memory retrieve --key "pattern-auth" --namespace patterns
+npm run analyze         # Analyze bundle sizes
+npm run analyze:server  # Analyze server bundle
+npm run analyze:browser # Analyze client bundle
 ```
 
-## Quick Setup
+## Architecture
 
-```bash
-claude mcp add claude-flow -- npx -y @claude-flow/cli@latest
-npx @claude-flow/cli@latest daemon start
-npx @claude-flow/cli@latest doctor --fix
+### Clean Architecture Layers
+
+This project uses Domain-Driven Design with hexagonal architecture:
+
+```
+src/
+├── domain/              # Core business logic (no external dependencies)
+│   ├── entities/        # Business entities (e.g., Contact)
+│   └── interfaces/      # Contracts for external services (IRepository, IService)
+├── adapters/            # External service implementations
+│   └── gateways/        # Infrastructure adapters (UpstashRateLimiterAdapter)
+├── use_cases/           # Business logic orchestration (SubmitContactUseCase)
+├── lib/                 # Utilities and shared code
+└── app/                 # Next.js App Router (presentation layer)
 ```
 
-## Claude Code vs CLI Tools
+**Key Principles:**
+- Domain interfaces define contracts (e.g., `IRateLimiter`, `IContactRepository`)
+- Adapters implement interfaces for external services
+- Use cases orchestrate business logic
+- API routes use use cases, never call adapters directly
 
-- Claude Code's Task tool handles ALL execution: agents, file ops, code generation, git
-- CLI tools handle coordination via Bash: swarm init, memory, hooks, routing
-- NEVER use CLI tools as a substitute for Task tool agents
+### Security Architecture
 
-## Support
+**Middleware Chain** (`src/middleware.ts`):
+1. Request size validation (1MB max)
+2. Authentication check for protected paths
+3. CORS origin validation
+4. CORS preflight handling
+5. Security headers injection
 
-- Documentation: https://github.com/ruvnet/claude-flow
-- Issues: https://github.com/ruvnet/claude-flow/issues
+**Security Libraries** (`src/lib/`):
+- `crypto-utils.ts` - SHA-256 hashing, salt generation, constant-time comparison
+- `security-headers.ts` - CSP, HSTS, X-Frame-Options, X-Content-Type-Options
+- `cors-utils.ts` - Origin allowlist with environment-based configuration
+- `xss-prevention.ts` - HTML sanitization utilities
+- `api-error-handler.ts` - Centralized error handling with specialized functions
+
+**Security Headers Applied:**
+- Content-Security-Policy (strict)
+- X-Frame-Options (DENY)
+- X-Content-Type-Options (nosniff)
+- Referrer-Policy (strict-origin-when-cross-origin)
+- Permissions-Policy (geolocation=(), microphone=())
+
+### Rate Limiting
+
+**Implementation**: Upstash Redis with adapter pattern
+
+**Flow:**
+1. API route calls `UpstashRateLimiterAdapter.checkLimit(identifier)`
+2. Adapter implements `IRateLimiter` interface from domain
+3. Returns `{ success, limit, remaining, reset, retryAfter }`
+4. If disabled (no env vars), allows all requests
+
+**Configuration**: 5 submissions per hour per IP (configurable in `src/lib/ratelimit.ts`)
+
+### Form Validation
+
+**Shared Zod Schemas** (`src/lib/validators.ts`):
+- Schemas defined once, used client and server
+- All API routes validate input with Zod before processing
+- Includes honeypot field for spam detection
+
+**Example:**
+```typescript
+import { contactSchema } from "@/lib/validators";
+const validated = contactSchema.parse(requestBody);
+```
+
+### API Routes
+
+**Route Handler Pattern:**
+```typescript
+// 1. Validate input with Zod
+// 2. Check rate limit
+// 3. Call use case
+// 4. Handle errors with apiErrorHandler
+// 5. Return typed response
+```
+
+**Edge Functions** (`src/app/api/edge/`):
+- Run on Edge Runtime (fast, lightweight)
+- Handle their own CORS (skip middleware)
+- Used for health checks, geo-lookup, analytics
+
+### ISR Caching
+
+**Resources Page** uses Incremental Static Regeneration:
+- Content cached at build time
+- Revalidated on-demand (stale-while-revalidate)
+- See `src/lib/resourceContent.ts` for implementation
+
+### Component Optimization
+
+**Performance Patterns:**
+- `React.memo` for expensive components
+- `useCallback` for event handlers
+- `useMemo` for computed values
+- Dynamic imports for large libraries (p5.js in HeroSection)
+
+**Example:**
+```typescript
+export const ResourceCard = React.memo(({ resource }) => {
+  const handleClick = useCallback(() => { ... }, [resource.id]);
+  const formattedDate = useMemo(() => formatDate(resource.date), [resource.date]);
+  return <div onClick={handleClick}>{formattedDate}</div>;
+});
+```
+
+### Testing Setup
+
+**Vitest Configuration** (`vitest.config.ts`):
+- Environment: jsdom
+- Path alias: `@/` → `src/`
+- Coverage provider: v8
+- Test location: `tests/` directory
+
+**Test Patterns:**
+```typescript
+// API endpoint test
+import { describe, it, expect } from 'vitest';
+import { POST } from '@/app/api/contact/route';
+
+// Utility test
+import { hashPassword } from '@/lib/crypto-utils';
+
+// Edge function test (requires Edge Runtime)
+import { GET } from '@/app/api/edge/health/route';
+```
+
+## Environment Variables
+
+**Required** (`.env.local`):
+```env
+UPSTASH_REDIS_REST_URL=https://xxx.upstash.io
+UPSTASH_REDIS_REST_TOKEN=xxx
+```
+
+**Optional** (for production):
+```env
+ALLOWED_ORIGINS=https://example.com,https://www.example.com
+```
+
+## Dependency Injection
+
+The app uses constructor injection for use cases:
+
+```typescript
+// In API route
+const repository = new LoggerContactRepository(); // adapter
+const useCase = new SubmitContactUseCase(repository); // use case
+await useCase.execute(contactData);
+```
+
+## File Organization Rules
+
+**Where to put code:**
+- `/src` - All source code
+- `/tests` - All test files (mirrors `/src` structure)
+- `/docs` - Documentation only (API specs, reports)
+- `/scripts` - Utility scripts
+- Never save to root folder
+
+## Build Verification
+
+Before committing:
+1. `npm run lint` - Must be clean
+2. `npm test` - All tests must pass
+3. `npm run build` - Must succeed with zero errors
+
+## Important Patterns
+
+**When adding API endpoints:**
+1. Create Zod schema in `validators.ts`
+2. Add to OpenAPI spec (`docs/api/openapi.yaml`)
+3. Add tests in `tests/api/`
+4. Use apiErrorHandler for consistent error responses
+
+**When adding components:**
+1. Use React.memo for expensive renders
+2. Extract callbacks with useCallback
+3. Add loading/error states
+4. Test with Vitest + Testing Library
+
+**When modifying security:**
+1. Run security scan: `npx @claude-flow/cli@latest security scan`
+2. Update `docs/SECURITY_AUDIT_REPORT.md`
+3. Test CORS headers
+4. Verify CSP doesn't break functionality
+
+## Migration Notes
+
+**Recent Migrations (from SPARC code review):**
+- Fixed lucide-react wildcard imports (use direct imports)
+- Added 225+ test cases for coverage
+- Implemented OWASP security controls (7/10 categories)
+- Added ISR caching for resources
+- Created OpenAPI 3.0 specification
+
+## Bundle Optimization
+
+**Lucide React Icons** - Always import directly:
+```typescript
+// ✅ Correct
+import { Star, ArrowRight } from 'lucide-react';
+
+// ❌ Wrong - bundles entire library
+import * as Icons from 'lucide-react';
+```
+
+**Dynamic Imports** - For heavy components:
+```typescript
+const HeavyChart = dynamic(() => import('./HeavyChart'), {
+  loading: () => <ChartSkeleton />,
+  ssr: false,
+});
+```
+
+## Performance Targets
+
+- Page Load: < 2s (3G connection)
+- Time to Interactive: < 3s
+- First Contentful Paint: < 1.5s
+- Bundle Size (gzipped): < 200KB initial
+
+## Key Files to Understand
+
+- `src/middleware.ts` - Request processing pipeline
+- `src/lib/validators.ts` - All input schemas
+- `src/lib/security-headers.ts` - Security header configuration
+- `src/lib/crypto-utils.ts` - Hashing utilities
+- `src/adapters/gateways/UpstashRateLimiterAdapter.ts` - Rate limiting adapter
+- `src/domain/interfaces/` - Domain contracts
+- `vitest.config.ts` - Test configuration
