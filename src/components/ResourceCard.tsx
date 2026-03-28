@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Clock, Target, Download, CheckCircle2, Lock } from "lucide-react";
-import { Resource } from "@/lib/resourcesData";
+import { Resource } from "@/types/resources";
 import DownloadModal from "./DownloadModal";
 
 export default function ResourceCard({ resource }: { resource: Resource }) {
@@ -38,7 +38,7 @@ export default function ResourceCard({ resource }: { resource: Resource }) {
         </span>
       </div>
 
-      {resource.icon}
+      {resource.icon && <resource.icon className="w-12 h-12 mb-3" style={{ color: "var(--accent)" }} />}
       
       <h3
         className="font-[family-name:var(--font-poppins)] font-bold text-lg mb-2"
@@ -83,7 +83,7 @@ export default function ResourceCard({ resource }: { resource: Resource }) {
               You&apos;ll Learn:
             </h4>
             <ul className="text-xs space-y-1">
-              {resource.whatYoullLearn.map((item, idx) => (
+              {resource.whatYoullLearn?.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2" style={{ color: "var(--foreground)" }}>
                   <CheckCircle2 className="w-3 h-3 mt-0.5 flex-shrink-0" style={{ color: "var(--accent)" }} />
                   {item}
@@ -95,11 +95,13 @@ export default function ResourceCard({ resource }: { resource: Resource }) {
       )}
       
       <div className="mt-auto pt-4 border-t flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
-        <span className="text-xs font-medium" style={{ color: "var(--foreground)" }}>
-          {resource.fileSize}
-        </span>
-        
-        <div className="flex items-center gap-2">
+        {resource.fileSize && (
+          <span className="text-xs font-medium" style={{ color: "var(--foreground)" }}>
+            {resource.fileSize}
+          </span>
+        )}
+
+        <div className="flex items-center gap-2 ml-auto">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-xs font-semibold transition-colors hover:text-amber-500"
@@ -107,20 +109,22 @@ export default function ResourceCard({ resource }: { resource: Resource }) {
           >
             {isExpanded ? "Less" : "More"}
           </button>
-          
+
           {resource.isPremium ? (
             <button
               onClick={handleDownload}
               className="inline-flex items-center text-sm font-semibold transition-colors hover:text-amber-500"
               style={{ color: "var(--heading)" }}
+              aria-label="Unlock premium resource"
             >
               <Download className="w-4 h-4" />
             </button>
           ) : (
             <Link
-              href={resource.url}
+              href={`/resources/${resource.category}/${resource.slug}`}
               className="inline-flex items-center text-sm font-semibold transition-colors hover:text-amber-500"
               style={{ color: "var(--heading)" }}
+              aria-label={`View ${resource.title}`}
             >
               <Download className="w-4 h-4" />
             </Link>

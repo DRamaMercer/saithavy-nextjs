@@ -28,7 +28,7 @@ export const trackEvent = (event: EventName, params?: EventParams): void => {
   }
 
   // Console log for development
-  if (import.meta.env.DEV) {
+  if (process.env.NODE_ENV === 'development') {
     console.log('[Analytics]', event, params);
   }
 };

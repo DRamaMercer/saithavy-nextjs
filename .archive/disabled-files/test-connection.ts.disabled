@@ -1,0 +1,145 @@
+/**
+ * Database and Environment Connection Test
+ *
+ * Run this file to verify your technical setup is working correctly.
+ * This tests environment variables and database connectivity.
+ */
+
+import { testDatabaseConnection, getCategories } from './supabase'
+
+/**
+ * Test all environment variables
+ */
+export function testEnvironmentVariables() {
+  console.log('\n🔍 Testing environment variables...\n')
+
+  const requiredVars = [
+    'VITE_SUPABASE_URL',
+    'VITE_SUPABASE_ANON_KEY',
+    'VITE_R2_ACCOUNT_ID',
+    'VITE_R2_ACCESS_KEY_ID',
+    'VITE_R2_SECRET_ACCESS_KEY',
+    'VITE_RESEND_API_KEY',
+    'VITE_PLAUSIBLE_DOMAIN',
+  ]
+
+  const optionalVars = [
+    'VITE_SUPABASE_SERVICE_ROLE_KEY',
+    'VITE_R2_BUCKET_NAME',
+    'VITE_RESEND_FROM_EMAIL',
+    'VITE_APP_URL',
+    'VITE_APP_NAME',
+    'VITE_APP_ENV',
+  ]
+
+  let allRequiredPresent = true
+
+  // Test required variables
+  console.log('Required Variables:')
+  requiredVars.forEach(varName => {
+    const value = import.meta.env[varName]
+    const present = !!value
+    const maskedValue = present ? `${value.slice(0, 8)}...` : 'MISSING'
+
+    console.log(`  ${present ? '✅' : '❌'} ${varName}: ${maskedValue}`)
+
+    if (!present) {
+      allRequiredPresent = false
+    }
+  })
+
+  // Test optional variables
+  console.log('\nOptional Variables:')
+  optionalVars.forEach(varName => {
+    const value = import.meta.env[varName]
+    const present = !!value
+    const maskedValue = present ? `${value.slice(0, 8)}...` : 'not set'
+
+    console.log(`  ${present ? '✅' : '⚠️'} ${varName}: ${maskedValue}`)
+  })
+
+  console.log('')
+
+  if (!allRequiredPresent) {
+    console.error('❌ Some required environment variables are missing!')
+    console.error('Please check your .env file and ensure all required variables are set.\n')
+    return false
+  }
+
+  console.log('✅ All required environment variables are present!\n')
+  return true
+}
+
+/**
+ * Test database connection and queries
+ */
+export async function testDatabase() {
+  console.log('🔍 Testing database connection...\n')
+
+  // Test basic connection
+  const connectionOk = await testDatabaseConnection()
+
+  if (!connectionOk) {
+    console.error('❌ Database connection failed!')
+    console.error('Please check your Supabase credentials and network connection.\n')
+    return false
+  }
+
+  // Test fetching categories
+  console.log('Testing category fetch...')
+  try {
+    const categories = await getCategories()
+
+    if (!categories || categories.length === 0) {
+      console.warn('⚠️ No categories found in database.')
+      console.warn('Please run the SQL schema from SETUP_INSTRUCTIONS.md\n')
+      return false
+    }
+
+    console.log(`✅ Found ${categories.length} categories:`)
+    categories.forEach((cat: any) => {
+      console.log(`  - ${cat.name} (${cat.slug})`)
+    })
+    console.log('')
+  } catch (error) {
+    console.error('❌ Error fetching categories:', error)
+    return false
+  }
+
+  console.log('✅ Database tests passed!\n')
+  return true
+}
+
+/**
+ * Run all tests
+ */
+export async function runAllTests() {
+  console.log('\n' + '='.repeat(60))
+  console.log('  Sai Resources v2 - Technical Setup Test')
+  console.log('='.repeat(60) + '\n')
+
+  const envOk = testEnvironmentVariables()
+  const dbOk = await testDatabase()
+
+  console.log('='.repeat(60))
+  console.log('  Test Results')
+  console.log('='.repeat(60))
+  console.log(`Environment Variables: ${envOk ? '✅ PASS' : '❌ FAIL'}`)
+  console.log(`Database Connection: ${dbOk ? '✅ PASS' : '❌ FAIL'}`)
+  console.log('='.repeat(60) + '\n')
+
+  if (envOk && dbOk) {
+    console.log('🎉 All tests passed! Your setup is ready.\n')
+    return true
+  } else {
+    console.log('❌ Some tests failed. Please fix the issues above.\n')
+    return false
+  }
+}
+
+// Auto-run tests if this file is executed directly
+if (typeof window !== 'undefined') {
+  // Running in browser context
+  ;(window as any).runSetupTests = runAllTests
+  console.log('💡 Tip: Run setup tests by calling: await runSetupTests()')
+}

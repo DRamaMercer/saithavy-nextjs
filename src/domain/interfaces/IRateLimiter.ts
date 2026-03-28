@@ -3,6 +3,7 @@ export interface RateLimitResult {
   limit: number;
   remaining: number;
   reset: number;
+  retryAfter?: number;
 }
 
 export interface IRateLimiter {

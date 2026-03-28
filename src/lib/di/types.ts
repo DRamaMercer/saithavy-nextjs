@@ -4,7 +4,12 @@
  * Provides type-safe service registration and resolution.
  */
 
-import { DIContainer, ServiceKey } from './Container';
+import { DIContainer, ServiceKeys } from './Container';
+
+/**
+ * Type for service keys
+ */
+export type ServiceKey = typeof ServiceKeys[keyof typeof ServiceKeys];
 
 /**
  * Type-safe service registry
@@ -63,7 +68,7 @@ export class TypedDIContainer implements ServiceRegistry {
     return this.container.has(key);
   }
 
-  get container(): DIContainer {
+  get underlyingContainer(): DIContainer {
     return this.container;
   }
 }

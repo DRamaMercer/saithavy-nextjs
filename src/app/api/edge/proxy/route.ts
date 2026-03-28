@@ -32,7 +32,7 @@ const proxyConfigs: Record<string, ProxyConfig> = {
       ...data,
       _proxied: {
         timestamp: new Date().toISOString(),
-        location: request.geo?.country || 'unknown',
+        location: request.headers.get('x-vercel-ip-country') || 'unknown',
       },
     }),
   },
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             config.cacheTime * 2
           }`,
           'X-Proxy-Cache': 'MISS',
-          'X-Edge-Location': request.geo?.region || 'unknown',
+          'X-Edge-Location': request.headers.get('x-vercel-ip-region') || 'unknown',
         },
       });
     } else {

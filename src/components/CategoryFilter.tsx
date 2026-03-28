@@ -24,21 +24,35 @@ export default function CategoryFilter({ resourceCounts, activeCategory }: Props
       {categories.map((category) => {
         const CategoryIcon = category.icon;
         const isActive = activeCategory === category.id;
+        const isEmoji = typeof CategoryIcon === 'string';
+
+        // Render icon based on type
+        const renderIcon = () => {
+          if (isEmoji) {
+            return <span className="text-base">{CategoryIcon}</span>;
+          }
+          // Type assertion: we know it's a component if not a string
+          const IconComponent = CategoryIcon as React.ComponentType<{ className?: string }>;
+          return <IconComponent className="w-4 h-4" />;
+        };
+
         return (
           <button
             key={category.id}
             onClick={() => handleCategoryChange(category.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 ${
-              isActive 
-                ? "text-white shadow-lg transform scale-105 bg-amber-600" 
+              isActive
+                ? "text-white shadow-lg transform scale-105 bg-amber-600"
                 : "hover:scale-105"
             }`}
-            style={{ 
+            style={{
               backgroundColor: isActive ? "var(--accent)" : "var(--surface)",
               color: isActive ? "white" : "var(--foreground)"
             }}
           >
-            <CategoryIcon className={`w-4 h-4 ${isActive ? "text-white" : category.color}`} />
+            <span className={isActive ? "text-white" : ""}>
+              {renderIcon()}
+            </span>
             {category.name}
             {category.id !== "all" && (
               <span className="text-xs opacity-75">

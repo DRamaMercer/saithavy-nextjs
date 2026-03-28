@@ -39,3 +39,26 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.dyad/
+
+# AgentDB
+.agentdb/
+*.db
+*.db-shm
+*.db-wal
+
+# claude-flow
+.claude-flow/
+.swarm/
+.sessions/
+.memory/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db

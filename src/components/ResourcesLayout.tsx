@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Star, ArrowRight } from "lucide-react";
-import { categories, Resource } from "@/lib/resourcesData";
+import { categories } from "@/lib/resourcesData";
+import { Resource } from "@/types/resources";
 import CategoryFilter from "@/components/CategoryFilter";
 import ResourceCard from "@/components/ResourceCard";
 

@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "agentdb:init": "node scripts/init-agentdb.mjs",
+    "agentdb:stats": "npx agentdb@latest stats .agentdb/reasoningbank.db",
+    "agentdb:export": "npx agentdb@latest export .agentdb/reasoningbank.db ./backup.json",
+    "agentdb:import": "npx agentdb@latest import ./backup.json"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -27,6 +31,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",
+    "react-markdown": "^10.1.0",
     "reading-time": "^1.5.0",
     "schema-dts": "^1.1.5",
     "typed.js": "^3.0.0",

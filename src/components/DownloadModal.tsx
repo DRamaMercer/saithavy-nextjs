@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { X, Mail, Download, CheckCircle2 } from "lucide-react";
-import { Resource } from "@/lib/resourcesData";
+import { Resource } from "@/types/resources";
 
 const downloadSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required." }),
@@ -38,7 +38,8 @@ export default function DownloadModal({ resource, onClose }: Props) {
     
     // Auto-trigger download (mock)
     setTimeout(() => {
-      window.location.href = resource.url;
+      const resourceUrl = `/resources/${resource.category}/${resource.slug}`;
+      window.location.href = resourceUrl;
     }, 1500);
   };
 
@@ -70,7 +71,7 @@ export default function DownloadModal({ resource, onClose }: Props) {
           <>
             <div className="mb-6 text-center">
               <div className="inline-flex justify-center mb-4 p-4 rounded-xl" style={{ backgroundColor: "var(--surface-alt)" }}>
-                {resource.icon}
+                {resource.icon && <resource.icon className="w-12 h-12" style={{ color: "var(--accent)" }} />}
               </div>
               <h3 className="font-[family-name:var(--font-poppins)] font-bold text-2xl mb-2" style={{ color: "var(--heading)" }}>
                 Get the {resource.type}

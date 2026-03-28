@@ -13,7 +13,6 @@ export function getClientIP(request: NextRequest): string {
   return (
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     request.headers.get('x-real-ip') ||
-    request.ip ||
     'unknown'
   );
 }
@@ -57,7 +56,8 @@ export function validateGeoRestrictions(
   request: NextRequest,
   restrictedCountries: string[] = []
 ): { allowed: boolean; country: string | null } {
-  const country = request.geo?.country || null;
+  // In Next.js 16, geo data is passed via headers by Vercel
+  const country = request.headers.get('x-vercel-ip-country') || null;
 
   if (!country || restrictedCountries.length === 0) {
     return { allowed: true, country };
@@ -127,8 +127,8 @@ export function createErrorResponse(
   const errorContext = {
     url: request.url,
     method: request.method,
-    country: request.geo?.country,
-    region: request.geo?.region,
+    country: request.headers.get('x-vercel-ip-country'),
+    region: request.headers.get('x-vercel-ip-region'),
     timestamp: new Date().toISOString(),
     error: error instanceof Error ? error.message : 'Unknown error',
   };
@@ -155,7 +155,6 @@ export function createErrorResponse(
 export function validateRequestBody<T>(
   body: unknown,
   requiredFields: (keyof T)[]
-): { valid: boolean; data?: T; errors: string[] }
 ) {
   const errors: string[] = [];
 
@@ -186,9 +185,9 @@ export function addGeoContext<T>(
   return {
     ...data,
     _geo: {
-      country: request.geo?.country || 'unknown',
-      region: request.geo?.region || 'unknown',
-      city: request.geo?.city || 'unknown',
+      country: request.headers.get('x-vercel-ip-country') || 'unknown',
+      region: request.headers.get('x-vercel-ip-region') || 'unknown',
+      city: request.headers.get('x-vercel-ip-city') || 'unknown',
       timestamp: new Date().toISOString(),
     },
   };
@@ -218,8 +217,8 @@ export function trackPerformance(
     operation,
     duration: `${duration}ms`,
     url: request.url,
-    country: request.geo?.country,
-    region: request.geo?.region,
+    country: request.headers.get('x-vercel-ip-country'),
+    region: request.headers.get('x-vercel-ip-region'),
   });
 
   // In production, send to monitoring service

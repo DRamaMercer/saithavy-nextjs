@@ -1,0 +1,12 @@
+NO-CODE AUTOMATION OPPORTUNITY MAP - Worksheet 3: ROI Calculator
+Calculate the financial return for each automation candidate
+
+Task,"Monthly Hours Saved","Hourly Rate ($)","Monthly Savings ($)","Setup Time (Hours)","Setup Cost ($)","Payback Period (Months)"
+"Example: Lead data entry",6,50,300,2,0,"<1 month"
+"Example: Invoice routing",2,75,150,8,0,"4 months"
+"Example: Social scheduling",4,65,260,1,15,"<1 month"
+[Your Task],0,0,"=B*D",0,0,"=F/(D+0.001)"
+[Your Task],0,0,"=B*D",0,0,"=F/(D+0.001)"
+[Your Task],0,0,"=B*D",0,0,"=F/(D+0.001)"
+[Your Task],0,0,"=B*D",0,0,"=F/(D+0.001)"
+[Your Task],0,0,"=B*D",0,0,"=F/(D+0.001)"

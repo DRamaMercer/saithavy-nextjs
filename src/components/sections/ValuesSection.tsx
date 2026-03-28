@@ -141,7 +141,7 @@ export default function ValuesSection() {
                 >
                   <h3
                     className="font-[family-name:var(--font-poppins)] font-bold text-xl mb-4"
-                    style={{ color: value.titleColor }}
+                    style={{ color: value.titleColor === "#1a365d" ? "var(--heading)" : value.titleColor }}
                   >
                     {value.title}
                   </h3>

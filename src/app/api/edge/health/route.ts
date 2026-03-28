@@ -40,8 +40,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         status: isHealthy ? 'healthy' : 'degraded',
         checks,
         metadata: {
-          region: request.geo?.region || 'unknown',
-          country: request.geo?.country || 'unknown',
+          region: request.headers.get('x-vercel-ip-region') || 'unknown',
+          country: request.headers.get('x-vercel-ip-country') || 'unknown',
           responseTime: `${responseTime}ms`,
           timestamp: new Date().toISOString(),
         },

@@ -14,7 +14,7 @@ import { Resource, ResourceContentMetadata, ResourceWithContent } from '@/types/
  * Content cache for optimization
  * In production, this could be replaced with Redis or similar
  */
-const contentCache = new Map<string, { content: string; metadata: ResourceContentMetadata }>();
+const contentCache = new Map<string, CacheEntry>();
 
 /**
  * Cache TTL in milliseconds (5 minutes)

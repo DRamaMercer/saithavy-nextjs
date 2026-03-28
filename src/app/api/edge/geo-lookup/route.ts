@@ -19,17 +19,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const ip =
       request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
       request.headers.get('x-real-ip') ||
-      request.ip ||
       'unknown';
 
-    // Get geolocation from request metadata (Vercel provides this)
+    // Get geolocation from headers (Vercel provides these)
     const geo = {
-      country: request.geo?.country || null,
-      country_code: request.geo?.country || null,
-      region: request.geo?.region || null,
-      city: request.geo?.city || null,
-      latitude: request.geo?.latitude || null,
-      longitude: request.geo?.longitude || null,
+      country: request.headers.get('x-vercel-ip-country'),
+      country_code: request.headers.get('x-vercel-ip-country'),
+      region: request.headers.get('x-vercel-ip-region'),
+      city: request.headers.get('x-vercel-ip-city'),
+      latitude: null,
+      longitude: null,
     };
 
     // Build response

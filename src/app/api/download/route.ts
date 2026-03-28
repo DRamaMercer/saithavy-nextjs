@@ -21,9 +21,7 @@ const DOWNLOAD_RATE_LIMIT = {
 const downloadSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   resourceId: z.string().min(1, 'Resource ID is required'),
-  format: z.enum(['pdf', 'web', 'print'], {
-    errorMap: () => ({ message: 'Invalid download format' }),
-  }),
+  format: z.enum(['pdf', 'web', 'print']),
   firstName: z.string().optional(),
 });
 
@@ -41,10 +39,10 @@ export async function POST(request: NextRequest) {
       'anonymous';
 
     // Check rate limit
-    const rateLimiter = resolveRateLimiter();
-    const rateLimitResult = await rateLimiter.checkLimit(ip, DOWNLOAD_RATE_LIMIT);
+    const rateLimiter = await resolveRateLimiter();
+    const rateLimitResult = await rateLimiter.checkLimit(ip);
 
-    if (!rateLimitResult.allowed) {
+    if (!rateLimitResult.success) {
       return NextResponse.json(
         {
           error: 'Too many download attempts. Please try again later.',
@@ -55,8 +53,8 @@ export async function POST(request: NextRequest) {
           headers: {
             'X-RateLimit-Limit': rateLimitResult.limit.toString(),
             'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
-            'X-RateLimit-Reset': rateLimitResult.reset?.toString() ?? '',
-            'Retry-After': rateLimitResult.retryAfter?.toString() ?? '3600',
+            'X-RateLimit-Reset': rateLimitResult.reset.toString(),
+            'Retry-After': (rateLimitResult.retryAfter ?? 3600).toString(),
           },
         }
       );
@@ -96,7 +94,7 @@ export async function POST(request: NextRequest) {
         headers: {
           'X-RateLimit-Limit': rateLimitResult.limit.toString(),
           'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
-          'X-RateLimit-Reset': rateLimitResult.reset?.toString() ?? '',
+          'X-RateLimit-Reset': rateLimitResult.reset.toString(),
         },
       }
     );

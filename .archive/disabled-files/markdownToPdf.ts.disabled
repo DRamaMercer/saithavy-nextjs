@@ -1,0 +1,189 @@
+import { marked } from 'marked';
+
+interface ResourceContent {
+  title: string;
+  category: string;
+  content?: string;
+}
+
+const getPdfStyles = () => `
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #1B263B;
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1B263B;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    h2 {
+      font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1B263B;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h3 {
+      font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1B263B;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+    p {
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    strong {
+      color: #E07A5F;
+    }
+    em {
+      color: #5E6472;
+      font-style: italic;
+    }
+    blockquote {
+      border-left: 4px solid #A8DADC;
+      padding-left: 16px;
+      margin: 16px 0;
+      font-style: italic;
+      color: #5E6472;
+    }
+    hr {
+      border: none;
+      border-top: 2px solid #A8DADC;
+      margin: 24px 0;
+    }
+    .header {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #A8DADC;
+      margin-bottom: 24px;
+    }
+    .category {
+      display: inline-block;
+      background: #A8DADC;
+      color: #1B263B;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 8px;
+    }
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #E5E7EB;
+      text-align: center;
+      font-size: 12px;
+      color: #5E6472;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #E5E7EB;
+      text-align: left;
+    }
+    th {
+      background: #1B263B;
+      color: white;
+      font-weight: 600;
+    }
+  </style>
+`;
+
+export const markdownToHtml = (markdown: string): string => {
+  return marked.parse(markdown) as string;
+};
+
+export const generatePdfHtml = (resource: ResourceContent): string => {
+  const contentHtml = resource.content ? markdownToHtml(resource.content) : '';
+  
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      ${getPdfStyles()}
+    </head>
+    <body>
+      <div class="header">
+        <h1>${resource.title}</h1>
+        <span class="category">${resource.category}</span>
+      </div>
+      ${contentHtml}
+      <div class="footer">
+        <p>© Saithavy Resources | Transform with Intention. Empower Your Journey.</p>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+export const generatePrintableHtml = (resource: ResourceContent): string => {
+  const contentHtml = resource.content ? markdownToHtml(resource.content) : '';
+  
+  return `
+    <div class="max-w-4xl mx-auto p-8">
+      <div class="text-center pb-6 border-b-2 border-[#A8DADC] mb-8">
+        <h1 class="text-3xl font-bold text-[#1B263B] mb-2">${resource.title}</h1>
+        <span class="inline-block bg-[#A8DADC] text-[#1B263B] px-4 py-1 rounded-full text-sm">${resource.category}</span>
+      </div>
+      <div class="prose max-w-none">
+        ${contentHtml}
+      </div>
+      <div class="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-[#5E6472]">
+        <p>© Saithavy Resources | Transform with Intention. Empower Your Journey.</p>
+      </div>
+    </div>
+  `;
+};
+
+export const downloadAsPdf = async (resource: ResourceContent): Promise<void> => {
+  const html = generatePdfHtml(resource);
+  
+  if (typeof window !== 'undefined') {
+    const html2pdf = (await import('html2pdf.js')).default;
+    
+    const element = document.createElement('div');
+    element.innerHTML = html;
+    document.body.appendChild(element);
+    
+    const opt = {
+      margin: 10,
+      filename: `${resource.title.toLowerCase().replace(/\s+/g, '-')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    await html2pdf().set(opt).from(element).save();
+    
+    document.body.removeChild(element);
+  }
+};

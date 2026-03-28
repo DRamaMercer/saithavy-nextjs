@@ -1,0 +1,9 @@
+NO-CODE AUTOMATION OPPORTUNITY MAP - Worksheet 4: Tool Recommendation Matrix
+Match automation difficulty to your technical comfort level
+
+"Automation Type","Best Tool","Why","Learning Curve","Monthly Cost ($)","When to Use"
+"Simple A→B",Zapier,"Easiest to learn, best docs","Low (1-2 hours)",0,"Getting started, 1-2 step automations"
+"Visual Workflows","Make (Integromat)","Powerful visual builder","Medium (3-5 hours)",0,"Complex multi-step workflows"
+Self-Hosted,n8n,"No monthly fees, full control","High (5-10 hours)",0,"Technical users, privacy-first"
+"Database + Automation",Airtable,"Built-in database + automation","Low (2-3 hours)",0,"Need structured data storage"
+"Spreadsheet Automation","Notion APIs","Great for doc-heavy workflows","Medium (3-4 hours)",0,"Knowledge management focus"

@@ -71,10 +71,10 @@ const contentConfig: Record<string, LocalizedContent> = {
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // Get geolocation from request (Vercel Edge provides this)
-    const country = request.geo?.country || 'US';
-    const city = request.geo?.city || 'Unknown';
-    const region = request.geo?.region || 'Unknown';
+    // Get geolocation from headers (Vercel Edge provides these)
+    const country = request.headers.get('x-vercel-ip-country') || 'US';
+    const city = request.headers.get('x-vercel-ip-city') || 'Unknown';
+    const region = request.headers.get('x-vercel-ip-region') || 'Unknown';
 
     // Get localized content
     const config = contentConfig[country] || contentConfig.US;
@@ -105,10 +105,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error('[GeoContent] Error:', error);
 
+    const country = request.headers.get('x-vercel-ip-country') || 'US';
     return NextResponse.json(
       {
         error: 'Failed to load localized content',
-        country: request.geo?.country,
+        country,
       },
       { status: 500 }
     );

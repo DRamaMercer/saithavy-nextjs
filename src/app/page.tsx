@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HeroSection from "@/components/sections/HeroSection";
+import ContactSection from "@/components/sections/ContactSection";
 
 export default function HomePage() {
   return (
@@ -93,23 +94,26 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20" style={{ backgroundColor: "var(--heading)" }}>
+      <section className="py-20" style={{ background: "linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%)" }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-[family-name:var(--font-poppins)] font-bold text-3xl md:text-4xl text-white mb-6">
+          <h2 className="font-[family-name:var(--font-poppins)] font-bold text-3xl md:text-4xl text-white dark:text-gray-900 mb-6">
             Ready to Start Your Transformation?
           </h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-100 dark:text-gray-800 mb-8 max-w-2xl mx-auto">
             Let&apos;s work together to unlock your potential and create meaningful, sustainable change.
           </p>
           <Link
-            href="/about#contact"
-            className="inline-flex items-center px-8 py-4 rounded-lg font-[family-name:var(--font-poppins)] font-semibold text-white transition-all duration-200 hover:opacity-90 hover:scale-105 transform"
-            style={{ backgroundColor: "var(--accent)" }}
+            href="#contact"
+            className="inline-flex items-center px-8 py-4 rounded-lg font-[family-name:var(--font-poppins)] font-semibold transition-all duration-200 hover:opacity-90 hover:scale-105 transform"
+            style={{ backgroundColor: "white", color: "#1a365d" }}
           >
             Get in Touch
           </Link>
         </div>
       </section>
+
+      {/* Contact Section */}
+      <ContactSection />
     </>
   );
 }

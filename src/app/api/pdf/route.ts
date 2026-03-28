@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get resource by ID (legacy ID support)
-    const resource = getResourceByIdLegacy(resourceId);
+    const resource = await getResourceByIdLegacy(resourceId);
 
     if (!resource) {
       return NextResponse.json(
@@ -45,8 +45,8 @@ export async function POST(request: NextRequest) {
     // Get content
     let content = '';
     try {
-      const withContent = await getResourceContent(resource);
-      content = withContent.content;
+      const result = await getResourceContent(resource);
+      content = result.content;
     } catch (error) {
       console.error(`[PDF API] Failed to load content for ${resource.slug}:`, error);
       content = `# ${resource.title}\n\n${resource.description}`;
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
  * Get resource by legacy ID (numeric string)
  * Maps old v2 ID system to new slug-based system
  */
-function getResourceByIdLegacy(id: string) {
+async function getResourceByIdLegacy(id: string) {
   const { resources } = await import('@/lib/resourcesData');
   return resources.find(r => r.id === id);
 }

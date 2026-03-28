@@ -1,0 +1,34 @@
+NO-CODE AUTOMATION OPPORTUNITY MAP - Worksheet 6: Opportunities by Function
+Common automation opportunities organized by business function
+
+SALES & MARKETING
+Opportunity,Difficulty,Impact,Tool,"Monthly Savings (hrs)"
+"Lead capture from forms/website",1,High,Zapier,"5-10 hrs"
+"Lead scoring and routing",3,High,"Make/OpenAI","3-5 hrs"
+"Email list segmentation",2,Medium,Zapier,"2-3 hrs"
+"Social media scheduling",1,Medium,Buffer,"3-5 hrs"
+"Ad performance reporting",3,Medium,Make,"2-4 hrs"
+
+OPERATIONS & FINANCE
+Opportunity,Difficulty,Impact,Tool,"Monthly Savings (hrs)"
+"Invoice processing",4,High,"Make/PDF parser","5-10 hrs"
+"Expense approval routing",3,Medium,Zapier,"3-5 hrs"
+"Inventory alerts",2,Medium,Zapier,"2-3 hrs"
+"Payroll data aggregation",3,High,Make,"4-6 hrs"
+"Compliance reporting",4,High,Custom,"5-8 hrs"
+
+CUSTOMER SUPPORT
+Opportunity,Difficulty,Impact,Tool,"Monthly Savings (hrs)"
+"Ticket auto-tagging",2,Medium,Zapier,"3-5 hrs"
+"FAQ chatbot",4,High,"Intercom Fin/Drift","10-20 hrs"
+"Customer onboarding emails",1,High,Zapier,"2-4 hrs"
+"NPS survey automation",2,Medium,"Typeform/Zapier","2-3 hrs"
+"Support ticket escalation",3,High,Make,"4-6 hrs"
+
+HUMAN RESOURCES
+Opportunity,Difficulty,Impact,Tool,"Monthly Savings (hrs)"
+"Employee onboarding tasks",3,High,Make,"4-8 hrs"
+"Time-off request routing",2,Medium,Zapier,"2-3 hrs"
+"Recruiting pipeline updates",3,Medium,Airtable,"3-5 hrs"
+"Employee anniversary reminders",1,Low,Zapier,"1-2 hrs"
+"Performance review scheduling",2,Medium,Make,"2-4 hrs"

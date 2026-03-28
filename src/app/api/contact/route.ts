@@ -2,14 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { SubmitContactUseCase } from "@/use_cases/SubmitContactUseCase";
 import { resolveContactRepository, resolveRateLimiter } from "@/lib/di/services";
 
-// Initialize use case with dependencies from DI container
-const submitContactUseCase = new SubmitContactUseCase(
-  resolveRateLimiter,
-  resolveContactRepository
-);
-
 export async function POST(request: NextRequest) {
   try {
+    // Initialize dependencies from DI container
+    const [rateLimiter, contactRepository] = await Promise.all([
+      resolveRateLimiter(),
+      Promise.resolve(resolveContactRepository()),
+    ]);
+
+    const submitContactUseCase = new SubmitContactUseCase(
+      rateLimiter,
+      contactRepository,
+    );
     // Extract infrastructure concerns (IP, Body)
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??

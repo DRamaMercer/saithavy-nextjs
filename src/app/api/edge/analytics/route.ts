@@ -56,9 +56,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       url: body.url || request.url,
       userAgent: request.headers.get('user-agent') || 'unknown',
       geo: {
-        country: request.geo?.country,
-        region: request.geo?.region,
-        city: request.geo?.city,
+        country: request.headers.get('x-vercel-ip-country') || undefined,
+        region: request.headers.get('x-vercel-ip-region') || undefined,
+        city: request.headers.get('x-vercel-ip-city') || undefined,
       },
       ip:
         request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         status: 202,
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate',
-          'X-Edge-Location': request.geo?.region || 'unknown',
+          'X-Edge-Location': request.headers.get('x-vercel-ip-region') || 'unknown',
         },
       }
     );

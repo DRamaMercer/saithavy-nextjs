@@ -115,7 +115,7 @@ export default function DownloadClient({ resource }: DownloadClientProps) {
         resource={resource}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onDownload={handleDownload}
+        onDownload={(resource, format) => handleDownload(format)}
       />
     </>
   );

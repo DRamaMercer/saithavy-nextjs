@@ -9,6 +9,7 @@ export class UpstashRateLimiterAdapter implements IRateLimiter {
       limit: result.limit,
       remaining: result.remaining,
       reset: result.reset,
+      retryAfter: result.reset,
     };
   }
 }

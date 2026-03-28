@@ -26,9 +26,9 @@ const REGION_RESTRICTIONS: Record<string, string[]> = {
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // Get country from geolocation
-    const country = request.geo?.country || 'US';
-    const region = request.geo?.region || 'unknown';
+    // Get country from headers (Vercel provides these)
+    const country = request.headers.get('x-vercel-ip-country') || 'US';
+    const region = request.headers.get('x-vercel-ip-region') || 'unknown';
 
     // Get restricted resources for this country (if any)
     const restrictedResourceIds = REGION_RESTRICTIONS[country] || [];
@@ -73,10 +73,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error('[ResourceAvailability] Error:', error);
 
+    const country = request.headers.get('x-vercel-ip-country') || 'US';
     return NextResponse.json(
       {
         error: 'Failed to check resource availability',
-        country: request.geo?.country,
+        country,
       },
       { status: 500 }
     );
