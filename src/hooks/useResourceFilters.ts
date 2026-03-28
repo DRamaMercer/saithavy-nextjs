@@ -4,101 +4,122 @@
  * Handles search, filtering, sorting, pagination with URL sync
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useDebounce } from '@/hooks/useDebounce';
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export interface ResourceFilters {
   category: string;
   type: string;
-  sort: 'newest' | 'popular' | 'relevance';
+  sort: "newest" | "popular" | "relevance";
   q: string;
   tags: string[];
   page: number;
 }
 
 const DEFAULT_FILTERS: ResourceFilters = {
-  category: 'all',
-  type: 'all',
-  sort: 'newest',
-  q: '',
+  category: "all",
+  type: "all",
+  sort: "newest",
+  q: "",
   tags: [],
   page: 1,
 };
 
-export function useResourceFilters() {
+export function useResourceFilters(options?: { skipURLSync?: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { skipURLSync = false } = options || {};
 
-  // Initialize filters from URL
-  const [filters, setFilters] = useState<ResourceFilters>(() => ({
-    category: searchParams.get('category') || DEFAULT_FILTERS.category,
-    type: searchParams.get('type') || DEFAULT_FILTERS.type,
-    sort: (searchParams.get('sort') as ResourceFilters['sort']) || DEFAULT_FILTERS.sort,
-    q: searchParams.get('q') || DEFAULT_FILTERS.q,
-    tags: searchParams.getAll('tags') || DEFAULT_FILTERS.tags,
-    page: parseInt(searchParams.get('page') || '1'),
-  }));
+  // Initialize filters from URL (check both path params and query params)
+  const [filters, setFilters] = useState<ResourceFilters>(() => {
+    // Check if we're on a category page (e.g., /resources/mindful-leadership)
+    const pathname = window.location.pathname;
+    const categoryMatch = pathname.match(/\/resources\/([^/?]+)/);
+
+    return {
+      category: categoryMatch
+        ? categoryMatch[1]
+        : searchParams.get("category") || DEFAULT_FILTERS.category,
+      type: searchParams.get("type") || DEFAULT_FILTERS.type,
+      sort:
+        (searchParams.get("sort") as ResourceFilters["sort"]) ||
+        DEFAULT_FILTERS.sort,
+      q: searchParams.get("q") || DEFAULT_FILTERS.q,
+      tags: searchParams.getAll("tags") || DEFAULT_FILTERS.tags,
+      page: parseInt(searchParams.get("page") || "1"),
+    };
+  });
 
   // Debounced search query
   const debouncedQuery = useDebounce(filters.q, 300);
 
   /**
    * Update URL with current filters
+   * Only updates on /resources page, not on /resources/[category] pages
    */
   const updateURL = useCallback(
     (newFilters: Partial<ResourceFilters>) => {
+      // Skip URL sync if explicitly requested or if on a category page
+      if (skipURLSync) {
+        return;
+      }
+
+      // Check if we're on a category page
+      const pathname = window.location.pathname;
+      if (pathname !== "/resources" && pathname.startsWith("/resources/")) {
+        // On a category page - don't update URL
+        return;
+      }
+
       const params = new URLSearchParams();
 
       const updated = { ...filters, ...newFilters };
 
-      if (updated.category && updated.category !== 'all') {
-        params.set('category', updated.category);
+      if (updated.category && updated.category !== "all") {
+        params.set("category", updated.category);
       }
-      if (updated.type && updated.type !== 'all') {
-        params.set('type', updated.type);
+      if (updated.type && updated.type !== "all") {
+        params.set("type", updated.type);
       }
-      if (updated.sort && updated.sort !== 'newest') {
-        params.set('sort', updated.sort);
+      if (updated.sort && updated.sort !== "newest") {
+        params.set("sort", updated.sort);
       }
       if (updated.q) {
-        params.set('q', updated.q);
+        params.set("q", updated.q);
       }
       if (updated.tags.length > 0) {
-        updated.tags.forEach((tag) => params.append('tags', tag));
+        updated.tags.forEach((tag) => params.append("tags", tag));
       }
       if (updated.page && updated.page > 1) {
-        params.set('page', updated.page.toString());
+        params.set("page", updated.page.toString());
       }
 
       const queryString = params.toString();
-      const newPath = `/resources${queryString ? `?${queryString}` : ''}`;
+      const newPath = `/resources${queryString ? `?${queryString}` : ""}`;
 
       router.push(newPath, { scroll: false });
     },
-    [filters, router]
+    [filters, router, skipURLSync],
   );
 
   /**
    * Update a single filter
    */
-  const updateFilter = useCallback(
-    (key: string, value: string | string[]) => {
-      setFilters((prev) => {
-        const updated = { ...prev, [key]: value };
+  const updateFilter = useCallback((key: string, value: string | string[]) => {
+    setFilters((prev) => {
+      const updated = { ...prev, [key]: value };
 
-        // Reset page when changing filters (except pagination)
-        if (key !== 'page') {
-          updated.page = 1;
-        }
+      // Reset page when changing filters (except pagination)
+      if (key !== "page") {
+        updated.page = 1;
+      }
 
-        return updated;
-      });
-    },
-    []
-  );
+      return updated;
+    });
+  }, []);
 
   /**
    * Update multiple filters at once
@@ -121,7 +142,7 @@ export function useResourceFilters() {
    */
   const resetFilters = useCallback(() => {
     setFilters(DEFAULT_FILTERS);
-    router.push('/resources', { scroll: false });
+    router.push("/resources", { scroll: false });
   }, [router]);
 
   /**

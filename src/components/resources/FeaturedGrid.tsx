@@ -5,12 +5,12 @@
  * Right: Stacked supporting cards (30%)
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Resource } from '@/types/resources';
-import ResourcePreviewModal from './ResourcePreviewModal';
+import { useState } from "react";
+import Link from "next/link";
+import { Resource } from "@/types/resources";
+import ResourcePreviewModal from "./ResourcePreviewModal";
 
 interface FeaturedGridProps {
   featured?: Resource;
@@ -23,7 +23,7 @@ export default function FeaturedGrid({
 }: FeaturedGridProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(
-    null
+    null,
   );
 
   const handleOpenModal = (resource: Resource) => {
@@ -42,9 +42,12 @@ export default function FeaturedGrid({
 
   return (
     <>
-      <section className="py-12" style={{ backgroundColor: 'var(--surface)' }}>
+      <section className="py-12" style={{ backgroundColor: "var(--surface)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-[family-name:var(--font-poppins)] font-bold text-2xl md:text-3xl mb-8" style={{ color: 'var(--heading)' }}>
+          <h2
+            className="font-[family-name:var(--font-poppins)] font-bold text-2xl md:text-3xl mb-8"
+            style={{ color: "var(--heading)" }}
+          >
             Featured Resources
           </h2>
 
@@ -96,7 +99,7 @@ function FeaturedCard({ resource, large, onPreview }: FeaturedCardProps) {
     return (
       <div
         className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
-        style={{ backgroundColor: 'var(--surface)' }}
+        style={{ backgroundColor: "var(--surface)" }}
         onClick={onPreview}
       >
         <div className="p-8">
@@ -105,7 +108,8 @@ function FeaturedCard({ resource, large, onPreview }: FeaturedCardProps) {
             <span
               className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white uppercase tracking-wide"
               style={{
-                background: 'linear-gradient(135deg, var(--heading), var(--accent))',
+                background:
+                  "linear-gradient(135deg, var(--heading), var(--accent))",
               }}
             >
               {resource.type}
@@ -113,14 +117,17 @@ function FeaturedCard({ resource, large, onPreview }: FeaturedCardProps) {
           </div>
 
           {/* Title */}
-          <h3 className="font-[family-name:var(--font-poppins)] font-bold text-xl md:text-2xl mb-4" style={{ color: 'var(--heading)' }}>
+          <h3
+            className="font-[family-name:var(--font-poppins)] font-bold text-xl md:text-2xl mb-4"
+            style={{ color: "var(--heading)" }}
+          >
             {resource.title}
           </h3>
 
           {/* Description */}
           <p
             className="text-base leading-relaxed mb-6 line-clamp-2"
-            style={{ color: 'var(--foreground)' }}
+            style={{ color: "var(--foreground)" }}
           >
             {resource.description}
           </p>
@@ -128,11 +135,21 @@ function FeaturedCard({ resource, large, onPreview }: FeaturedCardProps) {
           {/* CTA Button */}
           <button
             className="inline-flex items-center px-6 py-3 rounded-lg font-[family-name:var(--font-poppins)] font-semibold text-white transition-all duration-200 hover:opacity-90 hover:scale-105 transform"
-            style={{ backgroundColor: 'var(--accent)' }}
+            style={{ backgroundColor: "var(--accent)" }}
           >
             View Resource
-            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            <svg
+              className="w-5 h-5 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
             </svg>
           </button>
         </div>
@@ -143,18 +160,21 @@ function FeaturedCard({ resource, large, onPreview }: FeaturedCardProps) {
   return (
     <div
       className="rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer border border-transparent hover:border-[var(--accent)]"
-      style={{ backgroundColor: 'var(--surface)' }}
+      style={{ backgroundColor: "var(--surface)" }}
       onClick={onPreview}
     >
       {/* Title */}
-      <h3 className="font-[family-name:var(--font-poppins)] font-semibold text-base mb-2 line-clamp-2" style={{ color: 'var(--heading)' }}>
+      <h3
+        className="font-[family-name:var(--font-poppins)] font-semibold text-base mb-2 line-clamp-2"
+        style={{ color: "var(--heading)" }}
+      >
         {resource.title}
       </h3>
 
       {/* Type Badge */}
       <span
         className="inline-block px-2 py-1 rounded text-xs font-medium text-white"
-        style={{ backgroundColor: 'var(--accent)' }}
+        style={{ backgroundColor: "var(--accent)" }}
       >
         {resource.type}
       </span>

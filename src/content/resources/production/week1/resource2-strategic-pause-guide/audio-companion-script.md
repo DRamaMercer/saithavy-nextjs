@@ -1,3 +1,22 @@
+---
+title: "Strategic Pause Audio Companion"
+description: "A comprehensive audio for mindful leadership"
+category: "mindful-leadership"
+type: "Audio"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - audio
+  - audio companion script
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Strategic Pause Audio Companion
 ## 10-Minute Guided Practice
 

@@ -4,14 +4,14 @@
  * Provides a clean API for resource-related operations
  */
 
-import { Resource, ResourceCategory } from '@/types/resources';
+import { Resource, ResourceCategory } from "@/types/resources";
 
 export interface ResourceQueryParams {
   category?: string;
   page?: number;
   limit?: number;
   type?: string;
-  sort?: 'newest' | 'popular' | 'relevance';
+  sort?: "newest" | "popular" | "relevance";
   q?: string;
   tags?: string[];
 }
@@ -29,44 +29,44 @@ export interface ResourceDetail {
   related: Resource[];
 }
 
-const API_BASE = '/api';
+const API_BASE = "/api";
 
 /**
  * Fetch resources with pagination, filtering, sorting, and search
  */
 export async function getResources(
-  params: ResourceQueryParams = {}
+  params: ResourceQueryParams = {},
 ): Promise<PaginatedResponse> {
   const queryParams = new URLSearchParams();
 
-  if (params.category && params.category !== 'all') {
-    queryParams.set('category', params.category);
+  if (params.category && params.category !== "all") {
+    queryParams.set("category", params.category);
   }
   if (params.page && params.page > 1) {
-    queryParams.set('page', params.page.toString());
+    queryParams.set("page", params.page.toString());
   }
   if (params.limit && params.limit !== 12) {
-    queryParams.set('limit', params.limit.toString());
+    queryParams.set("limit", params.limit.toString());
   }
-  if (params.type && params.type !== 'all') {
-    queryParams.set('type', params.type);
+  if (params.type && params.type !== "all") {
+    queryParams.set("type", params.type);
   }
-  if (params.sort && params.sort !== 'newest') {
-    queryParams.set('sort', params.sort);
+  if (params.sort && params.sort !== "newest") {
+    queryParams.set("sort", params.sort);
   }
   if (params.q) {
-    queryParams.set('q', params.q);
+    queryParams.set("q", params.q);
   }
   if (params.tags && params.tags.length > 0) {
-    queryParams.set('tags', params.tags.join(','));
+    queryParams.set("tags", params.tags.join(","));
   }
 
   const queryString = queryParams.toString();
-  const url = `${API_BASE}/resources${queryString ? `?${queryString}` : ''}`;
+  const url = `${API_BASE}/resources${queryString ? `?${queryString}` : ""}`;
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error('Failed to fetch resources');
+    throw new Error("Failed to fetch resources");
   }
 
   return response.json();
@@ -78,7 +78,7 @@ export async function getResources(
 export async function getResourceBySlug(slug: string): Promise<ResourceDetail> {
   const response = await fetch(`${API_BASE}/resources/${slug}`);
   if (!response.ok) {
-    throw new Error('Failed to fetch resource');
+    throw new Error("Failed to fetch resource");
   }
 
   return response.json();
@@ -90,7 +90,7 @@ export async function getResourceBySlug(slug: string): Promise<ResourceDetail> {
 export async function getCategories(): Promise<ResourceCategory[]> {
   const response = await fetch(`${API_BASE}/categories`);
   if (!response.ok) {
-    throw new Error('Failed to fetch categories');
+    throw new Error("Failed to fetch categories");
   }
 
   return response.json();
@@ -99,13 +99,15 @@ export async function getCategories(): Promise<ResourceCategory[]> {
 /**
  * Toggle save/bookmark for a resource
  */
-export async function toggleSave(resourceId: string): Promise<{ saved: boolean }> {
+export async function toggleSave(
+  resourceId: string,
+): Promise<{ saved: boolean }> {
   const response = await fetch(`${API_BASE}/resources/${resourceId}/save`, {
-    method: 'POST',
+    method: "POST",
   });
 
   if (!response.ok) {
-    throw new Error('Failed to save resource');
+    throw new Error("Failed to save resource");
   }
 
   return response.json();
@@ -116,15 +118,15 @@ export async function toggleSave(resourceId: string): Promise<{ saved: boolean }
  */
 export async function searchResources(
   query: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<Resource[]> {
   const response = await fetch(
     `${API_BASE}/resources?q=${encodeURIComponent(query)}&limit=20`,
-    { signal }
+    { signal },
   );
 
   if (!response.ok) {
-    throw new Error('Failed to search resources');
+    throw new Error("Failed to search resources");
   }
 
   const data = await response.json();

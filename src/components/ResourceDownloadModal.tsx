@@ -9,12 +9,13 @@
  * Integrates with analytics for tracking
  */
 
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { X, FileText, Globe, Printer, Check, Loader2 } from 'lucide-react';
-import { Resource, DownloadFormat } from '@/types/resources';
-import { trackResourceDownload, trackEmailSignup } from '@/lib/analytics';
+import React, { useState } from "react";
+import { X, FileText, Globe, Printer, Check, Loader2 } from "lucide-react";
+import { Resource, DownloadFormat } from "@/types/resources";
+import { trackResourceDownload, trackEmailSignup } from "@/lib/analytics";
+import { clientLogger } from "@/lib/client-logger";
 
 interface ResourceDownloadModalProps {
   resource: Resource;
@@ -29,11 +30,11 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
   onClose,
   onDownload,
 }) => {
-  const [firstName, setFirstName] = useState('');
-  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
   const [downloadStarted, setDownloadStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,17 +42,17 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
   };
 
   const handleDownload = async (format: DownloadFormat) => {
-    setError('');
+    setError("");
 
     // For PDF downloads, require email
-    if (format === 'pdf') {
+    if (format === "pdf") {
       if (!email.trim()) {
-        setError('Please enter your email address');
+        setError("Please enter your email address");
         return;
       }
 
       if (!validateEmail(email)) {
-        setError('Please enter a valid email address');
+        setError("Please enter a valid email address");
         return;
       }
 
@@ -59,10 +60,10 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
 
       try {
         // Call download API with rate limiting
-        const response = await fetch('/api/download', {
-          method: 'POST',
+        const response = await fetch("/api/download", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             email: email.trim(),
@@ -76,16 +77,16 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
 
         if (!response.ok) {
           if (response.status === 429) {
-            setError('Too many download attempts. Please try again later.');
+            setError("Too many download attempts. Please try again later.");
           } else {
-            setError(data.error || 'Something went wrong. Please try again.');
+            setError(data.error || "Something went wrong. Please try again.");
           }
           setIsLoading(false);
           return;
         }
 
         // Track email signup
-        trackEmailSignup('resource_download', resource.id);
+        trackEmailSignup("resource_download", resource.id);
 
         // Track download
         trackResourceDownload(resource.id, resource.title, format);
@@ -99,8 +100,15 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
         }, 500);
       } catch (err) {
         setIsLoading(false);
-        setError('Something went wrong. Please try again.');
-        console.error('[ResourceDownloadModal] Download failed:', err);
+        setError("Something went wrong. Please try again.");
+        clientLogger.error(
+          "Download failed",
+          {
+            component: "ResourceDownloadModal",
+            resourceId: resource.id,
+            format,
+          },
+        );
       }
     } else {
       // For web and print, no email required
@@ -116,9 +124,9 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
       // Reset state after close animation
       setTimeout(() => {
         setDownloadStarted(false);
-        setFirstName('');
-        setEmail('');
-        setError('');
+        setFirstName("");
+        setEmail("");
+        setError("");
       }, 300);
     }
   };
@@ -150,47 +158,53 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
           <div className="p-8">
             <h3
               id="modal-title"
-              className="text-2xl font-bold text-[#1B263B] mb-2 font-poppins"
+              className="text-2xl font-bold text-blueprint-navy mb-2 font-poppins"
             >
-              Get "{resource.title}"
+              Get &quot;{resource.title}&quot;
             </h3>
-            <p className="text-[#5E6472] mb-6">
-              Choose your preferred format:
-            </p>
+            <p className="text-[#5E6472] mb-6">Choose your preferred format:</p>
 
             <div className="space-y-3" role="listbox">
               <button
-                onClick={() => handleDownload('pdf')}
+                onClick={() => handleDownload("pdf")}
                 disabled={isLoading}
                 className="w-full p-4 border-2 border-[#E07A5F] rounded-lg hover:bg-[#E07A5F]/10 transition-colors flex items-center gap-3 text-left group disabled:opacity-50 disabled:cursor-not-allowed"
                 role="option"
                 aria-selected="false"
                 aria-label={`Download ${resource.title} as PDF - Print-ready format`}
               >
-                <div className="w-10 h-10 rounded-lg bg-[#E07A5F] flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                <div
+                  className="w-10 h-10 rounded-lg bg-blueprint-terracotta flex items-center justify-center shrink-0"
+                  aria-hidden="true"
+                >
                   <FileText className="text-white" size={20} />
                 </div>
                 <div className="flex-1">
-                  <div className="font-semibold text-[#1B263B] group-hover:text-[#E07A5F] transition-colors">
+                  <div className="font-semibold text-blueprint-navy group-hover:text-blueprint-terracotta transition-colors">
                     PDF Download
                   </div>
-                  <div className="text-sm text-[#5E6472]">Print-ready format</div>
+                  <div className="text-sm text-[#5E6472]">
+                    Print-ready format
+                  </div>
                 </div>
               </button>
 
               <button
-                onClick={() => handleDownload('web')}
+                onClick={() => handleDownload("web")}
                 disabled={isLoading}
                 className="w-full p-4 border-2 border-[#A8DADC] rounded-lg hover:bg-[#A8DADC]/10 transition-colors flex items-center gap-3 text-left group disabled:opacity-50 disabled:cursor-not-allowed"
                 role="option"
                 aria-selected="false"
                 aria-label={`View ${resource.title} web version in browser`}
               >
-                <div className="w-10 h-10 rounded-lg bg-[#A8DADC] flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                <div
+                  className="w-10 h-10 rounded-lg bg-blueprint-sage flex items-center justify-center shrink-0"
+                  aria-hidden="true"
+                >
                   <Globe className="text-[#1B263B]" size={20} />
                 </div>
                 <div className="flex-1">
-                  <div className="font-semibold text-[#1B263B] group-hover:text-[#A8DADC] transition-colors">
+                  <div className="font-semibold text-blueprint-navy group-hover:text-blueprint-sage transition-colors">
                     Web Version
                   </div>
                   <div className="text-sm text-[#5E6472]">View in browser</div>
@@ -198,21 +212,26 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
               </button>
 
               <button
-                onClick={() => handleDownload('print')}
+                onClick={() => handleDownload("print")}
                 disabled={isLoading}
                 className="w-full p-4 border-2 border-[#F4A261] rounded-lg hover:bg-[#F4A261]/10 transition-colors flex items-center gap-3 text-left group disabled:opacity-50 disabled:cursor-not-allowed"
                 role="option"
                 aria-selected="false"
                 aria-label={`Open ${resource.title} print version - Optimized for printing`}
               >
-                <div className="w-10 h-10 rounded-lg bg-[#F4A261] flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                <div
+                  className="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center shrink-0"
+                  aria-hidden="true"
+                >
                   <Printer className="text-white" size={20} />
                 </div>
                 <div className="flex-1">
                   <div className="font-semibold text-[#1B263B] group-hover:text-[#F4A261] transition-colors">
                     Print Version
                   </div>
-                  <div className="text-sm text-[#5E6472]">Optimized for printing</div>
+                  <div className="text-sm text-[#5E6472]">
+                    Optimized for printing
+                  </div>
                 </div>
               </button>
             </div>
@@ -240,7 +259,7 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFirstName(e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E07A5F] focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blueprint-terracotta focus:border-transparent"
                     disabled={isLoading}
                     aria-invalid={false}
                   />
@@ -257,11 +276,11 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setEmail(e.target.value)
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E07A5F] focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blueprint-terracotta focus:border-transparent"
                     disabled={isLoading}
                     required
-                    aria-invalid={error ? 'true' : 'false'}
-                    aria-describedby={error ? 'email-error' : undefined}
+                    aria-invalid={error ? "true" : "false"}
+                    aria-describedby={error ? "email-error" : undefined}
                   />
                   {error && (
                     <span id="email-error" className="sr-only" role="alert">
@@ -270,9 +289,9 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
                   )}
                 </div>
                 <button
-                  onClick={() => handleDownload('pdf')}
+                  onClick={() => handleDownload("pdf")}
                   disabled={isLoading}
-                  className="w-full px-6 py-3 bg-gradient-to-r from-[#E07A5F] to-[#F4A261] text-white font-semibold rounded-lg hover:from-[#D0694E] hover:to-[#E39150] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full px-6 py-3 bg-linear-gradient-to-r from-blueprint-terracotta to-orange-500 text-white font-semibold rounded-lg hover:from-[#D0694E] hover:to-orange-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <>
@@ -280,7 +299,7 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
                       Processing...
                     </>
                   ) : (
-                    'Subscribe & Download'
+                    "Subscribe & Download"
                   )}
                 </button>
               </div>
@@ -294,12 +313,10 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check className="text-green-500" size={32} />
             </div>
-            <h3 className="text-2xl font-bold text-[#1B263B] mb-2">
+            <h3 className="text-2xl font-bold text-blueprint-navy mb-2">
               Your download is starting!
             </h3>
-            <p className="text-[#5E6472] mb-6">
-              Check your downloads folder.
-            </p>
+            <p className="text-[#5E6472] mb-6">Check your downloads folder.</p>
             <button
               onClick={handleClose}
               className="px-6 py-2 bg-stone-100 text-stone-700 rounded-lg hover:bg-stone-200 transition-colors"

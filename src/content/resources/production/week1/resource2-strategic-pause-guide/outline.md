@@ -1,3 +1,22 @@
+---
+title: "Resource 2: Strategic Pause Practice Guide"
+description: "A comprehensive guide for mindful leadership"
+category: "mindful-leadership"
+type: "Guide"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - guide
+  - outline
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Resource 2: Strategic Pause Practice Guide
 ## Production Outline
 

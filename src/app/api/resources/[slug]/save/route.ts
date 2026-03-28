@@ -6,8 +6,9 @@
  * Note: Currently uses localStorage as fallback. User auth required for persistent saves.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getResourceBySlug } from '@/lib/resourcesData';
+import { NextRequest, NextResponse } from "next/server";
+import { getResourceBySlug } from "@/lib/resourcesData";
+import { logger } from "@/lib/logger";
 
 // Types
 interface SaveResponse {
@@ -18,17 +19,17 @@ interface SaveResponse {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
-  try {
-    const { slug } = await params;
+  const { slug } = await params;
 
+  try {
     // Validate resource exists
     const resource = getResourceBySlug(slug);
     if (!resource) {
       return NextResponse.json(
-        { error: 'Resource not found' },
-        { status: 404 }
+        { error: "Resource not found" },
+        { status: 404 },
       );
     }
 
@@ -37,18 +38,18 @@ export async function POST(
     const response: SaveResponse = {
       saved: true,
       resourceSlug: slug,
-      message: 'Resource saved successfully',
+      message: "Resource saved successfully",
     };
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Save API error:', error);
+    logger.error("Save API error", { slug }, error as Error);
     return NextResponse.json(
-      { error: 'Failed to save resource' },
-      { status: 500 }
+      { error: "Failed to save resource" },
+      { status: 500 },
     );
   }
 }
 
 // Enable caching (disabled for mutations)
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";

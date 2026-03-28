@@ -1,3 +1,22 @@
+---
+title: "Mindful Leadership Reflection Journal"
+description: "A comprehensive guide for mindful leadership"
+category: "mindful-leadership"
+type: "Guide"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - guide
+  - summary
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Mindful Leadership Reflection Journal
 ## Production Summary
 

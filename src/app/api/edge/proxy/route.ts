@@ -6,9 +6,10 @@
  * Cache: Configurable per proxy type
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { edgeLogger } from "@/lib/edge-logger";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 /**
  * Proxy configuration
@@ -17,29 +18,29 @@ interface ProxyConfig {
   targetUrl: string;
   cacheTime: number;
   headers?: Record<string, string>;
-  transformResponse?: (data: any, request: NextRequest) => any;
+  transformResponse?: (data: Record<string, unknown>, request: NextRequest) => Record<string, unknown>;
 }
 
 const proxyConfigs: Record<string, ProxyConfig> = {
   // Example: Proxy blog posts from external API
   blog: {
-    targetUrl: 'https://jsonplaceholder.typicode.com/posts',
+    targetUrl: "https://jsonplaceholder.typicode.com/posts",
     cacheTime: 300, // 5 minutes
     headers: {
-      'User-Agent': 'Saithavy-Blog-Proxy/1.0',
+      "User-Agent": "Saithavy-Blog-Proxy/1.0",
     },
     transformResponse: (data, request) => ({
       ...data,
       _proxied: {
         timestamp: new Date().toISOString(),
-        location: request.headers.get('x-vercel-ip-country') || 'unknown',
+        location: request.headers.get("x-vercel-ip-country") || "unknown",
       },
     }),
   },
 
   // Example: Proxy user data (future integration)
   user: {
-    targetUrl: 'https://api.example.com/users',
+    targetUrl: "https://api.example.com/users",
     cacheTime: 60, // 1 minute
     transformResponse: undefined, // No transformation
   },
@@ -51,18 +52,18 @@ const proxyConfigs: Record<string, ProxyConfig> = {
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const url = new URL(request.url);
-    const proxyType = url.searchParams.get('type') || 'blog';
-    const targetPath = url.searchParams.get('path') || '';
+    const proxyType = url.searchParams.get("type") || "blog";
+    const targetPath = url.searchParams.get("path") || "";
 
     const config = proxyConfigs[proxyType];
 
     if (!config) {
       return NextResponse.json(
         {
-          error: 'Invalid proxy type',
+          error: "Invalid proxy type",
           availableTypes: Object.keys(proxyConfigs),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -77,27 +78,27 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const response = await fetch(fullUrl, {
       headers: {
         ...config.headers,
-        'X-Forwarded-For': request.headers.get('x-forwarded-for') || '',
-        'X-Real-IP': request.headers.get('x-real-ip') || '',
-        'X-Forwarded-Host': request.headers.get('x-forwarded-host') || '',
+        "X-Forwarded-For": request.headers.get("x-forwarded-for") || "",
+        "X-Real-IP": request.headers.get("x-real-ip") || "",
+        "X-Forwarded-Host": request.headers.get("x-forwarded-host") || "",
       },
     });
 
     if (!response.ok) {
       return NextResponse.json(
         {
-          error: 'Upstream server error',
+          error: "Upstream server error",
           status: response.status,
           statusText: response.statusText,
         },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
     // Handle response based on content type
-    const contentType = response.headers.get('content-type') || '';
+    const contentType = response.headers.get("content-type") || "";
 
-    if (contentType.includes('application/json')) {
+    if (contentType.includes("application/json")) {
       const data = await response.json();
 
       // Transform response if configured
@@ -108,11 +109,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(transformedData, {
         status: 200,
         headers: {
-          'Cache-Control': `public, s-maxage=${config.cacheTime}, stale-while-revalidate=${
+          "Cache-Control": `public, s-maxage=${config.cacheTime}, stale-while-revalidate=${
             config.cacheTime * 2
           }`,
-          'X-Proxy-Cache': 'MISS',
-          'X-Edge-Location': request.headers.get('x-vercel-ip-region') || 'unknown',
+          "X-Proxy-Cache": "MISS",
+          "X-Edge-Location":
+            request.headers.get("x-vercel-ip-region") || "unknown",
         },
       });
     } else {
@@ -122,20 +124,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return new NextResponse(blob, {
         status: response.status,
         headers: {
-          'Content-Type': contentType,
-          'Cache-Control': `public, s-maxage=${config.cacheTime}`,
+          "Content-Type": contentType,
+          "Cache-Control": `public, s-maxage=${config.cacheTime}`,
         },
       });
     }
   } catch (error) {
-    console.error('[Proxy] Error:', error);
+    edgeLogger.error("[Proxy] Error", { url: request.url }, error as Error);
 
     return NextResponse.json(
       {
-        error: 'Proxy request failed',
+        error: "Proxy request failed",
         url: request.url,
       },
-      { status: 502 }
+      { status: 502 },
     );
   }
 }

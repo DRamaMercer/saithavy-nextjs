@@ -1,3 +1,22 @@
+---
+title: "Recovery Roadmap Guide"
+description: "A comprehensive guide for overcoming adversity"
+category: "overcoming-adversity"
+type: "Guide"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - overcoming adversity
+  - guide
+  - recovery roadmap guide
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Recovery Roadmap Guide
 ## Navigating the Non-Linear Journey Back to Yourself
 

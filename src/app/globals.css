@@ -11,6 +11,15 @@
   --color-cool-gray: #718096;
   --color-warm-white: #fefefe;
 
+  /* Blueprint Brand Colors */
+  --color-blueprint-terracotta: #E07A5F;
+  --color-blueprint-navy: #1B263B;
+  --color-blueprint-sage: #A8DADC;
+  --color-blueprint-purple: #8B5CF6;
+  --color-blueprint-emerald: #10B981;
+  --color-blueprint-orange: #F97316;
+  --color-blueprint-rose: #F43F5E;
+
   /* Dark Mode Variants */
   --color-dark-bg: #0f172a;
   --color-dark-surface: #1e293b;

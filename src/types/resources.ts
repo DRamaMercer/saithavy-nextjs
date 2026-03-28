@@ -5,7 +5,7 @@
  * Follows strict TypeScript patterns for type safety.
  */
 
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon } from "lucide-react";
 
 /**
  * Resource categories with their display metadata
@@ -50,41 +50,45 @@ export interface Resource {
 
   // Content file path (relative to /content/resources/)
   contentPath?: string;
+
+  // Additional SEO fields
+  ogImage?: string;
+  lastUpdated?: string;
 }
 
 /**
  * Resource category types
  */
 export type ResourceCategoryType =
-  | 'mindful-leadership'
-  | 'ai-automation'
-  | 'personal-growth'
-  | 'remote-work'
-  | 'overcoming-adversity';
+  | "mindful-leadership"
+  | "ai-automation"
+  | "personal-growth"
+  | "remote-work"
+  | "overcoming-adversity";
 
 /**
  * Resource format types
  */
 export type ResourceType =
-  | 'PDF'
-  | 'Template'
-  | 'Guide'
-  | 'Audio'
-  | 'Video'
-  | 'Checklist'
-  | 'Workbook'
-  | 'Assessment'
-  | 'Framework';
+  | "PDF"
+  | "Template"
+  | "Guide"
+  | "Audio"
+  | "Video"
+  | "Checklist"
+  | "Workbook"
+  | "Assessment"
+  | "Framework";
 
 /**
  * Difficulty levels
  */
-export type DifficultyLevel = 'Beginner' | 'Intermediate' | 'Advanced';
+export type DifficultyLevel = "Beginner" | "Intermediate" | "Advanced";
 
 /**
  * Download format options
  */
-export type DownloadFormat = 'pdf' | 'web' | 'print';
+export type DownloadFormat = "pdf" | "web" | "print";
 
 /**
  * Resource content metadata (from frontmatter)

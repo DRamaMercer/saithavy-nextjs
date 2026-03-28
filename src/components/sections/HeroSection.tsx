@@ -68,7 +68,10 @@ export default function HeroSection() {
         p.setup = () => {
           const container = particleRef.current;
           if (!container) return;
-          const canvas = p.createCanvas(container.offsetWidth, container.offsetHeight);
+          const canvas = p.createCanvas(
+            container.offsetWidth,
+            container.offsetHeight,
+          );
           canvas.parent(container);
           canvas.style("position", "absolute");
           canvas.style("top", "0");
@@ -104,15 +107,19 @@ export default function HeroSection() {
           for (let i = 0; i < particles.length; i++) {
             for (let j = i + 1; j < particles.length; j++) {
               const dist = p.dist(
-                particles[i].x, particles[i].y,
-                particles[j].x, particles[j].y
+                particles[i].x,
+                particles[i].y,
+                particles[j].x,
+                particles[j].y,
               );
               if (dist < 100) {
                 p.stroke(26, 54, 93, (1 - dist / 100) * 50);
                 p.strokeWeight(1);
                 p.line(
-                  particles[i].x, particles[i].y,
-                  particles[j].x, particles[j].y
+                  particles[i].x,
+                  particles[i].y,
+                  particles[j].x,
+                  particles[j].y,
                 );
               }
             }
@@ -165,7 +172,10 @@ export default function HeroSection() {
             >
               <span ref={typedRef} />
             </h1>
-            <p className="text-xl md:text-2xl mb-8 leading-relaxed" style={{ color: "var(--foreground)" }}>
+            <p
+              className="text-xl md:text-2xl mb-8 leading-relaxed"
+              style={{ color: "var(--foreground)" }}
+            >
               Inspiring growth, creativity, and transformation through authentic
               leadership and innovative solutions.
             </p>

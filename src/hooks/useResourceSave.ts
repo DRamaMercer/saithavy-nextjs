@@ -4,12 +4,13 @@
  * Handles saving resources with localStorage fallback
  */
 
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect } from 'react';
-import { toggleSave } from '@/services/resourceService';
+import { useState, useCallback, useEffect } from "react";
+import { toggleSave } from "@/services/resourceService";
+import { clientLogger } from "@/lib/client-logger";
 
-const STORAGE_KEY = 'saved-resources';
+const STORAGE_KEY = "saved-resources";
 
 export function useResourceSave() {
   const [savedResources, setSavedResources] = useState<Set<string>>(new Set());
@@ -24,7 +25,7 @@ export function useResourceSave() {
         setSavedResources(new Set(saved));
       }
     } catch (error) {
-      console.error('Failed to load saved resources:', error);
+      clientLogger.error("Failed to load saved resources", {});
     }
   }, []);
 
@@ -35,54 +36,51 @@ export function useResourceSave() {
     (resourceId: string) => {
       return savedResources.has(resourceId);
     },
-    [savedResources]
+    [savedResources],
   );
 
   /**
    * Toggle save state for a resource
    */
-  const toggleSaveState = useCallback(async (resourceId: string) => {
-    setIsLoading(true);
+  const toggleSaveState = useCallback(
+    async (resourceId: string) => {
+      setIsLoading(true);
 
-    try {
-      // Optimistic update
-      const newSaved = new Set(savedResources);
-      const wasSaved = newSaved.has(resourceId);
+      try {
+        // Optimistic update
+        const newSaved = new Set(savedResources);
+        const wasSaved = newSaved.has(resourceId);
 
-      if (wasSaved) {
-        newSaved.delete(resourceId);
-      } else {
-        newSaved.add(resourceId);
+        if (wasSaved) {
+          newSaved.delete(resourceId);
+        } else {
+          newSaved.add(resourceId);
+        }
+
+        setSavedResources(newSaved);
+
+        // Persist to localStorage
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(newSaved)));
+
+        // Call API (fire and forget for now)
+        await toggleSave(resourceId);
+
+        return !wasSaved;
+      } catch (error) {
+        clientLogger.error("Failed to save resource", { resourceId });
+
+        // Revert on error
+        const reverted = new Set(savedResources);
+        setSavedResources(reverted);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(reverted)));
+
+        throw error;
+      } finally {
+        setIsLoading(false);
       }
-
-      setSavedResources(newSaved);
-
-      // Persist to localStorage
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(Array.from(newSaved))
-      );
-
-      // Call API (fire and forget for now)
-      await toggleSave(resourceId);
-
-      return !wasSaved;
-    } catch (error) {
-      console.error('Failed to save resource:', error);
-
-      // Revert on error
-      const reverted = new Set(savedResources);
-      setSavedResources(reverted);
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(Array.from(reverted))
-      );
-
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [savedResources]);
+    },
+    [savedResources],
+  );
 
   /**
    * Get all saved resources

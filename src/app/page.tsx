@@ -2,6 +2,9 @@ import Link from "next/link";
 import HeroSection from "@/components/sections/HeroSection";
 import ContactSection from "@/components/sections/ContactSection";
 
+// ISR: Revalidate every hour for homepage updates
+export const revalidate = 3600;
+
 export default function HomePage() {
   return (
     <>
@@ -16,8 +19,12 @@ export default function HomePage() {
           >
             Empowering Authentic Growth
           </h2>
-          <p className="text-lg md:text-xl leading-relaxed mb-8 max-w-2xl mx-auto" style={{ color: "var(--foreground)" }}>
-            I help individuals and businesses embrace transformation through AI automation, remote work strategies, and authentic leadership.
+          <p
+            className="text-lg md:text-xl leading-relaxed mb-8 max-w-2xl mx-auto"
+            style={{ color: "var(--foreground)" }}
+          >
+            I help individuals and businesses embrace transformation through AI
+            automation, remote work strategies, and authentic leadership.
           </p>
           <Link
             href="/about"
@@ -25,8 +32,18 @@ export default function HomePage() {
             style={{ backgroundColor: "var(--accent)" }}
           >
             Learn My Story
-            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            <svg
+              className="w-5 h-5 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
             </svg>
           </Link>
         </div>
@@ -35,7 +52,10 @@ export default function HomePage() {
       {/* Services Preview */}
       <section
         className="py-20"
-        style={{ background: "linear-gradient(to bottom right, rgba(26,54,93,0.04), rgba(192,86,33,0.04))" }}
+        style={{
+          background:
+            "linear-gradient(to bottom right, rgba(26,54,93,0.04), rgba(192,86,33,0.04))",
+        }}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2
@@ -85,8 +105,18 @@ export default function HomePage() {
               style={{ color: "var(--accent)" }}
             >
               View All Services
-              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4 ml-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           </div>
@@ -94,13 +124,20 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20" style={{ background: "linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%)" }}>
+      <section
+        className="py-20"
+        style={{
+          background:
+            "linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%)",
+        }}
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-[family-name:var(--font-poppins)] font-bold text-3xl md:text-4xl text-white dark:text-gray-900 mb-6">
             Ready to Start Your Transformation?
           </h2>
           <p className="text-lg text-gray-100 dark:text-gray-800 mb-8 max-w-2xl mx-auto">
-            Let&apos;s work together to unlock your potential and create meaningful, sustainable change.
+            Let&apos;s work together to unlock your potential and create
+            meaningful, sustainable change.
           </p>
           <Link
             href="#contact"

@@ -1,3 +1,22 @@
+---
+title: "Anti-Fragility Workbook - Production Summary"
+description: "A comprehensive workbook for mindful leadership"
+category: "mindful-leadership"
+type: "Workbook"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - workbook
+  - workbook summary
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Anti-Fragility Workbook - Production Summary
 
 ## File Information

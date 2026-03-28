@@ -65,7 +65,10 @@ export default function MissionSection() {
           >
             My Mission
           </h2>
-          <p className="reveal-text text-xl max-w-3xl mx-auto leading-relaxed" style={{ color: "var(--foreground)" }}>
+          <p
+            className="reveal-text text-xl max-w-3xl mx-auto leading-relaxed"
+            style={{ color: "var(--foreground)" }}
+          >
             To inspire and empower individuals to live authentically, embracing
             resilience and anti-fragility as pathways to personal and
             professional transformation.

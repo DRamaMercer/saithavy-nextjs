@@ -9,9 +9,13 @@ interface UseScrollRevealOptions {
 }
 
 export function useScrollReveal<T extends HTMLElement>(
-  options: UseScrollRevealOptions = {}
+  options: UseScrollRevealOptions = {},
 ) {
-  const { threshold = 0.1, rootMargin = "0px 0px -50px 0px", once = true } = options;
+  const {
+    threshold = 0.1,
+    rootMargin = "0px 0px -50px 0px",
+    once = true,
+  } = options;
   const ref = useRef<T>(null);
 
   const handleIntersect = useCallback(
@@ -25,7 +29,7 @@ export function useScrollReveal<T extends HTMLElement>(
         }
       });
     },
-    [once]
+    [once],
   );
 
   useEffect(() => {

@@ -5,12 +5,13 @@
  * with modal integration
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Resource } from '@/types/resources';
-import { trackEvent } from '@/lib/analytics';
-import ResourceDownloadModal from '@/components/ResourceDownloadModal';
+import { useState } from "react";
+import { Resource } from "@/types/resources";
+import { trackEvent } from "@/lib/analytics";
+import ResourceDownloadModal from "@/components/ResourceDownloadModal";
+import { clientLogger } from "@/lib/client-logger";
 
 interface DownloadClientProps {
   resource: Resource;
@@ -18,11 +19,10 @@ interface DownloadClientProps {
 
 export default function DownloadClient({ resource }: DownloadClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [downloadStarted, setDownloadStarted] = useState(false);
 
   const handleDownloadClick = () => {
     // Track resource view
-    trackEvent('resource_download_click', {
+    trackEvent("resource_download_click", {
       resource_id: resource.id,
       resource_title: resource.title,
       resource_category: resource.category,
@@ -31,28 +31,29 @@ export default function DownloadClient({ resource }: DownloadClientProps) {
     setIsModalOpen(true);
   };
 
-  const handleDownload = async (format: 'pdf' | 'web' | 'print') => {
+  const handleDownload = async (format: "pdf" | "web" | "print") => {
     // Track download event
-    trackEvent('resource_download', {
+    trackEvent("resource_download", {
       resource_id: resource.id,
       resource_title: resource.title,
       resource_category: resource.category,
       download_format: format,
     });
 
-    setDownloadStarted(true);
-
     // Implement actual download logic
     switch (format) {
-      case 'pdf':
+      case "pdf":
         // Trigger PDF download
         await downloadPDF(resource);
         break;
-      case 'web':
+      case "web":
         // Navigate to web version or open in new tab
-        window.open(`/resources/${resource.category}/${resource.slug}`, '_blank');
+        window.open(
+          `/resources/${resource.category}/${resource.slug}`,
+          "_blank",
+        );
         break;
-      case 'print':
+      case "print":
         // Trigger print dialog
         window.print();
         break;
@@ -61,17 +62,16 @@ export default function DownloadClient({ resource }: DownloadClientProps) {
     // Close modal after delay
     setTimeout(() => {
       setIsModalOpen(false);
-      setDownloadStarted(false);
     }, 3000);
   };
 
   const downloadPDF = async (resource: Resource) => {
     try {
       // Call PDF generation API
-      const response = await fetch('/api/pdf', {
-        method: 'POST',
+      const response = await fetch("/api/pdf", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           resourceId: resource.id,
@@ -80,23 +80,26 @@ export default function DownloadClient({ resource }: DownloadClientProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate PDF');
+        throw new Error("Failed to generate PDF");
       }
 
       // Get blob and create download link
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `${resource.slug}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('[DownloadClient] PDF download failed:', error);
+    } catch (_error) {
+      clientLogger.error(
+        "PDF download failed",
+        { component: "DownloadClient", resourceId: resource.id },
+      );
       // Fallback: show error message
-      alert('Failed to download PDF. Please try again.');
+      alert("Failed to download PDF. Please try again.");
     }
   };
 

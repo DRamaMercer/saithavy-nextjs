@@ -1,3 +1,22 @@
+---
+title: "The Anti-Fragility Workbook"
+description: "A comprehensive workbook for mindful leadership"
+category: "mindful-leadership"
+type: "Workbook"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - workbook
+  - anti fragility workbook
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # The Anti-Fragility Workbook
 ## A 15-Page Guide to Growing Stronger Through Adversity
 

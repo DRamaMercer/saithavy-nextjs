@@ -5,6 +5,9 @@ import ValuesSection from "@/components/sections/ValuesSection";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ContactSection from "@/components/sections/ContactSection";
 
+// ISR: Revalidate every 24 hours (rarely changes)
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "About",
   description:
@@ -15,9 +18,7 @@ export default function AboutPage() {
   return (
     <>
       {/* About Hero */}
-      <section
-        className="pt-24 pb-16 hero-bg"
-      >
+      <section className="pt-24 pb-16 hero-bg">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1
             className="font-[family-name:var(--font-poppins)] font-bold text-4xl md:text-6xl mb-6"

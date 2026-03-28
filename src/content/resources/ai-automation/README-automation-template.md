@@ -1,3 +1,22 @@
+---
+title: "No-Code Automation Opportunity Map - Template Files"
+description: "A comprehensive template for ai automation"
+category: "ai-automation"
+type: "Template"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - ai automation
+  - template
+  - README automation template
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # No-Code Automation Opportunity Map - Template Files
 
 ## What's Included

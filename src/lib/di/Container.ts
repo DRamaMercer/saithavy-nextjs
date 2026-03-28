@@ -44,7 +44,7 @@
  * ```
  */
 
-type ServiceLifetime = 'singleton' | 'transient';
+type ServiceLifetime = "singleton" | "transient";
 
 type ServiceFactory<T> = () => T | Promise<T>;
 
@@ -69,7 +69,7 @@ export class DIContainer {
   register<T>(
     key: ServiceKey,
     factory: ServiceFactory<T>,
-    lifetime: ServiceLifetime = 'singleton'
+    lifetime: ServiceLifetime = "singleton",
   ): void {
     if (this.services.has(key)) {
       throw new Error(`Service already registered: ${String(key)}`);
@@ -88,7 +88,7 @@ export class DIContainer {
   registerOrUpdate<T>(
     key: ServiceKey,
     factory: ServiceFactory<T>,
-    lifetime: ServiceLifetime = 'singleton'
+    lifetime: ServiceLifetime = "singleton",
   ): void {
     this.services.set(key, {
       factory,
@@ -113,7 +113,7 @@ export class DIContainer {
     }
 
     // Return singleton instance if available
-    if (descriptor.lifetime === 'singleton' && descriptor.instance) {
+    if (descriptor.lifetime === "singleton" && descriptor.instance) {
       return descriptor.instance as T;
     }
 
@@ -125,7 +125,7 @@ export class DIContainer {
       const instance = await descriptor.factory();
 
       // Store singleton instance
-      if (descriptor.lifetime === 'singleton') {
+      if (descriptor.lifetime === "singleton") {
         descriptor.instance = instance;
       }
 
@@ -151,7 +151,7 @@ export class DIContainer {
     }
 
     // Return singleton instance if available
-    if (descriptor.lifetime === 'singleton' && descriptor.instance) {
+    if (descriptor.lifetime === "singleton" && descriptor.instance) {
       return descriptor.instance as T;
     }
 
@@ -165,12 +165,12 @@ export class DIContainer {
       // Handle async factories
       if (instance instanceof Promise) {
         throw new Error(
-          `Cannot resolve async factory synchronously: ${String(key)}`
+          `Cannot resolve async factory synchronously: ${String(key)}`,
         );
       }
 
       // Store singleton instance
-      if (descriptor.lifetime === 'singleton') {
+      if (descriptor.lifetime === "singleton") {
         descriptor.instance = instance;
       }
 
@@ -264,7 +264,7 @@ export function createContainer(): DIContainer {
  */
 export const ServiceKeys = {
   // Repositories
-  ContactRepository: Symbol('ContactRepository'),
-  RateLimiter: Symbol('RateLimiter'),
-  Logger: Symbol('Logger'),
+  ContactRepository: Symbol("ContactRepository"),
+  RateLimiter: Symbol("RateLimiter"),
+  Logger: Symbol("Logger"),
 } as const;

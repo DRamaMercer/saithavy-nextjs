@@ -66,27 +66,30 @@ export default function TimelineSection() {
   const [activeTab, setActiveTab] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const handleTabClick = useCallback(async (index: number) => {
-    if (index === activeTab) return;
+  const handleTabClick = useCallback(
+    async (index: number) => {
+      if (index === activeTab) return;
 
-    // Animate out
-    const container = contentRef.current;
-    if (container) {
-      container.style.opacity = "0";
-      container.style.transform = "translateY(20px)";
-    }
-
-    setTimeout(() => {
-      setActiveTab(index);
-      // Animate in
+      // Animate out
+      const container = contentRef.current;
       if (container) {
-        requestAnimationFrame(() => {
-          container.style.opacity = "1";
-          container.style.transform = "translateY(0)";
-        });
+        container.style.opacity = "0";
+        container.style.transform = "translateY(20px)";
       }
-    }, 300);
-  }, [activeTab]);
+
+      setTimeout(() => {
+        setActiveTab(index);
+        // Animate in
+        if (container) {
+          requestAnimationFrame(() => {
+            container.style.opacity = "1";
+            container.style.transform = "translateY(0)";
+          });
+        }
+      }, 300);
+    },
+    [activeTab],
+  );
 
   const item = timelineData[activeTab];
 
@@ -107,7 +110,10 @@ export default function TimelineSection() {
           >
             My Journey
           </h2>
-          <p className="text-xl max-w-3xl mx-auto" style={{ color: "var(--foreground)" }}>
+          <p
+            className="text-xl max-w-3xl mx-auto"
+            style={{ color: "var(--foreground)" }}
+          >
             Every challenge became a stepping stone, every setback a setup for
             growth. This is my story of transformation.
           </p>

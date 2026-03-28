@@ -1,3 +1,22 @@
+---
+title: "Leadership Values Clarification Exercise"
+description: "A comprehensive template for mindful leadership"
+category: "mindful-leadership"
+type: "Template"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - template
+  - leadership values clarification exercise
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Leadership Values Clarification Exercise
 
 **Discover Your Core Values, Test Your Decisions, and Lead with Complete Alignment**

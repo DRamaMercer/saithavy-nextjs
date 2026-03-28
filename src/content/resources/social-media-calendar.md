@@ -1,3 +1,22 @@
+---
+title: "Social Media Calendar: 90-Day Content Strategy"
+description: "A comprehensive guide for personal growth"
+category: "personal-growth"
+type: "Guide"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - personal growth
+  - guide
+  - social media calendar
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Social Media Calendar: 90-Day Content Strategy
 
 ## Overview

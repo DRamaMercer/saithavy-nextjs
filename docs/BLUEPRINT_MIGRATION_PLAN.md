@@ -19,7 +19,7 @@ This plan outlines migrating all resources from the **blueprint** project (React
 ```
 blueprint/
 ├── content/                          # Source content packages (3 bundles)
-│   ├── mindful-leadership-framework/  # 7 files (~35,000 words)
+│   ├── mindful-leadership-framework/  # 8 files (~35,000 words)
 │   │   ├── README.md
 │   │   ├── 01-email-sequence.md
 │   │   ├── 02-self-awareness-assessment.md
@@ -28,7 +28,7 @@ blueprint/
 │   │   ├── 05-team-culture-playbook.md
 │   │   ├── 06-conflict-resolution-guide.md
 │   │   └── 07-bonus-materials.md
-│   ├── personal-transformation/       # 7 files
+│   ├── personal-transformation/       # 8 files (~18,000 words)
 │   │   ├── README.md
 │   │   ├── 01-email-sequence.md
 │   │   ├── 02-vision-clarification.md
@@ -37,7 +37,7 @@ blueprint/
 │   │   ├── 05-weekly-review-template.md
 │   │   ├── 06-progress-tracker.md
 │   │   └── 07-reflection-prompts.md
-│   └── resilience-toolkit/            # 8 files
+│   └── resilience-toolkit/            # 9 files (~15,000 words)
 │       ├── 00-welcome-guide.md
 │       ├── 01-email-sequence.md
 │       ├── 02-self-assessment.md
@@ -45,8 +45,58 @@ blueprint/
 │       ├── 04-emotional-regulation.md
 │       ├── 05-recovery-routines.md
 │       ├── 06-support-network.md
-│       └── 07-bonus-materials.md
+│       ├── 07-bonus-materials.md
+│       └── README.md
+├── docs/                             # Additional content packages (2 bundles)
+│   ├── ai-innovation-playbook/        # 13 files + CSV (~25,000 words)
+│   │   ├── README.md
+│   │   ├── 00-welcome.md
+│   │   ├── 01-ai-readiness-assessment.md
+│   │   ├── 02-use-case-selection-matrix.md
+│   │   ├── 03-90-day-implementation-roadmap.md
+│   │   ├── 04-prompt-library.md
+│   │   ├── 05-roi-calculator.md
+│   │   ├── 06-implementation-guide.md
+│   │   ├── 07-email-sequence.md
+│   │   ├── 08-additional-resources.md
+│   │   ├── QUICK-START.md
+│   │   ├── IMPLEMENTATION-CHECKLIST.md
+│   │   └── INDEX.md
+│   └── lead-magnets/
+│       └── remote-work-mastery/       # 8 files (~12,000 words)
+│           ├── README.md
+│           ├── 01-email-sequence.md
+│           ├── 02-home-office-setup-guide.md
+│           ├── 03-async-communication-playbook.md
+│           ├── 04-time-zone-mastery-framework.md
+│           ├── 05-virtual-collaboration-templates.md
+│           ├── 06-work-life-boundary-tools.md
+│           └── 07-troubleshooting-guide.md
 ├── dist/resources/                   # Individual resources (23 files)
+│   ├── ai-implementation-checklist.md
+│   ├── ai-prompt-engineering-guide.md
+│   ├── ai-tools-productivity.md
+│   ├── async-communication-mastery.md
+│   ├── career-growth-playbook.md
+│   ├── cross-cultural-communication.md
+│   ├── decision-making-frameworks.md
+│   ├── deep-work-protocol.md
+│   ├── energy-management-system.md
+│   ├── enterprise-ai-adoption-strategy.md
+│   ├── enterprise-innovation-framework.md
+│   ├── habit-building-blueprint.md
+│   ├── innovation-system-guide.md
+│   ├── meeting-optimization-toolkit.md
+│   ├── mindful-leadership-workbook.md
+│   ├── negotiation-scripts-library.md
+│   ├── personal-branding-toolkit.md
+│   ├── remote-team-communication-toolkit.md
+│   ├── remote-work-setup-guide.md
+│   ├── stress-management-framework.md
+│   └── prompt-templates/              # 3 AI prompt files
+│       ├── ai-content-prompts.md
+│       ├── ai-analysis-prompts.md
+│       └── ai-operations-prompts.md
 │   ├── ai-implementation-checklist.md
 │   ├── ai-prompt-engineering-guide.md
 │   ├── ai-tools-productivity.md
@@ -155,28 +205,85 @@ interface Resource {
 
 ### Phase 1: Content Migration (Priority: HIGH)
 
-#### 1.1 Migrate Content Packages (3 bundles)
+#### 1.0 Migrate Bonus Content (3 bonus guides)
 
-**Mindful Leadership Framework**
+**Complete Systems That Scale Bundle Bonuses** (~16K words total)
+
+**Bonus #1: Systems Integration Guide** (~6K words)
+- Source: `blueprint/docs/resources/bonuses/BONUS_1_Systems_Integration_Guide.md`
+- Target: `src/content/resources/mindful-leadership/systems-integration-guide.md`
+- Teaches how to combine all 4 quarterly systems into one workflow
+- 5 integrated workflows with sample scenarios
+- 90-day integration roadmap
+- Category: mindful-leadership
+- Type: guide
+
+**Bonus #2: Implementation Priority Matrix** (~4K words + spreadsheet spec)
+- Source: `blueprint/docs/resources/bonuses/BONUS_2_Implementation_Priority_Matrix.md`
+- Target: `src/content/resources/personal-growth/implementation-priority-matrix.md`
+- Helps decide which system to implement first
+- 5 detailed 90-day roadmaps for different scenarios
+- Scoring system for prioritization
+- Category: personal-growth
+- Type: framework
+
+**Bonus #3: Annual Planning Template** (~6K words + template structure)
+- Source: `blueprint/docs/resources/bonuses/BONUS_3_Annual_Planning_Template.md`
+- Target: `src/content/resources/personal-growth/annual-planning-template.md`
+- Complete annual planning system with 7-tab template
+- Monthly, weekly, and daily planning structure
+- Pre-filled 2025 example
+- Category: personal-growth
+- Type: template
+
+#### 1.1 Migrate Content Packages (5 bundles)
+
+**1. Mindful Leadership Framework** (8 files, ~35K words)
 - Source: `blueprint/content/mindful-leadership-framework/`
 - Target: `src/content/resources/mindful-leadership/mindful-leadership-framework-complete.md`
-- Action: Combine all 7 modules into single comprehensive resource
+- Action: Combine all 8 modules into single comprehensive resource
 - Add frontmatter metadata
 - Create new resource entry in resourcesData.ts
+- Category: mindful-leadership
+- Theme: Blue | Focus: Leadership Excellence
 
-**Personal Transformation**
-- Source: `blueprint/content/personal-transformation/`
-- Target: `src/content/resources/personal-growth/personal-transformation-complete.md`
-- Action: Combine all 7 modules
+**2. AI Innovation Playbook** (13 files + CSV, ~25K words)
+- Source: `blueprint/docs/ai-innovation-playbook/`
+- Target: `src/content/resources/ai-automation/ai-innovation-playbook-complete.md`
+- Action: Combine all 13 files into comprehensive resource
+- Include ROI calculator reference
 - Add frontmatter metadata
 - Create new resource entry
+- Category: ai-automation
+- Theme: Purple | Focus: AI Implementation
+- Includes: 50+ prompt templates, readiness assessment, 90-day roadmap
 
-**Resilience Toolkit**
+**3. Resilience Toolkit** (9 files, ~15K words)
 - Source: `blueprint/content/resilience-toolkit/`
 - Target: `src/content/resources/overcoming-adversity/resilience-toolkit-complete.md`
+- Action: Combine all 9 modules
+- Add frontmatter metadata
+- Create new resource entry
+- Category: overcoming-adversity
+- Theme: Emerald | Focus: Wellness & Resilience
+
+**4. Remote Work Mastery Guide** (8 files, ~12K words)
+- Source: `blueprint/docs/lead-magnets/remote-work-mastery/`
+- Target: `src/content/resources/remote-work/remote-work-mastery-complete.md`
 - Action: Combine all 8 modules
 - Add frontmatter metadata
 - Create new resource entry
+- Category: remote-work
+- Theme: Orange | Focus: Remote Work Excellence
+
+**5. Personal Transformation Roadmap** (8 files, ~18K words)
+- Source: `blueprint/content/personal-transformation/`
+- Target: `src/content/resources/personal-growth/personal-transformation-complete.md`
+- Action: Combine all 8 modules
+- Add frontmatter metadata
+- Create new resource entry
+- Category: personal-growth
+- Theme: Rose | Focus: Personal Growth
 
 #### 1.2 Migrate Individual Resources (23 files)
 
@@ -394,18 +501,19 @@ Verify:
 ## File Operations Summary
 
 ### Files to Copy
-- **3 content packages** → 3 comprehensive resources
-- **23 individual resources** → 23 separate resources
-- **3 AI prompt files** → 3 resources (or combine)
-- **Total**: ~29 new content files
+- **5 content packages** → 5 comprehensive resources (46 source files → 5 combined)
+- **23 individual resources** from `dist/resources/` → 23 separate resources
+- **3 AI prompt files** from `prompt-templates/` → 3 resources (or combine)
+- **Bonus content** from docs/resources/ → additional resources
+- **Total**: ~31-35 new content files
 
 ### Files to Modify
 - `src/lib/resourcesData.ts` - Add ~26-30 resource entries
 
 ### Estimated Content Volume
-- **Words**: ~60,000+ words
-- **Pages**: ~120+ pages (PDF equivalent)
-- **Files**: ~29 markdown files
+- **Words**: ~105,000+ words
+- **Pages**: ~210+ pages (PDF equivalent)
+- **Files**: ~51 markdown files (5 comprehensive packages + 23 individual resources + 3 AI prompt files + bonus content)
 
 ---
 

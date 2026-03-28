@@ -73,10 +73,16 @@ export default function Footer() {
       href: "#",
       icon: (
         <>
-          <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.9"/>
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" opacity="0.5"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.9" />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+            opacity="0.5"
+          />
           <path d="M16.5 9.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S15 7.17 15 8s.67 1.5 1.5 1.5zm-9 0c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S6 7.17 6 8s.67 1.5 1.5 1.5z" />
-          <path d="M12 16c-1.5 0-2.8-.8-3.5-2 .7-1.2 2-2 3.5-2s2.8.8 3.5 2c-.7 1.2-2 2-3.5 2z" opacity="0.7"/>
+          <path
+            d="M12 16c-1.5 0-2.8-.8-3.5-2 .7-1.2 2-2 3.5-2s2.8.8 3.5 2c-.7 1.2-2 2-3.5 2z"
+            opacity="0.7"
+          />
         </>
       ),
     },
@@ -116,7 +122,11 @@ export default function Footer() {
                 style={{ backgroundColor: "var(--accent)" }}
                 aria-label={social.label}
               >
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   {social.icon}
                 </svg>
               </a>

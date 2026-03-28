@@ -1,3 +1,22 @@
+---
+title: "Launch Checklist: Complete Resource Library Go-Live"
+description: "A comprehensive checklist for personal growth"
+category: "personal-growth"
+type: "Checklist"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - personal growth
+  - checklist
+  - launch checklist
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Launch Checklist: Complete Resource Library Go-Live
 
 ## Overview

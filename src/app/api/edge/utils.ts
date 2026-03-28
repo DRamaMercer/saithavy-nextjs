@@ -4,16 +4,17 @@
  * Common utilities for Vercel Edge Functions
  */
 
-import type { NextRequest } from 'next/server';
+import type { NextRequest } from "next/server";
+import { edgeLogger } from "@/lib/edge-logger";
 
 /**
  * Extract client IP address from request headers
  */
 export function getClientIP(request: NextRequest): string {
   return (
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    request.headers.get('x-real-ip') ||
-    'unknown'
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown"
   );
 }
 
@@ -22,7 +23,7 @@ export function getClientIP(request: NextRequest): string {
  */
 export function generateCacheKey(
   request: NextRequest,
-  suffix?: string
+  suffix?: string,
 ): string {
   const url = new URL(request.url);
   const baseKey = `${url.pathname}${url.search}`;
@@ -34,16 +35,16 @@ export function generateCacheKey(
  */
 export function createCorsResponse(
   data: unknown,
-  origins: string[] = ['*'],
-  methods: string[] = ['GET', 'POST', 'OPTIONS']
+  origins: string[] = ["*"],
+  methods: string[] = ["GET", "POST", "OPTIONS"],
 ): Response {
   const response = Response.json(data);
 
-  response.headers.set('Access-Control-Allow-Origin', origins.join(', '));
-  response.headers.set('Access-Control-Allow-Methods', methods.join(', '));
+  response.headers.set("Access-Control-Allow-Origin", origins.join(", "));
+  response.headers.set("Access-Control-Allow-Methods", methods.join(", "));
   response.headers.set(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization'
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization",
   );
 
   return response;
@@ -54,10 +55,10 @@ export function createCorsResponse(
  */
 export function validateGeoRestrictions(
   request: NextRequest,
-  restrictedCountries: string[] = []
+  restrictedCountries: string[] = [],
 ): { allowed: boolean; country: string | null } {
   // In Next.js 16, geo data is passed via headers by Vercel
-  const country = request.headers.get('x-vercel-ip-country') || null;
+  const country = request.headers.get("x-vercel-ip-country") || null;
 
   if (!country || restrictedCountries.length === 0) {
     return { allowed: true, country };
@@ -75,28 +76,28 @@ export function validateGeoRestrictions(
 export function formatDate(
   date: Date,
   format: string,
-  locale: string = 'en-US'
+  locale: string = "en-US",
 ): string {
   try {
-    if (format === 'ISO') {
+    if (format === "ISO") {
       return date.toISOString();
     }
 
-    if (format === 'US') {
-      return date.toLocaleDateString('en-US');
+    if (format === "US") {
+      return date.toLocaleDateString("en-US");
     }
 
     // Custom formats
     const formats: Record<string, string> = {
-      'MM/DD/YYYY': date.toLocaleDateString('en-US'),
-      'DD/MM/YYYY': date.toLocaleDateString('en-GB'),
-      'DD.MM.YYYY': date.toLocaleDateString('de-DE'),
-      'YYYY-MM-DD': date.toISOString().split('T')[0],
+      "MM/DD/YYYY": date.toLocaleDateString("en-US"),
+      "DD/MM/YYYY": date.toLocaleDateString("en-GB"),
+      "DD.MM.YYYY": date.toLocaleDateString("de-DE"),
+      "YYYY-MM-DD": date.toISOString().split("T")[0],
     };
 
     return formats[format] || date.toLocaleDateString(locale);
-  } catch (error) {
-    console.error('[formatDate] Error:', error);
+  } catch (_error) {
+    edgeLogger.error("[formatDate] Error", { format, locale });
     return date.toISOString();
   }
 }
@@ -106,7 +107,7 @@ export function formatDate(
  */
 export function getCacheControlHeader(
   maxAge: number,
-  staleWhileRevalidate?: number
+  staleWhileRevalidate?: number,
 ): string {
   if (staleWhileRevalidate) {
     return `public, s-maxage=${maxAge}, stale-while-revalidate=${staleWhileRevalidate}`;
@@ -120,32 +121,36 @@ export function getCacheControlHeader(
 export function createErrorResponse(
   error: unknown,
   request: NextRequest,
-  status: number = 500
+  status: number = 500,
 ): Response {
-  console.error('[EdgeFunction] Error:', error);
+  edgeLogger.error(
+    "[EdgeFunction] Error",
+    { url: request.url, method: request.method },
+    error as Error,
+  );
 
   const errorContext = {
     url: request.url,
     method: request.method,
-    country: request.headers.get('x-vercel-ip-country'),
-    region: request.headers.get('x-vercel-ip-region'),
+    country: request.headers.get("x-vercel-ip-country"),
+    region: request.headers.get("x-vercel-ip-region"),
     timestamp: new Date().toISOString(),
-    error: error instanceof Error ? error.message : 'Unknown error',
+    error: error instanceof Error ? error.message : "Unknown error",
   };
 
   return Response.json(
     {
-      error: 'An error occurred',
+      error: "An error occurred",
       requestId: crypto.randomUUID(),
       context: errorContext,
     },
     {
       status,
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-        'X-Error-Context': JSON.stringify(errorContext),
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "X-Error-Context": JSON.stringify(errorContext),
       },
-    }
+    },
   );
 }
 
@@ -154,12 +159,12 @@ export function createErrorResponse(
  */
 export function validateRequestBody<T>(
   body: unknown,
-  requiredFields: (keyof T)[]
+  requiredFields: (keyof T)[],
 ) {
   const errors: string[] = [];
 
-  if (typeof body !== 'object' || body === null) {
-    return { valid: false, errors: ['Request body must be an object'] };
+  if (typeof body !== "object" || body === null) {
+    return { valid: false, errors: ["Request body must be an object"] };
   }
 
   for (const field of requiredFields) {
@@ -180,14 +185,14 @@ export function validateRequestBody<T>(
  */
 export function addGeoContext<T>(
   data: T,
-  request: NextRequest
+  request: NextRequest,
 ): T & { _geo: GeoContext } {
   return {
     ...data,
     _geo: {
-      country: request.headers.get('x-vercel-ip-country') || 'unknown',
-      region: request.headers.get('x-vercel-ip-region') || 'unknown',
-      city: request.headers.get('x-vercel-ip-city') || 'unknown',
+      country: request.headers.get("x-vercel-ip-country") || "unknown",
+      region: request.headers.get("x-vercel-ip-region") || "unknown",
+      city: request.headers.get("x-vercel-ip-city") || "unknown",
       timestamp: new Date().toISOString(),
     },
   };
@@ -209,16 +214,16 @@ interface GeoContext {
 export function trackPerformance(
   startTime: number,
   operation: string,
-  request: NextRequest
+  request: NextRequest,
 ): void {
   const duration = Date.now() - startTime;
 
-  console.log('[EdgePerformance]', {
+  edgeLogger.info("[EdgePerformance]", {
     operation,
     duration: `${duration}ms`,
     url: request.url,
-    country: request.headers.get('x-vercel-ip-country'),
-    region: request.headers.get('x-vercel-ip-region'),
+    country: request.headers.get("x-vercel-ip-country"),
+    region: request.headers.get("x-vercel-ip-region"),
   });
 
   // In production, send to monitoring service
@@ -264,7 +269,7 @@ export const defaultConfig: EdgeFunctionConfig = {
     enabled: true,
   },
   security: {
-    corsOrigins: ['*'],
+    corsOrigins: ["*"],
     requireAuth: false,
   },
 };

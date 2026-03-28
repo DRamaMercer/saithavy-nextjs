@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const category = categories.find((c) => c.id === slug);
-  
+
   if (!category) {
     return {
       title: "Category Not Found",
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${category.name} Resources | Saithavy`,
       description: `Explore free playbooks, templates, and guides about ${category.name.toLowerCase()} tailored for modern remote teams.`,
-    }
+    },
   };
 }
 
@@ -44,26 +44,29 @@ export default async function CategoryPage({ params }: Props) {
     notFound();
   }
 
-  const resourceCounts = resources.reduce((acc, resource) => {
-    acc[resource.category] = (acc[resource.category] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const resourceCounts = resources.reduce(
+    (acc, resource) => {
+      acc[resource.category] = (acc[resource.category] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
-  const filteredResources = resources.filter(r => r.category === slug);
-  const featuredResources = resources.filter(r => r.featured);
+  const filteredResources = resources.filter((r) => r.category === slug);
+  const featuredResources = resources.filter((r) => r.featured);
   const totalDownloads = resources.reduce((sum, r) => sum + r.downloads, 0);
 
   // Structured Data specific to this category
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": `${category.name} Resources`,
-    "description": `Free resources and tools about ${category.name.toLowerCase()}`,
-    "url": `https://saithavy.com/resources/category/${slug}`,
-    "isPartOf": {
+    name: `${category.name} Resources`,
+    description: `Free resources and tools about ${category.name.toLowerCase()}`,
+    url: `https://saithavy.com/resources/category/${slug}`,
+    isPartOf: {
       "@type": "WebSite",
-      "name": "Saithavy"
-    }
+      name: "Saithavy",
+    },
   };
 
   return (
@@ -72,10 +75,10 @@ export default async function CategoryPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ResourcesLayout 
+      <ResourcesLayout
         selectedCategory={slug}
         filteredResources={filteredResources}
-        featuredResources={featuredResources} 
+        featuredResources={featuredResources}
         resourceCounts={resourceCounts}
         totalDownloads={totalDownloads}
         totalResources={resources.length}

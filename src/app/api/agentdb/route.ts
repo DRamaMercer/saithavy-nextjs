@@ -6,8 +6,9 @@
  * and pattern storage.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { storePattern, retrievePatterns, getDBStats } from '@/lib/agentdb';
+import { NextRequest, NextResponse } from "next/server";
+import { storePattern, retrievePatterns, getDBStats } from "@/lib/agentdb";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/agentdb/store
@@ -20,8 +21,8 @@ export async function POST(request: NextRequest) {
 
     if (!type || !domain || !pattern) {
       return NextResponse.json(
-        { error: 'Missing required fields: type, domain, pattern' },
-        { status: 400 }
+        { error: "Missing required fields: type, domain, pattern" },
+        { status: 400 },
       );
     }
 
@@ -29,34 +30,50 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Pattern stored successfully',
+      message: "Pattern stored successfully",
     });
   } catch (error) {
-    console.error('[AgentDB API] Store error:', error);
+    logger.error(
+      "[AgentDB API] Store error",
+      { endpoint: "POST agentdb" },
+      error as Error,
+    );
     return NextResponse.json(
-      { error: 'Failed to store pattern' },
-      { status: 500 }
+      { error: "Failed to store pattern" },
+      { status: 500 },
     );
   }
 }
 
 /**
- * GET /api/agentdb/search
- * Search for similar patterns
+ * GET /api/agentdb
+ * Search for similar patterns or get database statistics
  */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const query = searchParams.get('query');
-    const domain = searchParams.get('domain') || undefined;
-    const k = parseInt(searchParams.get('k') || '10');
+    const query = searchParams.get("query");
+    const action = searchParams.get("action");
 
+    // Handle stats request
+    if (action === "stats") {
+      const stats = await getDBStats();
+      return NextResponse.json({
+        success: true,
+        stats,
+      });
+    }
+
+    // Handle search request
     if (!query) {
       return NextResponse.json(
-        { error: 'Missing query parameter' },
-        { status: 400 }
+        { error: "Missing query parameter" },
+        { status: 400 },
       );
     }
+
+    const domain = searchParams.get("domain") || undefined;
+    const k = parseInt(searchParams.get("k") || "10");
 
     // For demo purposes, create a simple embedding
     // In production, use a proper embedding model
@@ -78,32 +95,12 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[AgentDB API] Search error:', error);
-    return NextResponse.json(
-      { error: 'Failed to search patterns' },
-      { status: 500 }
+    logger.error(
+      "[AgentDB API] Error",
+      { endpoint: "GET agentdb" },
+      error as Error,
     );
-  }
-}
-
-/**
- * GET /api/agentdb/stats
- * Get database statistics
- */
-export async function STATS() {
-  try {
-    const stats = await getDBStats();
-
-    return NextResponse.json({
-      success: true,
-      stats,
-    });
-  } catch (error) {
-    console.error('[AgentDB API] Stats error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get stats' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Request failed" }, { status: 500 });
   }
 }
 
@@ -128,7 +125,7 @@ function simpleHash(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash;
   }
   return Math.abs(hash);

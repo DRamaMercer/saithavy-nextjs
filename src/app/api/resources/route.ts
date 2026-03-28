@@ -2,6 +2,7 @@
  * Resources API - Main listing endpoint with pagination, filtering, sorting, and search
  *
  * GET /api/resources
+ *
  * Query params:
  * - category: Filter by category (default: 'all')
  * - page: Page number (default: 1)
@@ -10,11 +11,107 @@
  * - sort: Sort order (default: 'newest') - options: newest, popular, relevance
  * - q: Search query (default: '')
  * - tags: Comma-separated tags
+ *
+ * @openapi
+ * /api/resources:
+ *   get:
+ *     summary: List all resources
+ *     description: |
+ *       Retrieve a paginated list of resources with filtering, sorting, and search capabilities.
+ *
+ *       **Rate Limit:** 100 requests per 5 minutes per IP
+ *
+ *       **Cache:** 5 minutes (300 seconds)
+ *     tags:
+ *       - Resources
+ *     parameters:
+ *       - name: category
+ *         in: query
+ *         description: Filter by category slug
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: "mindful-leadership"
+ *       - name: page
+ *         in: query
+ *         description: Page number for pagination
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *       - name: limit
+ *         in: query
+ *         description: Number of items per page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 50
+ *           default: 12
+ *       - name: type
+ *         in: query
+ *         description: Filter by resource type
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [guide, checklist, template, video, audio, workbook]
+ *       - name: sort
+ *         in: query
+ *         description: Sort order
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [newest, popular, relevance]
+ *           default: newest
+ *       - name: q
+ *         in: query
+ *         description: Search query string
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: tags
+ *         in: query
+ *         description: Comma-separated tag list
+ *         required: false
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successful response with paginated resources
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 resources:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Resource'
+ *                 totalCount:
+ *                   type: integer
+ *                   description: Total number of resources matching filters
+ *                 totalPages:
+ *                   type: integer
+ *                   description: Total number of pages
+ *                 currentPage:
+ *                   type: integer
+ *                   description: Current page number
+ *                 categories:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Category'
+ *       '500':
+ *         description: Internal server error
+ *
+ * @param {NextRequest} request - The incoming request object
+ * @returns {Promise<NextResponse>} JSON response with paginated resources
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { resources, categories } from '@/lib/resourcesData';
-import { Resource, ResourceCategory } from '@/types/resources';
+import { NextRequest, NextResponse } from "next/server";
+import { resources, categories } from "@/lib/resourcesData";
+import { Resource, ResourceCategory } from "@/types/resources";
+import { logger } from "@/lib/logger";
 
 // Types
 interface ResourceQueryParams {
@@ -22,7 +119,7 @@ interface ResourceQueryParams {
   page?: number;
   limit?: number;
   type?: string;
-  sort?: 'newest' | 'popular' | 'relevance';
+  sort?: "newest" | "popular" | "relevance";
   q?: string;
   tags?: string[];
 }
@@ -69,13 +166,18 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const params: ResourceQueryParams = {
-      category: searchParams.get('category') || 'all',
-      page: Math.max(1, parseInt(searchParams.get('page') || '1')),
-      limit: Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '12'))),
-      type: searchParams.get('type') || 'all',
-      sort: (searchParams.get('sort') as 'newest' | 'popular' | 'relevance') || 'newest',
-      q: searchParams.get('q') || '',
-      tags: searchParams.get('tags')?.split(',').filter(Boolean) || [],
+      category: searchParams.get("category") || "all",
+      page: Math.max(1, parseInt(searchParams.get("page") || "1")),
+      limit: Math.min(
+        50,
+        Math.max(1, parseInt(searchParams.get("limit") || "12")),
+      ),
+      type: searchParams.get("type") || "all",
+      sort:
+        (searchParams.get("sort") as "newest" | "popular" | "relevance") ||
+        "newest",
+      q: searchParams.get("q") || "",
+      tags: searchParams.get("tags")?.split(",").filter(Boolean) || [],
     };
 
     // Check cache
@@ -89,23 +191,23 @@ export async function GET(request: NextRequest) {
     let filteredResources = [...resources];
 
     // Category filter
-    if (params.category && params.category !== 'all') {
+    if (params.category && params.category !== "all") {
       filteredResources = filteredResources.filter(
-        (r) => r.category === params.category
+        (r) => r.category === params.category,
       );
     }
 
     // Type filter
-    if (params.type && params.type !== 'all') {
+    if (params.type && params.type !== "all") {
       filteredResources = filteredResources.filter(
-        (r) => r.type === params.type
+        (r) => r.type === params.type,
       );
     }
 
     // Tags filter
     if (params.tags && params.tags.length > 0) {
       filteredResources = filteredResources.filter((r) =>
-        params.tags!.some((tag) => r.keywords?.includes(tag))
+        params.tags!.some((tag) => r.keywords?.includes(tag)),
       );
     }
 
@@ -116,19 +218,19 @@ export async function GET(request: NextRequest) {
         (r) =>
           r.title.toLowerCase().includes(query) ||
           r.description.toLowerCase().includes(query) ||
-          r.keywords?.some((k) => k.toLowerCase().includes(query))
+          r.keywords?.some((k) => k.toLowerCase().includes(query)),
       );
     }
 
     // Sort resources
     switch (params.sort) {
-      case 'popular':
+      case "popular":
         filteredResources.sort((a, b) => b.downloads - a.downloads);
         break;
-      case 'relevance':
+      case "relevance":
         // Keep search relevance order (no additional sorting)
         break;
-      case 'newest':
+      case "newest":
       default:
         // Sort by id descending (assuming newer resources have higher IDs)
         filteredResources.sort((a, b) => parseInt(b.id) - parseInt(a.id));
@@ -159,14 +261,20 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Resources API error:', error);
+    logger.error(
+      "Resources API error",
+      {
+        endpoint: "/api/resources",
+        params: Object.fromEntries(request.nextUrl.searchParams),
+      },
+      error as Error,
+    );
     return NextResponse.json(
-      { error: 'Failed to fetch resources' },
-      { status: 500 }
+      { error: "Failed to fetch resources" },
+      { status: 500 },
     );
   }
 }
 
 // Enable caching
-export const dynamic = 'force-dynamic';
 export const revalidate = 300; // 5 minutes

@@ -1,3 +1,22 @@
+---
+title: "Mindful Leadership Reflection Journal"
+description: "A comprehensive template for mindful leadership"
+category: "mindful-leadership"
+type: "Template"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - template
+  - mindful leadership reflection journal content
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Mindful Leadership Reflection Journal
 ## 30 Days to Leading Yourself First
 

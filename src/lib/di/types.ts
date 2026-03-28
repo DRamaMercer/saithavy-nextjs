@@ -4,12 +4,12 @@
  * Provides type-safe service registration and resolution.
  */
 
-import { DIContainer, ServiceKeys } from './Container';
+import { DIContainer, ServiceKeys } from "./Container";
 
 /**
  * Type for service keys
  */
-export type ServiceKey = typeof ServiceKeys[keyof typeof ServiceKeys];
+export type ServiceKey = (typeof ServiceKeys)[keyof typeof ServiceKeys];
 
 /**
  * Type-safe service registry
@@ -18,7 +18,7 @@ export interface ServiceRegistry {
   register<T>(
     key: ServiceKey,
     factory: () => T | Promise<T>,
-    lifetime?: 'singleton' | 'transient'
+    lifetime?: "singleton" | "transient",
   ): void;
   resolve<T>(key: ServiceKey): Promise<T>;
   resolveSync<T>(key: ServiceKey): T;
@@ -36,9 +36,7 @@ export interface TypedServiceKey<T> {
 /**
  * Create a typed service key
  */
-export function createServiceKey<T>(
-  key: ServiceKey
-): TypedServiceKey<T> {
+export function createServiceKey<T>(key: ServiceKey): TypedServiceKey<T> {
   return { key, __type: null as unknown as T };
 }
 
@@ -51,7 +49,7 @@ export class TypedDIContainer implements ServiceRegistry {
   register<T>(
     key: ServiceKey,
     factory: () => T | Promise<T>,
-    lifetime: 'singleton' | 'transient' = 'singleton'
+    lifetime: "singleton" | "transient" = "singleton",
   ): void {
     this.container.register(key, factory, lifetime);
   }
@@ -79,7 +77,7 @@ export class TypedDIContainer implements ServiceRegistry {
 export type ServiceDescriptor<T> = {
   key: ServiceKey;
   factory: () => T | Promise<T>;
-  lifetime?: 'singleton' | 'transient';
+  lifetime?: "singleton" | "transient";
 };
 
 /**
@@ -87,7 +85,7 @@ export type ServiceDescriptor<T> = {
  */
 export function registerServices(
   container: TypedDIContainer,
-  services: ServiceDescriptor<unknown>[]
+  services: ServiceDescriptor<unknown>[],
 ): void {
   services.forEach(({ key, factory, lifetime }) => {
     container.register(key, factory, lifetime);

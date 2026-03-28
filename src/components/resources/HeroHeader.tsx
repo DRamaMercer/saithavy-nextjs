@@ -4,7 +4,7 @@
  * Displays category name, description, and metadata with dark gradient background
  */
 
-import Link from 'next/link';
+import Link from "next/link";
 
 interface HeroHeaderProps {
   title?: string;
@@ -14,16 +14,17 @@ interface HeroHeaderProps {
 }
 
 export default function HeroHeader({
-  title = 'Resource Hub',
-  subtitle = 'Guides, templates, and tools for personal and professional growth',
+  title = "Resource Hub",
+  subtitle = "Guides, templates, and tools for personal and professional growth",
   breadcrumb,
   totalCount = 62,
 }: HeroHeaderProps) {
   return (
     <section
-      className="py-16 md:py-20"
+      className="pt-24 md:pt-28 pb-16 md:pb-20"
       style={{
-        background: 'linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%)',
+        background:
+          "linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%)",
       }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

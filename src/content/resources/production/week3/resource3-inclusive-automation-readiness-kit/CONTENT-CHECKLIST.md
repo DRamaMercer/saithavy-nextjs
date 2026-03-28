@@ -1,3 +1,22 @@
+---
+title: "Inclusive Automation Readiness Kit - Content Checklist"
+description: "A comprehensive checklist for mindful leadership"
+category: "mindful-leadership"
+type: "Checklist"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - checklist
+  - CONTENT CHECKLIST
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Inclusive Automation Readiness Kit - Content Checklist
 
 ## Production Requirements

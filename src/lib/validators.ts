@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-
-
 export const contactSchema = z.object({
   firstName: z
     .string({ error: "First name must be a string" })
@@ -27,4 +25,3 @@ export const contactSchema = z.object({
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
-

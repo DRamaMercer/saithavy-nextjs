@@ -5,9 +5,10 @@
  * Returns full resource with content, related resources
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getResourceBySlug, getRelatedResources } from '@/lib/resourcesData';
-import { Resource } from '@/types/resources';
+import { NextRequest, NextResponse } from "next/server";
+import { getResourceBySlug, getRelatedResources } from "@/lib/resourcesData";
+import { Resource } from "@/types/resources";
+import { logger } from "@/lib/logger";
 
 // Types
 interface ResourceDetailResponse {
@@ -17,18 +18,18 @@ interface ResourceDetailResponse {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
-  try {
-    const { slug } = await params;
+  const { slug } = await params;
 
+  try {
     // Get resource by slug
     const resource = getResourceBySlug(slug);
 
     if (!resource) {
       return NextResponse.json(
-        { error: 'Resource not found' },
-        { status: 404 }
+        { error: "Resource not found" },
+        { status: 404 },
       );
     }
 
@@ -43,14 +44,13 @@ export async function GET(
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Resource detail API error:', error);
+    logger.error("Resource detail API error", { slug }, error as Error);
     return NextResponse.json(
-      { error: 'Failed to fetch resource' },
-      { status: 500 }
+      { error: "Failed to fetch resource" },
+      { status: 500 },
     );
   }
 }
 
 // Enable caching
-export const dynamic = 'force-dynamic';
 export const revalidate = 600; // 10 minutes

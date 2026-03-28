@@ -1,3 +1,22 @@
+---
+title: "Crisis Response Plan Template"
+description: "A comprehensive template for overcoming adversity"
+category: "overcoming-adversity"
+type: "Template"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - overcoming adversity
+  - template
+  - crisis response plan template
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Crisis Response Plan Template
 ## Your Personal Protocol for Difficult Moments
 

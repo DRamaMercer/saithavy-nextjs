@@ -5,23 +5,25 @@
  * Shows filtered resources for a specific category
  */
 
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
-import { categories, resources } from '@/lib/resourcesData';
-import ClientCategoryPage from './ClientCategoryPage';
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { categories, resources } from "@/lib/resourcesData";
+import ClientCategoryPage from "./ClientCategoryPage";
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
 }
 
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: CategoryPageProps): Promise<Metadata> {
   const { category } = await params;
-  const categoryData = categories.find(c => c.id === category);
+  const categoryData = categories.find((c) => c.id === category);
 
   if (!categoryData) {
     return {
-      title: 'Category Not Found',
+      title: "Category Not Found",
     };
   }
 
@@ -74,7 +76,13 @@ function CategoryLoading() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Hero skeleton */}
-      <div className="h-48 rounded-2xl animate-pulse mb-8" style={{ background: 'linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%)' }} />
+      <div
+        className="h-48 rounded-2xl animate-pulse mb-8"
+        style={{
+          background:
+            "linear-gradient(135deg, var(--heading) 0%, var(--accent) 100%)",
+        }}
+      />
 
       {/* Grid skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -82,11 +90,20 @@ function CategoryLoading() {
           <div
             key={i}
             className="rounded-xl p-6 animate-pulse"
-            style={{ backgroundColor: 'var(--surface-alt)' }}
+            style={{ backgroundColor: "var(--surface-alt)" }}
           >
-            <div className="h-4 rounded mb-4" style={{ backgroundColor: 'var(--border)' }} />
-            <div className="h-6 rounded mb-2 w-3/4" style={{ backgroundColor: 'var(--border)' }} />
-            <div className="h-4 rounded mb-4 w-1/2" style={{ backgroundColor: 'var(--border)' }} />
+            <div
+              className="h-4 rounded mb-4"
+              style={{ backgroundColor: "var(--border)" }}
+            />
+            <div
+              className="h-6 rounded mb-2 w-3/4"
+              style={{ backgroundColor: "var(--border)" }}
+            />
+            <div
+              className="h-4 rounded mb-4 w-1/2"
+              style={{ backgroundColor: "var(--border)" }}
+            />
           </div>
         ))}
       </div>

@@ -4,11 +4,11 @@
  * Centralizes all service registrations with the DI container.
  */
 
-import { getContainer, ServiceKeys } from './Container';
-import { IContactRepository } from '@/domain/interfaces/IContactRepository';
-import { LoggerContactRepository } from '@/adapters/repositories/LoggerContactRepository';
-import { IRateLimiter } from '@/domain/interfaces/IRateLimiter';
-import { UpstashRateLimiterAdapter } from '@/adapters/gateways/UpstashRateLimiterAdapter';
+import { getContainer, ServiceKeys } from "./Container";
+import { IContactRepository } from "@/domain/interfaces/IContactRepository";
+import { LoggerContactRepository } from "@/adapters/repositories/LoggerContactRepository";
+import { IRateLimiter } from "@/domain/interfaces/IRateLimiter";
+import { UpstashRateLimiterAdapter } from "@/adapters/gateways/UpstashRateLimiterAdapter";
 
 /**
  * Register all core services with the container
@@ -22,7 +22,7 @@ export function registerCoreServices(): void {
     () => {
       return new LoggerContactRepository();
     },
-    'singleton'
+    "singleton",
   );
 
   // Register Rate Limiter
@@ -31,7 +31,7 @@ export function registerCoreServices(): void {
     () => {
       return new UpstashRateLimiterAdapter();
     },
-    'singleton'
+    "singleton",
   );
 }
 
@@ -55,7 +55,7 @@ registerCoreServices();
  */
 export function resolveContactRepository(): IContactRepository {
   return getContainer().resolveSync<IContactRepository>(
-    ServiceKeys.ContactRepository
+    ServiceKeys.ContactRepository,
   );
 }
 

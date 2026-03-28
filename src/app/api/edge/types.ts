@@ -70,7 +70,7 @@ export type ProxyConfigs = Record<string, ProxyConfig>;
  * Health check response
  */
 export interface HealthCheckResponse {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   checks: Record<string, boolean | string>;
   metadata?: {
     region?: string;

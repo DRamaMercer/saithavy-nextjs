@@ -4,17 +4,19 @@
  * Manages filter state, API calls, and renders all resource hub components
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import HeroHeader from '@/components/resources/HeroHeader';
-import FeaturedGrid from '@/components/resources/FeaturedGrid';
-import PillarCardsRow from '@/components/resources/PillarCardsRow';
-import FiltersBar from '@/components/resources/FiltersBar';
-import ResourceCardGrid from '@/components/resources/ResourceCardGrid';
-import { useResourceFilters } from '@/hooks/useResourceFilters';
-import { getResources, ResourceQueryParams } from '@/services/resourceService';
-import { ResourceCategory, Resource } from '@/types/resources';
+import { useState, useEffect, useCallback } from "react";
+import HeroHeader from "@/components/resources/HeroHeader";
+import FeaturedGrid from "@/components/resources/FeaturedGrid";
+import PillarCardsRow from "@/components/resources/PillarCardsRow";
+import FiltersBar from "@/components/resources/FiltersBar";
+import ResourceCardGrid from "@/components/resources/ResourceCardGrid";
+import ScrollToTop from "@/components/ScrollToTop";
+import { useResourceFilters } from "@/hooks/useResourceFilters";
+import { getResources, ResourceQueryParams } from "@/services/resourceService";
+import { ResourceCategory, Resource } from "@/types/resources";
+import { clientLogger } from "@/lib/client-logger";
 
 interface ClientResourcesPageProps {
   initialCategories: ResourceCategory[];
@@ -30,11 +32,16 @@ export default function ClientResourcesPage({
   initialTotal,
 }: ClientResourcesPageProps) {
   const [resources, setResources] = useState<Resource[]>([]);
-  const [categories, setCategories] = useState<ResourceCategory[]>(initialCategories);
+  const [categories, setCategories] =
+    useState<ResourceCategory[]>(initialCategories);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(initialTotal);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
 
-  const { filters, debouncedQuery, updateFilter, resetFilters } = useResourceFilters();
+  const { filters, debouncedQuery, updateFilter, resetFilters } =
+    useResourceFilters();
 
   /**
    * Fetch resources based on current filters
@@ -56,8 +63,22 @@ export default function ClientResourcesPage({
       setResources(response.resources);
       setTotalCount(response.totalCount);
       setCategories(response.categories);
-    } catch (error) {
-      console.error('Failed to fetch resources:', error);
+      setCurrentPage(response.currentPage);
+      setTotalPages(response.totalPages);
+
+      // Extract all unique tags from resources
+      const allTags = new Set<string>();
+      response.resources.forEach((resource) => {
+        if (resource.keywords) {
+          resource.keywords.forEach((tag) => allTags.add(tag));
+        }
+      });
+      setAvailableTags(Array.from(allTags).sort());
+    } catch (_error) {
+      clientLogger.error(
+        "Failed to fetch resources",
+        { component: "ClientResourcesPage", filters },
+      );
     } finally {
       setLoading(false);
     }
@@ -74,7 +95,7 @@ export default function ClientResourcesPage({
    * Get available resource types for filter chips
    */
   const availableTypes = Array.from(
-    new Set(resources.flatMap((r) => r.type))
+    new Set(resources.flatMap((r) => r.type)),
   ).sort();
 
   return (
@@ -87,10 +108,7 @@ export default function ClientResourcesPage({
       />
 
       {/* Featured Section */}
-      <FeaturedGrid
-        featured={initialFeatured}
-        supporting={initialSupporting}
-      />
+      <FeaturedGrid featured={initialFeatured} supporting={initialSupporting} />
 
       {/* Pillar/Category Cards */}
       <PillarCardsRow categories={categories} />
@@ -101,18 +119,25 @@ export default function ClientResourcesPage({
         onFilterChange={updateFilter}
         onReset={resetFilters}
         availableTypes={availableTypes}
+        availableTags={availableTags}
       />
 
       {/* Resource Grid */}
-      <section className="py-12" style={{ backgroundColor: 'var(--surface)' }}>
+      <section className="py-12" style={{ backgroundColor: "var(--surface)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ResourceCardGrid
             resources={resources}
             loading={loading}
             totalCount={totalCount}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => updateFilter("page", page.toString())}
           />
         </div>
       </section>
+
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
     </>
   );
 }

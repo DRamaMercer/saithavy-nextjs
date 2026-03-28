@@ -1,3 +1,22 @@
+---
+title: "Inclusive Automation Readiness Kit"
+description: "A comprehensive pdf for mindful leadership"
+category: "mindful-leadership"
+type: "PDF"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - pdf
+  - inclusive automation readiness kit complete
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Inclusive Automation Readiness Kit
 
 **A Comprehensive Guide to Automation That Includes Everyone**

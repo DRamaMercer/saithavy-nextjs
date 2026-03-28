@@ -1,3 +1,22 @@
+---
+title: "Burnout Prevention Checklist - Production Summary"
+description: "A comprehensive guide for mindful leadership"
+category: "mindful-leadership"
+type: "Guide"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - guide
+  - burnout prevention summary
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Burnout Prevention Checklist - Production Summary
 
 ## Resource Created: Comprehensive Burnout Prevention System

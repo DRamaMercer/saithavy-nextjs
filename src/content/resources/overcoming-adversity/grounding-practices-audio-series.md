@@ -1,3 +1,22 @@
+---
+title: "Grounding Practices Audio Series"
+description: "A comprehensive audio for overcoming adversity"
+category: "overcoming-adversity"
+type: "Audio"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - overcoming adversity
+  - audio
+  - grounding practices audio series
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Grounding Practices Audio Series
 ## 4-Part Production Scripts
 

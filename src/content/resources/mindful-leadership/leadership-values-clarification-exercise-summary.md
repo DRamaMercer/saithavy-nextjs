@@ -1,3 +1,22 @@
+---
+title: "Leadership Values Clarification Exercise - Quick Reference"
+description: "A comprehensive guide for mindful leadership"
+category: "mindful-leadership"
+type: "Guide"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - guide
+  - leadership values clarification exercise summary
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Leadership Values Clarification Exercise - Quick Reference
 
 ## Overview

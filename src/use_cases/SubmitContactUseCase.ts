@@ -24,7 +24,7 @@ export interface SubmitContactResponse {
 export class SubmitContactUseCase {
   constructor(
     private rateLimiter: IRateLimiter,
-    private contactRepository: IContactRepository
+    private contactRepository: IContactRepository,
   ) {}
 
   async execute(request: SubmitContactRequest): Promise<SubmitContactResponse> {

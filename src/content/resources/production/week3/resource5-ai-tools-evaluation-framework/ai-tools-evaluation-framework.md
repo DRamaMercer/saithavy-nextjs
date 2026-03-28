@@ -1,3 +1,22 @@
+---
+title: "AI Tools Evaluation Framework"
+description: "A comprehensive framework for mindful leadership"
+category: "mindful-leadership"
+type: "Framework"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - framework
+  - ai tools evaluation framework
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # AI Tools Evaluation Framework
 ## Complete Guide to Choosing the Right AI Tools for Your Workflow
 

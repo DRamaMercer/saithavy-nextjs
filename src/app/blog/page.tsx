@@ -2,9 +2,13 @@ import Link from "next/link";
 import { getAllPosts, getAllCategories } from "@/lib/blog";
 import { format, parseISO } from "date-fns";
 
+// ISR: Revalidate every hour for blog index updates
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Blog & Insights | Saithavy",
-  description: "Read my latest thoughts on remote work, authentic leadership, and AI automation.",
+  description:
+    "Read my latest thoughts on remote work, authentic leadership, and AI automation.",
 };
 
 export default function BlogIndexPage() {
@@ -21,8 +25,12 @@ export default function BlogIndexPage() {
           >
             Insights & <span className="text-gradient">Reflections</span>
           </h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "var(--foreground)" }}>
-            Deep dives into authentic leadership, the future of remote work, and how to harness AI for personal growth.
+          <p
+            className="text-lg md:text-xl max-w-2xl mx-auto"
+            style={{ color: "var(--foreground)" }}
+          >
+            Deep dives into authentic leadership, the future of remote work, and
+            how to harness AI for personal growth.
           </p>
         </header>
 
@@ -38,7 +46,10 @@ export default function BlogIndexPage() {
             <span
               key={category}
               className="px-4 py-2 rounded-full text-sm font-medium transition-colors hover:bg-opacity-80"
-              style={{ backgroundColor: "var(--surface)", color: "var(--heading)" }}
+              style={{
+                backgroundColor: "var(--surface)",
+                color: "var(--heading)",
+              }}
             >
               {category}
             </span>
@@ -57,11 +68,17 @@ export default function BlogIndexPage() {
               <div className="flex items-center justify-between mb-4">
                 <span
                   className="text-xs font-semibold px-3 py-1 rounded-full"
-                  style={{ backgroundColor: "var(--background)", color: "var(--accent)" }}
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--accent)",
+                  }}
                 >
                   {post.category}
                 </span>
-                <span className="text-xs" style={{ color: "var(--foreground)" }}>
+                <span
+                  className="text-xs"
+                  style={{ color: "var(--foreground)" }}
+                >
                   {post.readingTime}
                 </span>
               </div>
@@ -77,14 +94,30 @@ export default function BlogIndexPage() {
               >
                 {post.description}
               </p>
-              <div className="flex items-center text-sm font-medium mt-auto border-t pt-4" style={{ borderColor: "var(--border)" }}>
+              <div
+                className="flex items-center text-sm font-medium mt-auto border-t pt-4"
+                style={{ borderColor: "var(--border)" }}
+              >
                 <span style={{ color: "var(--foreground)" }}>
                   {format(parseISO(post.date), "MMMM d, yyyy")}
                 </span>
-                <span className="ml-auto inline-flex items-center" style={{ color: "var(--accent)" }}>
+                <span
+                  className="ml-auto inline-flex items-center"
+                  style={{ color: "var(--accent)" }}
+                >
                   Read Article
-                  <svg className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <svg
+                    className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 transform duration-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
                   </svg>
                 </span>
               </div>

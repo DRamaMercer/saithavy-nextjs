@@ -14,7 +14,12 @@ const services = [
     ],
     iconBg: "var(--heading)",
     icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+      />
     ),
   },
   {
@@ -28,7 +33,12 @@ const services = [
     ],
     iconBg: "var(--accent)",
     icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+      />
     ),
   },
   {
@@ -42,7 +52,12 @@ const services = [
     ],
     iconBg: "var(--highlight)",
     icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+      />
     ),
   },
 ];
@@ -68,7 +83,10 @@ export default function ServicesSection() {
           >
             How I Can Help You
           </h2>
-          <p className="reveal-text text-xl max-w-3xl mx-auto" style={{ color: "var(--foreground)" }}>
+          <p
+            className="reveal-text text-xl max-w-3xl mx-auto"
+            style={{ color: "var(--foreground)" }}
+          >
             Transform your approach to work and life with proven strategies for
             authentic growth and sustainable success.
           </p>
@@ -100,10 +118,16 @@ export default function ServicesSection() {
               >
                 {service.title}
               </h3>
-              <p className="mb-6 leading-relaxed" style={{ color: "var(--foreground)" }}>
+              <p
+                className="mb-6 leading-relaxed"
+                style={{ color: "var(--foreground)" }}
+              >
                 {service.description}
               </p>
-              <ul className="text-sm mb-6 space-y-2" style={{ color: "var(--foreground)" }}>
+              <ul
+                className="text-sm mb-6 space-y-2"
+                style={{ color: "var(--foreground)" }}
+              >
                 {service.features.map((feature) => (
                   <li key={feature} className="flex items-center">
                     <svg
@@ -128,8 +152,18 @@ export default function ServicesSection() {
                 style={{ color: "var(--accent)" }}
               >
                 Learn More
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-4 h-4 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </a>
             </div>

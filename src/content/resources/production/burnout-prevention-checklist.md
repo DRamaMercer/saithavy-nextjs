@@ -1,3 +1,22 @@
+---
+title: "The Burnout Prevention Checklist"
+description: "A comprehensive checklist for mindful leadership"
+category: "mindful-leadership"
+type: "Checklist"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - checklist
+  - burnout prevention checklist
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # The Burnout Prevention Checklist
 ## A Comprehensive System for Recognizing, Preventing, and Recovering from Burnout
 

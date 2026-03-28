@@ -5,11 +5,11 @@
  * Clicking navigates to category page (NOT filter)
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { ArrowRight, Navigation } from 'lucide-react';
-import { ResourceCategory } from '@/types/resources';
+import Link from "next/link";
+import { ArrowRight, Navigation } from "lucide-react";
+import { ResourceCategory } from "@/types/resources";
 
 interface PillarCardsRowProps {
   categories: ResourceCategory[];
@@ -17,18 +17,24 @@ interface PillarCardsRowProps {
 
 export default function PillarCardsRow({ categories }: PillarCardsRowProps) {
   // Filter out 'all' category
-  const pillarCategories = categories.filter((cat) => cat.id !== 'all');
+  const pillarCategories = categories.filter((cat) => cat.id !== "all");
 
   return (
-    <section className="py-12" style={{ backgroundColor: 'var(--surface)' }}>
+    <section className="py-12" style={{ backgroundColor: "var(--surface)" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-[family-name:var(--font-poppins)] font-bold text-2xl md:text-3xl" style={{ color: 'var(--heading)' }}>
+          <h2
+            className="font-[family-name:var(--font-poppins)] font-bold text-2xl md:text-3xl"
+            style={{ color: "var(--heading)" }}
+          >
             Browse by Category
           </h2>
 
           {/* Scroll Hint */}
-          <div className="hidden md:flex items-center text-sm" style={{ color: 'var(--foreground)' }}>
+          <div
+            className="hidden md:flex items-center text-sm"
+            style={{ color: "var(--foreground)" }}
+          >
             <Navigation className="w-4 h-4 mr-1" />
             Scroll or click to explore
           </div>
@@ -44,20 +50,23 @@ export default function PillarCardsRow({ categories }: PillarCardsRowProps) {
             >
               <div
                 className="rounded-xl p-6 h-full transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer border-2 border-transparent hover:border-[var(--accent)]"
-                style={{ backgroundColor: 'var(--surface-alt)' }}
+                style={{ backgroundColor: "var(--surface-alt)" }}
               >
                 {/* Icon */}
                 <div className="text-4xl mb-4">{category.icon}</div>
 
                 {/* Name */}
-                <h3 className="font-[family-name:var(--font-poppins)] font-bold text-lg mb-2" style={{ color: 'var(--heading)' }}>
+                <h3
+                  className="font-[family-name:var(--font-poppins)] font-bold text-lg mb-2"
+                  style={{ color: "var(--heading)" }}
+                >
                   {category.name}
                 </h3>
 
                 {/* Description */}
                 <p
                   className="text-sm mb-4 line-clamp-2"
-                  style={{ color: 'var(--foreground)' }}
+                  style={{ color: "var(--foreground)" }}
                 >
                   {category.description}
                 </p>
@@ -77,7 +86,10 @@ export default function PillarCardsRow({ categories }: PillarCardsRowProps) {
         </div>
 
         {/* Mobile Scroll Hint */}
-        <div className="flex md:hidden items-center justify-center mt-4 text-sm" style={{ color: 'var(--foreground)' }}>
+        <div
+          className="flex md:hidden items-center justify-center mt-4 text-sm"
+          style={{ color: "var(--foreground)" }}
+        >
           <ArrowRight className="w-4 h-4 mr-1" />
           Swipe to see more
         </div>

@@ -4,17 +4,20 @@
  * Manages filter state, API calls, and renders resources for a category
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import HeroHeader from '@/components/resources/HeroHeader';
-import FiltersBar from '@/components/resources/FiltersBar';
-import ResourceCardGrid from '@/components/resources/ResourceCardGrid';
-import { useResourceFilters } from '@/hooks/useResourceFilters';
-import { getResources, ResourceQueryParams } from '@/services/resourceService';
-import { ResourceCategory, Resource } from '@/types/resources';
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import HeroHeader from "@/components/resources/HeroHeader";
+import FiltersBar from "@/components/resources/FiltersBar";
+import ResourceCardGrid from "@/components/resources/ResourceCardGrid";
+import LeadMagnetSpotlight from "@/components/resources/LeadMagnetSpotlight";
+import ScrollToTop from "@/components/ScrollToTop";
+import { useResourceFilters } from "@/hooks/useResourceFilters";
+import { getResources, ResourceQueryParams } from "@/services/resourceService";
+import { ResourceCategory, Resource } from "@/types/resources";
+import { clientLogger } from "@/lib/client-logger";
 
 interface ClientCategoryPageProps {
   category: ResourceCategory;
@@ -26,15 +29,19 @@ interface ClientCategoryPageProps {
 export default function ClientCategoryPage({
   category,
   initialResources,
-  initialFeatured,
+  initialFeatured: _initialFeatured,
   initialTotal,
 }: ClientCategoryPageProps) {
   const [resources, setResources] = useState<Resource[]>(initialResources);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(initialTotal);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Override default category filter with current category
-  const { filters, debouncedQuery, updateFilter, resetFilters } = useResourceFilters();
+  // Skip URL sync since we're on a /resources/[category] page, not /resources
+  const { filters, debouncedQuery, updateFilter, resetFilters } =
+    useResourceFilters({ skipURLSync: true });
 
   /**
    * Fetch resources based on current filters
@@ -55,8 +62,13 @@ export default function ClientCategoryPage({
       const response = await getResources(params);
       setResources(response.resources);
       setTotalCount(response.totalCount);
-    } catch (error) {
-      console.error('Failed to fetch resources:', error);
+      setCurrentPage(response.currentPage);
+      setTotalPages(response.totalPages);
+    } catch (_error) {
+      clientLogger.error(
+        "Failed to fetch resources",
+        { component: "ClientCategoryPage", category: category.id },
+      );
     } finally {
       setLoading(false);
     }
@@ -73,7 +85,7 @@ export default function ClientCategoryPage({
    * Get available resource types for filter chips
    */
   const availableTypes = Array.from(
-    new Set(resources.flatMap((r) => r.type))
+    new Set(resources.flatMap((r) => r.type)),
   ).sort();
 
   return (
@@ -83,7 +95,7 @@ export default function ClientCategoryPage({
         <Link
           href="/resources"
           className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200 hover:opacity-70"
-          style={{ color: 'var(--accent)' }}
+          style={{ color: "var(--accent)" }}
         >
           <ArrowLeft className="w-4 h-4" />
           Back to All Resources
@@ -97,6 +109,12 @@ export default function ClientCategoryPage({
         totalCount={totalCount}
       />
 
+      {/* Lead Magnet Spotlight */}
+      <LeadMagnetSpotlight
+        categoryId={category.id}
+        categoryName={category.name}
+      />
+
       {/* Filters Bar */}
       <FiltersBar
         filters={filters}
@@ -104,21 +122,27 @@ export default function ClientCategoryPage({
         onReset={() => {
           resetFilters();
           // Reset to this category
-          updateFilter('category', category.id);
+          updateFilter("category", category.id);
         }}
         availableTypes={availableTypes}
       />
 
       {/* Resource Grid */}
-      <section className="py-12" style={{ backgroundColor: 'var(--surface)' }}>
+      <section className="py-12" style={{ backgroundColor: "var(--surface)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ResourceCardGrid
             resources={resources}
             loading={loading}
             totalCount={totalCount}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => updateFilter("page", page.toString())}
           />
         </div>
       </section>
+
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
     </>
   );
 }

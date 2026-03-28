@@ -1,3 +1,22 @@
+---
+title: "Inclusive Automation Readiness Kit - Quick Reference"
+description: "A comprehensive guide for mindful leadership"
+category: "mindful-leadership"
+type: "Guide"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - guide
+  - quick reference
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Inclusive Automation Readiness Kit - Quick Reference
 
 ## 15-Page Featured PDF Resource

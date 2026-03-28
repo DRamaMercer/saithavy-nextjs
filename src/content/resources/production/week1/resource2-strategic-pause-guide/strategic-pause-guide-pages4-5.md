@@ -1,3 +1,22 @@
+---
+title: "Pages 4-5: How to Practice + Scenario Examples"
+description: "A comprehensive guide for mindful leadership"
+category: "mindful-leadership"
+type: "Guide"
+featured: false
+difficulty: "Intermediate"
+timeToRead: "15 min"
+targetAudience: "All Professionals"
+keywords:
+  - mindful leadership
+  - guide
+  - strategic pause guide pages4 5
+lastUpdated: "2026-03-28"
+isPremium: false
+downloads: 0
+fileSize: "0.5 MB PDF"
+---
+
 # Pages 4-5: How to Practice + Scenario Examples
 
 ---
