@@ -6,9 +6,10 @@
  * Cache: No cache (events must be tracked immediately)
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { edgeLogger } from "@/lib/edge-logger";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 /**
  * Event schema validation
@@ -40,30 +41,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Validate required fields
     if (!body.name) {
       return NextResponse.json(
-        { error: 'Missing required field: name' },
-        { status: 400 }
+        { error: "Missing required field: name" },
+        { status: 400 },
       );
     }
 
     // Build event object
     const event: AnalyticsEvent = {
       name: body.name,
-      category: body.category || 'general',
+      category: body.category || "general",
       label: body.label,
       value: body.value,
       properties: body.properties || {},
       timestamp: new Date().toISOString(),
       url: body.url || request.url,
-      userAgent: request.headers.get('user-agent') || 'unknown',
+      userAgent: request.headers.get("user-agent") || "unknown",
       geo: {
-        country: request.headers.get('x-vercel-ip-country') || undefined,
-        region: request.headers.get('x-vercel-ip-region') || undefined,
-        city: request.headers.get('x-vercel-ip-city') || undefined,
+        country: request.headers.get("x-vercel-ip-country") || undefined,
+        region: request.headers.get("x-vercel-ip-region") || undefined,
+        city: request.headers.get("x-vercel-ip-city") || undefined,
       },
       ip:
-        request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-        request.headers.get('x-real-ip') ||
-        'unknown',
+        request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+        request.headers.get("x-real-ip") ||
+        "unknown",
     };
 
     // TODO: Send to analytics platform (e.g., Vercel Analytics, PostHog)
@@ -71,8 +72,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // await sendToAnalytics(event);
 
     // Development-only logging (disabled in production)
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Analytics] Event:', {
+    if (process.env.NODE_ENV === "development") {
+      edgeLogger.info("[Analytics] Event:", {
         name: event.name,
         category: event.category,
         geo: event.geo.country,
@@ -83,24 +84,29 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(
       {
         success: true,
-        message: 'Event tracked',
+        message: "Event tracked",
       },
       {
         status: 202,
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
-          'X-Edge-Location': request.headers.get('x-vercel-ip-region') || 'unknown',
+          "Cache-Control": "private, no-cache, no-store, must-revalidate",
+          "X-Edge-Location":
+            request.headers.get("x-vercel-ip-region") || "unknown",
         },
-      }
+      },
     );
   } catch (error) {
-    console.error('[Analytics] Error:', error);
+    edgeLogger.error(
+      "[Analytics] Error",
+      { endpoint: "analytics" },
+      error as Error,
+    );
 
     return NextResponse.json(
       {
-        error: 'Failed to track event',
+        error: "Failed to track event",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -108,17 +114,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 /**
  * GET handler - Return analytics tracking status
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   return NextResponse.json(
     {
-      status: 'operational',
-      version: '1.0.0',
+      status: "operational",
+      version: "1.0.0",
       timestamp: new Date().toISOString(),
     },
     {
       headers: {
-        'Cache-Control': 'public, s-maxage=60',
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
       },
-    }
+    },
   );
 }

@@ -6,9 +6,10 @@
  * Cache: 1 hour with stale-while-revalidate
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { edgeLogger } from "@/lib/edge-logger";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 /**
  * Content configuration by country
@@ -23,46 +24,52 @@ interface LocalizedContent {
 
 const contentConfig: Record<string, LocalizedContent> = {
   US: {
-    currency: 'USD',
-    language: 'en-US',
-    dateFormat: 'MM/DD/YYYY',
+    currency: "USD",
+    language: "en-US",
+    dateFormat: "MM/DD/YYYY",
     pricingMultiplier: 1.0,
-    message: 'Welcome! Check out our resources for mindful leadership and remote work.',
+    message:
+      "Welcome! Check out our resources for mindful leadership and remote work.",
   },
   GB: {
-    currency: 'GBP',
-    language: 'en-GB',
-    dateFormat: 'DD/MM/YYYY',
+    currency: "GBP",
+    language: "en-GB",
+    dateFormat: "DD/MM/YYYY",
     pricingMultiplier: 0.79,
-    message: 'Welcome! Explore our mindful leadership and remote work resources.',
+    message:
+      "Welcome! Explore our mindful leadership and remote work resources.",
   },
   DE: {
-    currency: 'EUR',
-    language: 'de-DE',
-    dateFormat: 'DD.MM.YYYY',
+    currency: "EUR",
+    language: "de-DE",
+    dateFormat: "DD.MM.YYYY",
     pricingMultiplier: 0.92,
-    message: 'Willkommen! Entdecken Sie unsere Ressourcen für achtsame Führung und Remote-Arbeit.',
+    message:
+      "Willkommen! Entdecken Sie unsere Ressourcen für achtsame Führung und Remote-Arbeit.",
   },
   FR: {
-    currency: 'EUR',
-    language: 'fr-FR',
-    dateFormat: 'DD/MM/YYYY',
+    currency: "EUR",
+    language: "fr-FR",
+    dateFormat: "DD/MM/YYYY",
     pricingMultiplier: 0.92,
-    message: 'Bienvenue! Découvrez nos ressources sur un leadership conscient et le travail à distance.',
+    message:
+      "Bienvenue! Découvrez nos ressources sur un leadership conscient et le travail à distance.",
   },
   CA: {
-    currency: 'CAD',
-    language: 'en-CA',
-    dateFormat: 'YYYY-MM-DD',
+    currency: "CAD",
+    language: "en-CA",
+    dateFormat: "YYYY-MM-DD",
     pricingMultiplier: 1.36,
-    message: 'Welcome! Explore our mindful leadership and remote work resources.',
+    message:
+      "Welcome! Explore our mindful leadership and remote work resources.",
   },
   AU: {
-    currency: 'AUD',
-    language: 'en-AU',
-    dateFormat: 'DD/MM/YYYY',
+    currency: "AUD",
+    language: "en-AU",
+    dateFormat: "DD/MM/YYYY",
     pricingMultiplier: 1.53,
-    message: 'G\'day! Check out our resources for mindful leadership and remote work.',
+    message:
+      "G'day! Check out our resources for mindful leadership and remote work.",
   },
 };
 
@@ -72,9 +79,9 @@ const contentConfig: Record<string, LocalizedContent> = {
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     // Get geolocation from headers (Vercel Edge provides these)
-    const country = request.headers.get('x-vercel-ip-country') || 'US';
-    const city = request.headers.get('x-vercel-ip-city') || 'Unknown';
-    const region = request.headers.get('x-vercel-ip-region') || 'Unknown';
+    const country = request.headers.get("x-vercel-ip-country") || "US";
+    const city = request.headers.get("x-vercel-ip-city") || "Unknown";
+    const region = request.headers.get("x-vercel-ip-region") || "Unknown";
 
     // Get localized content
     const config = contentConfig[country] || contentConfig.US;
@@ -93,25 +100,29 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const response = NextResponse.json(data, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400', // 1 hour cache, 24 hour SWR
-        'Content-Language': config.language,
-        'Vary': 'Accept-Language, CloudFront-Viewer-Country',
-        'X-Edge-Location': region,
-        'X-Edge-Country': country,
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600", // 5 min cache, 10 min SWR
+        "Content-Language": config.language,
+        Vary: "Accept-Language, CloudFront-Viewer-Country",
+        "X-Edge-Location": region,
+        "X-Edge-Country": country,
       },
     });
 
     return response;
   } catch (error) {
-    console.error('[GeoContent] Error:', error);
+    edgeLogger.error(
+      "[GeoContent] Error",
+      { country: request.headers.get("x-vercel-ip-country") },
+      error as Error,
+    );
 
-    const country = request.headers.get('x-vercel-ip-country') || 'US';
+    const country = request.headers.get("x-vercel-ip-country") || "US";
     return NextResponse.json(
       {
-        error: 'Failed to load localized content',
+        error: "Failed to load localized content",
         country,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
