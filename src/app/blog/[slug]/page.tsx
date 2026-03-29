@@ -5,6 +5,47 @@ import { format, parseISO } from "date-fns";
 import ReadingProgress from "@/components/ReadingProgress";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import Callout from "@/components/mdx/Callout";
+import Checklist from "@/components/mdx/Checklist";
+import ChecklistItem from "@/components/mdx/ChecklistItem";
+import Accordion, { AccordionItem } from "@/components/mdx/Accordion";
+import Tabs, { Tab } from "@/components/mdx/Tabs";
+import StepGuide from "@/components/mdx/StepGuide";
+import StepGuideStep from "@/components/mdx/StepGuideStep";
+import ImageGallery from "@/components/mdx/ImageGallery";
+import Timeline from "@/components/mdx/Timeline";
+import Quote from "@/components/mdx/Quote";
+import Stats from "@/components/mdx/Stats";
+import CodeBlock from "@/components/mdx/CodeBlock";
+import VideoEmbed from "@/components/mdx/VideoEmbed";
+import ProgressBar from "@/components/mdx/ProgressBar";
+import TwoColumn from "@/components/mdx/TwoColumn";
+import ToolRecommendation from "@/components/mdx/ToolRecommendation";
+import StatsHighlight from "@/components/mdx/StatsHighlight";
+import ProTip from "@/components/mdx/ProTip";
+
+const mdxComponents = {
+  Callout,
+  Checklist,
+  ChecklistItem,
+  Accordion,
+  AccordionItem,
+  Tabs,
+  Tab,
+  StepGuide,
+  StepGuideStep,
+  ImageGallery,
+  Timeline,
+  Quote,
+  Stats,
+  CodeBlock,
+  VideoEmbed,
+  ProgressBar,
+  TwoColumn,
+  ToolRecommendation,
+  StatsHighlight,
+  ProTip,
+};
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -75,7 +116,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 className="text-sm font-medium"
                 style={{ color: "var(--foreground)" }}
               >
-                {format(parseISO(post.date), "MMMM d, yyyy")}
+                {post.date ? format(parseISO(post.date), "MMMM d, yyyy") : "Unknown date"}
               </span>
               <span
                 className="text-sm font-medium"
@@ -116,7 +157,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               Tailwind typography plugin is required for prose to work correctly.
               It will be installed via npm in the next step to properly style the MDX.
             */}
-            <MDXRemote source={post.content} />
+            <MDXRemote
+              source={post.content}
+              components={mdxComponents}
+              options={{
+                mdxOptions: {
+                  remarkPlugins: [],
+                  rehypePlugins: [],
+                },
+                parseFrontmatter: true,
+              }}
+            />
           </div>
 
           <hr className="my-12" style={{ borderColor: "var(--border)" }} />

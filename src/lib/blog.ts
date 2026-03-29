@@ -29,12 +29,34 @@ export function getPostBySlug(slug: string): Post {
 
   const stats = readingTime(content);
 
+  // Extract category from either data.category (string) or data.categories (array of objects)
+  let category = "Uncategorized";
+  if (typeof data.category === "string") {
+    category = data.category;
+  } else if (Array.isArray(data.categories) && data.categories.length > 0) {
+    // categories is an array of objects like [{slug, name}]
+    const firstCategory = data.categories[0];
+    if (typeof firstCategory === "string") {
+      category = firstCategory;
+    } else if (firstCategory && typeof firstCategory === "object") {
+      // Use the name if available, otherwise the slug
+      category = (firstCategory as any).name || (firstCategory as any).slug || "Uncategorized";
+    }
+  }
+
+  // Handle date - could be string or object (with __value in some cases)
+  let dateValue = data.date || data.publishedAt;
+  if (dateValue && typeof dateValue === 'object' && '__value' in dateValue) {
+    dateValue = (dateValue as any).__value;
+  }
+  const date = String(dateValue || '');
+
   return {
     slug: realSlug,
     title: data.title as string,
-    date: data.date as string,
-    description: data.description as string,
-    category: (data.category as string) || "Uncategorized",
+    date,
+    description: (data.description || data.excerpt) as string,
+    category,
     tags: (data.tags as string[]) || [],
     content,
     readingTime: stats.text,
