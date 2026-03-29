@@ -1,5 +1,0 @@
-src/components/DownloadModal.tsx(73,18): error TS2322: Type 'LucideIcon' is not assignable to type 'ReactNode'.
-src/components/ResourceCard.tsx(14,18): error TS2339: Property 'isPremium' does not exist on type 'Resource'.
-src/components/ResourceCard.tsx(30,7): error TS2322: Type 'LucideIcon' is not assignable to type 'ReactNode'.
-src/components/ResourceCard.tsx(31,19): error TS2339: Property 'isPremium' does not exist on type 'Resource'.
-src/components/ResourceCard.tsx(111,21): error TS2339: Property 'isPremium' does not exist on type 'Resource'.
