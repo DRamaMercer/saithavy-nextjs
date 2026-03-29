@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useId } from "react";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -8,11 +8,15 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, leftIcon, rightIcon, className = "", ...props }, ref) => {
+  function Input({ label, error, leftIcon, rightIcon, className = "", id, ...props }, ref) {
+    // Generate unique ID for label-input association
+    const generatedId = useId();
+    const inputId = id || generatedId;
+
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-[#1B263B] mb-1.5">
+          <label htmlFor={inputId} className="block text-sm font-medium text-[#1B263B] mb-1.5">
             {label}
           </label>
         )}
@@ -24,11 +28,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           <input
             ref={ref}
+            id={inputId}
             className={`
-            w-full px-4 py-2.5 
-            ${leftIcon ? "pl-10" : ""} 
+            w-full px-4 py-2.5
+            ${leftIcon ? "pl-10" : ""}
             ${rightIcon ? "pr-10" : ""}
-            border border-gray-300 rounded-lg 
+            border border-gray-300 rounded-lg
             text-[#1B263B] placeholder-[#5E6472]
             focus:outline-none focus:ring-2 focus:ring-[#E07A5F] focus:border-transparent
             transition-all duration-200
@@ -53,3 +58,4 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = "Input";
 
 export default Input;
+export { Input };

@@ -17,12 +17,12 @@ export interface BadgeProps {
   className?: string;
 }
 
-const Badge: React.FC<BadgeProps> = ({
+function Badge({
   children,
   variant = "default",
   size = "sm",
   className = "",
-}) => {
+}: BadgeProps): React.JSX.Element {
   const variants = {
     default: "bg-gray-100 text-gray-800",
     primary: "bg-[#E07A5F] text-white",
@@ -55,6 +55,7 @@ const Badge: React.FC<BadgeProps> = ({
       {children}
     </span>
   );
-};
+}
 
 export default Badge;
+export { Badge };

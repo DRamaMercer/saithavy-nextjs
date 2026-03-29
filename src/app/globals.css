@@ -203,6 +203,45 @@ html {
 }
 
 /* ============================================
+   Accessibility - Focus Visible
+   ============================================ */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip Navigation */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  z-index: 9999;
+  padding: 1rem;
+  background: var(--accent);
+  color: white;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  left: 10px;
+  top: 10px;
+}
+
+/* ============================================
+   Reduced Motion Support
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
    Typed.js Cursor
    ============================================ */
 .typed-cursor {

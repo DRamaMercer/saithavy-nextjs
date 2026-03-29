@@ -6,21 +6,23 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  ariaLabel?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({
+function Button({
   variant = "primary",
   size = "md",
   children,
   isLoading = false,
   leftIcon,
   rightIcon,
+  ariaLabel,
   className = "",
   disabled,
   ...props
-}) => {
+}: ButtonProps): React.JSX.Element {
   const baseStyles =
-    "font-semibold rounded-lg transition-all duration-200 inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed";
+    "font-semibold rounded-lg transition-all duration-200 inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blueprint-terracotta focus-visible:outline-offset-2";
 
   const variants = {
     primary:
@@ -42,6 +44,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
       disabled={disabled || isLoading}
+      aria-label={ariaLabel || (typeof children === 'string' ? children : 'Button')}
       {...props}
     >
       {isLoading ? (
@@ -74,6 +77,7 @@ const Button: React.FC<ButtonProps> = ({
       )}
     </button>
   );
-};
+}
 
 export default Button;
+export { Button };
