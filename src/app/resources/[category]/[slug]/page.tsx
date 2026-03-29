@@ -325,6 +325,16 @@ export default async function ResourceDetailPage({
   // Get related resources
   const relatedResources = getRelatedResources(resource);
 
+  // Get all resources for navigation
+  const allResources = resources;
+
+  // Find current resource index
+  const currentIndex = allResources.findIndex(
+    (r) => r.slug === resource.slug && r.category === resource.category
+  );
+  const previousResource = currentIndex > 0 ? allResources[currentIndex - 1] : null;
+  const nextResource = currentIndex < allResources.length - 1 ? allResources[currentIndex + 1] : null;
+
   // Get content with metadata (if exists)
   let contentWithMetadata = null;
   if (hasContent) {
@@ -644,6 +654,72 @@ export default async function ResourceDetailPage({
                 ))}
               </ul>
             </section>
+          )}
+
+          {/* Previous/Next Navigation */}
+          {(previousResource || nextResource) && (
+            <nav
+              aria-label="Resource navigation"
+              className="mt-16 flex justify-between items-center gap-4 p-6 bg-gradient-to-r from-[var(--surface-alt)] to-white rounded-2xl border border-[var(--border)] shadow-lg"
+            >
+              {previousResource && (
+                <Link
+                  href={`/resources/${previousResource.category}/${previousResource.slug}`}
+                  className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all hover:shadow-md focus-visible:ring-2 focus-visible:ring-blueprint-terracotta focus-visible:ring-offset-2"
+                  style={{
+                    color: "var(--heading)",
+                    backgroundColor: "var(--surface)",
+                  }}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7 7"
+                    />
+                  </svg>
+                  <span className="hidden sm:inline">
+                    {previousResource.title}
+                  </span>
+                  <span className="sm:hidden">Previous</span>
+                </Link>
+              )}
+
+              {nextResource && (
+                <Link
+                  href={`/resources/${nextResource.category}/${nextResource.slug}`}
+                  className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all hover:shadow-md focus-visible:ring-2 focus-visible:ring-blueprint-terracotta focus-visible:ring-offset-2"
+                  style={{
+                    color: "var(--heading)",
+                    backgroundColor: "var(--surface)",
+                  }}
+                >
+                  <span className="hidden sm:inline">
+                    {nextResource.title}
+                  </span>
+                  <span className="sm:hidden">Next</span>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+              )}
+            </nav>
           )}
 
           {/* Related Resources */}

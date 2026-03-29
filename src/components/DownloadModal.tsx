@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { X, Mail, Download, CheckCircle2 } from "lucide-react";
 import { Resource } from "@/types/resources";
+import { FocusTrap } from "focus-trap-react";
 
 const downloadSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required." }),
@@ -34,37 +35,8 @@ function DownloadModal({ resource, onClose }: Props) {
     resolver: zodResolver(downloadSchema),
   });
 
-  // Focus management for accessibility
-  useEffect(() => {
-    // Focus the close button when modal opens
-    closeButtonRef.current?.focus();
-
-    // Trap focus within modal
-    const handleTab = (e: KeyboardEvent) => {
-      if (e.key !== "Tab" || !modalRef.current) return;
-
-      const focusableElements = modalRef.current.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-
-      if (e.shiftKey) {
-        if (document.activeElement === firstElement) {
-          lastElement.focus();
-          e.preventDefault();
-        }
-      } else {
-        if (document.activeElement === lastElement) {
-          firstElement.focus();
-          e.preventDefault();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleTab);
-    return () => document.removeEventListener("keydown", handleTab);
-  }, []);
+  // Focus trap using focus-trap-react library
+  // Note: FocusTrap component wraps the modal content in the JSX
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -116,12 +88,20 @@ function DownloadModal({ resource, onClose }: Props) {
       aria-modal="true"
       aria-labelledby={`modal-title-${resource.id}`}
     >
-      <div
-        ref={modalRef}
-        className="w-full max-w-md relative rounded-2xl shadow-2xl p-8 animate-in zoom-in-95 duration-200"
-        style={{ backgroundColor: "var(--surface)" }}
-        onClick={handleModalClick}
+      <FocusTrap
+        active={true}
+        focusTrapOptions={{
+          initialFocus: false,
+          clickOutsideDeactivates: true,
+          onPostActivate: () => closeButtonRef.current?.focus(),
+        }}
       >
+        <div
+          ref={modalRef}
+          className="w-full max-w-md relative rounded-2xl shadow-2xl p-8 animate-in zoom-in-95 duration-200"
+          style={{ backgroundColor: "var(--surface)" }}
+          onClick={handleModalClick}
+        >
         <button
           ref={closeButtonRef}
           onClick={onClose}
@@ -285,7 +265,8 @@ function DownloadModal({ resource, onClose }: Props) {
             </form>
           </>
         )}
-      </div>
+        </div>
+      </FocusTrap>
     </div>
   );
 }

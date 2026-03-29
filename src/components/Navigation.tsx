@@ -85,8 +85,10 @@ export default function Navigation() {
             <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2"
-              aria-label="Toggle menu"
+              className="p-2 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               <svg
                 className="w-6 h-6"
@@ -94,6 +96,7 @@ export default function Navigation() {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 style={{ color: "var(--foreground)" }}
+                aria-hidden="true"
               >
                 {mobileMenuOpen ? (
                   <path
@@ -118,15 +121,18 @@ export default function Navigation() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div
+            id="mobile-menu"
             className="md:hidden pb-4 border-t"
             style={{ borderColor: "var(--border)" }}
+            role="navigation"
+            aria-label="Mobile navigation"
           >
             <div className="pt-4 space-y-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block px-4 py-2 rounded-lg transition-colors duration-200"
+                  className="block px-4 py-2 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   style={{
                     color:
                       pathname === link.href
@@ -134,6 +140,7 @@ export default function Navigation() {
                         : "var(--foreground)",
                     fontWeight: pathname === link.href ? 600 : 400,
                   }}
+                  aria-current={pathname === link.href ? "page" : undefined}
                 >
                   {link.label}
                 </Link>

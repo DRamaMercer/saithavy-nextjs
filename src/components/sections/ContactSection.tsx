@@ -17,9 +17,10 @@ export default function ContactSection() {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
+    mode: "onTouched", // Validate on field blur for better UX
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -111,12 +112,15 @@ export default function ContactSection() {
               <div
                 className="p-4 rounded-lg mb-6 flex items-center animate-[fadeIn_0.5s_ease]"
                 style={{ backgroundColor: "var(--highlight)", color: "white" }}
+                role="status"
+                aria-live="polite"
               >
                 <svg
                   className="w-6 h-6 mr-2 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -133,12 +137,18 @@ export default function ContactSection() {
             )}
 
             {(submitStatus === "error" || submitStatus === "rate-limited") && (
-              <div className="bg-red-500 text-white p-4 rounded-lg mb-6 flex items-center">
+              <div
+                id="submit-error"
+                className="bg-red-500 text-white p-4 rounded-lg mb-6 flex items-center"
+                role="alert"
+                aria-live="assertive"
+              >
                 <svg
                   className="w-6 h-6 mr-2 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -208,6 +218,8 @@ export default function ContactSection() {
                     id="lastName"
                     type="text"
                     {...register("lastName")}
+                    aria-invalid={errors.lastName ? "true" : "false"}
+                    aria-describedby={errors.lastName ? "lastName-error" : undefined}
                     className={`form-field w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all ${
                       errors.lastName ? "border-red-500" : ""
                     }`}
@@ -220,7 +232,7 @@ export default function ContactSection() {
                     }}
                   />
                   {errors.lastName && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p id="lastName-error" className="text-red-500 text-sm mt-1" role="alert">
                       {errors.lastName.message}
                     </p>
                   )}
@@ -239,6 +251,8 @@ export default function ContactSection() {
                   id="email"
                   type="email"
                   {...register("email")}
+                  aria-invalid={errors.email ? "true" : "false"}
+                  aria-describedby={errors.email ? "email-error" : undefined}
                   className={`form-field w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all ${
                     errors.email ? "border-red-500" : ""
                   }`}
@@ -249,7 +263,7 @@ export default function ContactSection() {
                   }}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p id="email-error" className="text-red-500 text-sm mt-1" role="alert">
                     {errors.email.message}
                   </p>
                 )}
@@ -266,6 +280,8 @@ export default function ContactSection() {
                 <select
                   id="interest"
                   {...register("interest")}
+                  aria-invalid={errors.interest ? "true" : "false"}
+                  aria-describedby={errors.interest ? "interest-error" : undefined}
                   className={`form-field w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all ${
                     errors.interest ? "border-red-500" : ""
                   }`}
@@ -287,7 +303,7 @@ export default function ContactSection() {
                   ))}
                 </select>
                 {errors.interest && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p id="interest-error" className="text-red-500 text-sm mt-1" role="alert">
                     {errors.interest.message}
                   </p>
                 )}
@@ -306,6 +322,8 @@ export default function ContactSection() {
                   rows={4}
                   {...register("message")}
                   placeholder="Tell me about your goals and how I can help..."
+                  aria-invalid={errors.message ? "true" : "false"}
+                  aria-describedby={errors.message ? "message-error" : undefined}
                   className={`form-field w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-all resize-none ${
                     errors.message ? "border-red-500" : ""
                   }`}
@@ -316,7 +334,7 @@ export default function ContactSection() {
                   }}
                 />
                 {errors.message && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p id="message-error" className="text-red-500 text-sm mt-1" role="alert">
                     {errors.message.message}
                   </p>
                 )}
@@ -325,7 +343,9 @@ export default function ContactSection() {
               <button
                 type="submit"
                 disabled={submitStatus === "loading"}
-                className="w-full text-white px-8 py-4 rounded-lg font-[family-name:var(--font-poppins)] font-semibold transition-all duration-200 hover:opacity-90 hover:scale-[1.02] transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                aria-busy={submitStatus === "loading"}
+                aria-describedby={submitStatus === "error" || submitStatus === "rate-limited" ? "submit-error" : undefined}
+                className="w-full text-white px-8 py-4 rounded-lg font-[family-name:var(--font-poppins)] font-semibold transition-all duration-200 hover:opacity-90 hover:scale-[1.02] transform disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
                 style={{ backgroundColor: "var(--accent)" }}
               >
                 {submitStatus === "loading" ? (
@@ -334,6 +354,7 @@ export default function ContactSection() {
                       className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                       fill="none"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
                       <circle
                         className="opacity-25"
@@ -349,7 +370,7 @@ export default function ContactSection() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       />
                     </svg>
-                    Sending...
+                    <span>Sending...</span>
                   </span>
                 ) : (
                   "Send Message"

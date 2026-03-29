@@ -2,15 +2,16 @@
  * ResourcePreviewModal - Modal for previewing featured resources
  *
  * Shows resource details, download options, and full info
- * Reuses/enhances DownloadModal functionality
+ * Enhanced with focus trap for accessibility
  */
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { X, Download, BookOpen, Clock, Target, Award } from "lucide-react";
 import Link from "next/link";
 import { Resource } from "@/types/resources";
+import { FocusTrap } from "focus-trap-react";
 
 interface ResourcePreviewModalProps {
   resource: Resource;
@@ -23,7 +24,10 @@ export default function ResourcePreviewModal({
   isOpen,
   onClose,
 }: ResourcePreviewModalProps) {
-  // Handle escape key
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Handle escape key and body scroll
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -54,15 +58,28 @@ export default function ResourcePreviewModal({
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
       {/* Modal Content */}
-      <div
-        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl"
-        style={{ backgroundColor: "var(--surface)" }}
-        onClick={(e) => e.stopPropagation()}
+      <FocusTrap
+        active={true}
+        focusTrapOptions={{
+          initialFocus: false,
+          clickOutsideDeactivates: true,
+          onPostActivate: () => closeButtonRef.current?.focus(),
+        }}
       >
+        <div
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`modal-title-${resource.id}`}
+          className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl"
+          style={{ backgroundColor: "var(--surface)" }}
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Close Button */}
         <button
+          ref={closeButtonRef}
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--surface-alt)]"
+          className="absolute top-4 right-4 p-2 rounded-lg transition-colors duration-200 hover:bg-[var(--surface-alt)] focus:outline-none focus:ring-2 focus:ring-amber-500"
           aria-label="Close modal"
         >
           <X className="w-6 h-6" style={{ color: "var(--foreground)" }} />
@@ -85,6 +102,7 @@ export default function ResourcePreviewModal({
 
           {/* Title */}
           <h2
+            id={`modal-title-${resource.id}`}
             className="font-[family-name:var(--font-poppins)] font-bold text-2xl md:text-3xl mb-4"
             style={{ color: "var(--heading)" }}
           >
@@ -242,7 +260,8 @@ export default function ResourcePreviewModal({
             </button>
           </div>
         </div>
-      </div>
+        </div>
+      </FocusTrap>
     </div>
   );
 }

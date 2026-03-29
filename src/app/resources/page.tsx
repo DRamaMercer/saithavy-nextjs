@@ -15,6 +15,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { resources, categories } from "@/lib/resourcesData";
 import ClientResourcesPage from "./ClientResourcesPage";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 // ISR: Revalidate every 30 minutes for resource library updates
 export const revalidate = 1800;
@@ -141,14 +142,16 @@ export default function ResourcesPage() {
       />
 
       {/* Client-side page with hooks and interactivity */}
-      <Suspense fallback={<ResourcesLoading />}>
-        <ClientResourcesPage
-          initialCategories={categories}
-          initialFeatured={mainFeatured}
-          initialSupporting={supportingFeatured}
-          initialTotal={resources.length}
-        />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<ResourcesLoading />}>
+          <ClientResourcesPage
+            initialCategories={categories}
+            initialFeatured={mainFeatured}
+            initialSupporting={supportingFeatured}
+            initialTotal={resources.length}
+          />
+        </Suspense>
+      </ErrorBoundary>
     </>
   );
 }
