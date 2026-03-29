@@ -1,0 +1,458 @@
+---
+# =============================================================================
+# APEX BLOG POST TEMPLATE v2.0
+# =============================================================================
+# Copy this file and rename it to: YYYY-MM-DD-post-slug.mdx
+# Example: 2026-01-27-my-amazing-post.mdx
+#
+# This template includes all MDX components from the Apex Blog System
+# See: /docs/apex-blog-system-guide.md for complete documentation
+# =============================================================================
+
+# REQUIRED FIELDS
+title: "Your Compelling Blog Post Title (50-60 characters ideal)"
+excerpt: "A concise, engaging summary that appears in previews and search results. Keep it under 160 characters for optimal SEO."
+
+# FEATURED IMAGE
+# Recommended size: 1200x630px (Open Graph standard 16:9 ratio)
+featuredImage:
+  url: "/blog/your-image.jpg"
+  alt: "Descriptive alt text for accessibility and SEO"
+  width: 1200
+  height: 630
+
+# AUTHOR
+author:
+  name: "Your Name"
+  image: "/images/author.jpg"
+
+# DATES
+publishedAt: "2024-01-15"  # Format: YYYY-MM-DD
+updatedAt: "2024-01-15"  # Update when making edits
+
+# CATEGORIES & TAGS
+# Categories: Broad topics (use slug + name format for proper validation)
+categories:
+  - slug: "leadership"
+    name: "Leadership"
+
+# Tags: Specific keywords (5-8 recommended)
+tags: ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"]
+
+# SEO METADATA (Optional but recommended)
+seo:
+  title: "Custom SEO Title | Your Brand"  # Max 60 characters
+  description: "Custom meta description for search engines"  # Max 160 characters
+  keywords: ["seo", "keyword", "phrases"]
+  noindex: false  # Set to true to exclude from search engines
+  canonicalUrl: "https://yourdomain.com/blog/your-post"  # If republishing
+
+# OPTIONAL METADATA
+# readingTime: 7  # Minutes (auto-calculated if not provided)
+# featured: true  # Show in featured posts section
+# draft: false  # Set to true to hide from production
+---
+
+# =============================================================================
+# CONTENT STARTS HERE
+# =============================================================================
+
+## Introduction
+
+Start with a compelling introduction that hooks the reader. The first paragraph should clearly state what the post is about and why it matters to your audience.
+
+<Callout type="tip" title="Quick Overview">
+Use this callout component to provide a quick summary or key takeaway upfront. This helps readers understand the value immediately.
+</Callout>
+
+## Main Section Heading (H2)
+
+Break your content into clear sections with descriptive H2 headings. This improves readability and SEO.
+
+### Subsection (H3)
+
+Use H3 for subsections when needed. Maintain a logical hierarchy.
+
+## Why This Matters
+
+Explain the importance or relevance of your topic. Connect with your reader's needs and pain points.
+
+## Key Takeaways
+
+Use bullet points for easy scanning:
+
+- **Bold important points**: Make key information stand out
+- Keep bullets concise and actionable
+- Use parallel structure for consistency
+- Aim for 3-7 bullets per list
+
+## MDX Components Examples
+
+### Callout/Alert Components
+
+<Callout type="tip" title="Pro Tip">
+This is a tip callout for helpful advice and best practices.
+</Callout>
+
+<Callout type="warning" title="Important Warning">
+This is a warning callout for potential pitfalls or important considerations.
+</Callout>
+
+<Callout type="info" title="Additional Information">
+This is an info callout for additional context and details.
+</Callout>
+
+<Callout type="error" title="Critical Error">
+This is an error callout for mistakes to avoid or critical issues.
+</Callout>
+
+<Callout type="success" title="Success">
+This is a success callout for positive outcomes and achievements.
+</Callout>
+
+### Tabbed Content
+
+<Tabs>
+  <div label="Overview">
+    Content for the first tab goes here. This is useful for organizing related information.
+  </div>
+  <div label="Details">
+    Content for the second tab. Use tabs to reduce cognitive load and improve scannability.
+  </div>
+  <div label="Examples">
+    Content for the third tab with practical examples.
+  </div>
+</Tabs>
+
+### Accordion/Collapsible Sections
+
+<Accordion
+  items={[
+    {
+      id: 'section1',
+      title: 'What is this concept?',
+      content: 'Detailed explanation of the concept. Accordion components help organize complex information into digestible sections.'
+    },
+    {
+      id: 'section2',
+      title: 'How does it work?',
+      content: 'Step-by-step explanation of how this concept works in practice.'
+    },
+    {
+      id: 'section3',
+      title: 'Common use cases',
+      content: 'Real-world applications and scenarios where this concept is applied.'
+    }
+  ]}
+  allowMultipleOpen={true}
+/>
+
+### Interactive Checklist
+
+<Checklist
+  title="Implementation Checklist"
+  items={[
+    { id: 'task1', text: 'First key task to complete', checked: false },
+    { id: 'task2', text: 'Second important task', checked: false },
+    { id: 'task3', text: 'Third critical step', checked: false },
+    { id: 'task4', text: 'Final task to complete', checked: false }
+  ]}
+  storageKey="post-checklist-unique-id"
+/>
+
+### Step-by-Step Guide with Progress
+
+<StepGuide
+  title="How to Implement This Strategy"
+  description="Follow these steps to achieve the desired outcome"
+  steps={[
+    {
+      title: 'Step 1: Preparation',
+      content: 'Detailed instructions for the preparation phase. Include all necessary prerequisites and setup requirements.',
+      estimatedTime: '5 min'
+    },
+    {
+      title: 'Step 2: Execution',
+      content: 'Step-by-step instructions for the main execution phase. Break down complex tasks into manageable actions.',
+      estimatedTime: '15 min'
+    },
+    {
+      title: 'Step 3: Optimization',
+      content: 'Refinement and optimization steps to maximize results.',
+      estimatedTime: '10 min'
+    },
+    {
+      title: 'Step 4: Review',
+      content: 'Final review and validation steps to ensure everything works correctly.',
+      estimatedTime: '5 min'
+    }
+  ]}
+  totalEstimatedTime="35 min"
+  showProgress={true}
+/>
+
+### Image Gallery
+
+<ImageGallery
+  images={[
+    {
+      src: '/images/blog/example1.jpg',
+      alt: 'Description of first example image',
+      caption: 'Optional caption for the first image'
+    },
+    {
+      src: '/images/blog/example2.jpg',
+      alt: 'Description of second example image',
+      caption: 'Optional caption for the second image'
+    },
+    {
+      src: '/images/blog/example3.jpg',
+      alt: 'Description of third example image',
+      caption: 'Optional caption for the third image'
+    }
+  ]}
+  layout="grid"
+  columns={3}
+/>
+
+### Code Examples
+
+Code blocks get automatic syntax highlighting with line numbers:
+
+```typescript
+// TypeScript example with syntax highlighting
+interface Example {
+  name: string;
+  value: number;
+}
+
+function processExample(example: Example): string {
+  return `Processing ${example.name} with value ${example.value}`;
+}
+
+const result = processExample({ name: 'Test', value: 42 });
+console.log(result);
+```
+
+```javascript
+// JavaScript example
+const data = [1, 2, 3, 4, 5];
+const doubled = data.map(x => x * 2);
+console.log(doubled); // [2, 4, 6, 8, 10]
+```
+
+```python
+# Python example
+def calculate_metric(data):
+    """Calculate important metric from data."""
+    return sum(data) / len(data)
+
+result = calculate_metric([1, 2, 3, 4, 5])
+print(f"Average: {result}")
+```
+
+## Common Mistakes to Avoid
+
+Address potential pitfalls:
+
+- ❌ **Mistake 1**: Why it's problematic and what goes wrong
+- ❌ **Mistake 2**: The negative impact on results
+- ❌ **Mistake 3**: Common oversight that causes issues
+- ✅ **Better Approach**: The right way to do it with explanation
+
+## Expert Tips
+
+Share insider knowledge or advanced techniques:
+
+> **Traditional Blockquote**: Use this format for important quotes, testimonials, or key insights that deserve special attention.
+
+## Resources and Tools
+
+Link to helpful resources:
+
+- [Resource Name](https://example.com): Brief description of what it offers
+- [Tool Name](https://example.com): What it does and why it's useful
+- [Guide Name](https://example.com): Link to comprehensive guide
+- [Documentation](https://docs.example.com): Official documentation link
+
+## Real-World Application
+
+Show how readers can apply this information:
+
+### Scenario 1: [Specific Use Case]
+
+Describe how to apply the concepts in this specific context with concrete examples.
+
+### Scenario 2: [Another Use Case]
+
+Show a different application of the same principles in another context.
+
+## Frequently Asked Questions
+
+<Accordion
+  items={[
+    {
+      id: 'faq1',
+      title: 'What is the main benefit of this approach?',
+      content: 'Detailed answer explaining the primary benefit and why it matters for the reader.'
+    },
+    {
+      id: 'faq2',
+      title: 'How do I get started quickly?',
+      content: 'Step-by-step guidance for rapid implementation with minimal setup time.'
+    },
+    {
+      id: 'faq3',
+      title: 'What are the common pitfalls to avoid?',
+      content: 'List of mistakes people make and how to avoid them for better results.'
+    }
+  ]}
+  allowMultipleOpen={true}
+/>
+
+## Action Steps
+
+Give readers clear next steps:
+
+1. **Immediate Action**: What to do right now (today)
+2. **Short-term Goal**: What to accomplish this week
+3. **Long-term Vision**: Where this leads in the future
+
+## Conclusion
+
+Summarize the key points and reinforce the main message. End with a call-to-action or thought-provoking question.
+
+<Callout type="success" title="Key Takeaway">
+The most important insight from this post that readers should remember and apply.
+</Callout>
+
+What will you do differently after reading this? Share your thoughts in the comments or [connect with me](/contact).
+
+---
+
+## Template Usage Guide
+
+### Available MDX Components (Apex Blog System v2.0)
+
+**1. Callout Component:**
+```tsx
+<Callout type="tip|warning|info|error|success" title="Optional Title">
+  Content here...
+</Callout>
+```
+
+**2. Tabs Component:**
+```tsx
+<Tabs>
+  <div label="Tab 1">Content...</div>
+  <div label="Tab 2">Content...</div>
+</Tabs>
+```
+
+**3. Accordion Component:**
+```tsx
+<Accordion
+  items={[
+    { id: '1', title: 'Question 1', content: 'Answer...' }
+  ]}
+  allowMultipleOpen={true}
+/>
+```
+
+**4. Checklist Component:**
+```tsx
+<Checklist
+  items={[
+    { id: '1', text: 'Task 1', checked: false }
+  ]}
+  storageKey="unique-key"
+/>
+```
+
+**5. StepGuide Component:**
+```tsx
+<StepGuide
+  title="Guide Title"
+  steps={[{ title: 'Step 1', content: '...' }]}
+  totalEstimatedTime="20 min"
+  showProgress={true}
+/>
+```
+
+**6. ImageGallery Component:**
+```tsx
+<ImageGallery
+  images={[{ src: '/path.jpg', alt: 'Text' }]}
+  layout="grid|masonry|carousel"
+  columns={2|3|4}
+/>
+```
+
+**7. VideoEmbed Component:**
+```tsx
+<VideoEmbed
+  platform="youtube|vimeo"
+  videoId="video-id"
+  startTime={30}
+/>
+```
+
+### Content Best Practices
+
+1. **Heading Structure**: Always start with H2 (##), never H1 (#)
+2. **Excerpt Length**: Keep under 200 characters for optimal SEO
+3. **SEO Title**: Under 60 characters for best SERP display
+4. **SEO Description**: Under 160 characters for full display in search results
+5. **Image Alt Text**: Be descriptive and specific for accessibility
+6. **Internal Links**: Use relative paths (/blog/post-slug)
+7. **External Links**: Add context, use descriptive anchor text
+
+### Automated Features
+
+- ✅ Reading time calculated automatically (200 words/min)
+- ✅ Table of contents auto-generated from headings
+- ✅ Related posts auto-matched by categories/tags
+- ✅ SEO metadata auto-generated from frontmatter
+- ✅ Structured data (JSON-LD) auto-generated
+- ✅ Image optimization (WebP, lazy loading) automatic
+- ✅ Syntax highlighting (Shiki) automatic
+- ✅ Print optimization automatic
+
+---
+**Template Version**: 2.0 (Apex Blog System)
+**Last Updated**: 2026-01-27
+**Documentation**: See /docs/apex-blog-system-guide.md
+
+---
+
+## SEO Best Practices Checklist
+
+When creating your blog post, ensure:
+
+- [ ] Title is compelling and includes primary keyword
+- [ ] Excerpt is under 160 characters and engaging
+- [ ] Featured image is optimized (compressed, proper size)
+- [ ] H1 used only once (the main title)
+- [ ] H2 and H3 headings create clear structure
+- [ ] Primary keyword appears in first 100 words
+- [ ] Keywords used naturally throughout (avoid stuffing)
+- [ ] Internal links to other relevant posts
+- [ ] External links to authoritative sources
+- [ ] Images have descriptive alt text
+- [ ] Content is 1000+ words (for better SEO)
+- [ ] Paragraphs are short (2-4 sentences)
+- [ ] Bullet points and lists for scannability
+- [ ] Call-to-action at the end
+- [ ] Meta description is compelling
+- [ ] Categories and tags are relevant
+
+## Content Guidelines
+
+- **Length**: Aim for 1500-2500 words for in-depth posts
+- **Tone**: Conversational yet professional
+- **Voice**: First person for personal stories, second person for advice
+- **Formatting**: Use bold, italics, and lists strategically
+- **Links**: 2-5 internal links, 1-3 external authoritative links
+- **Images**: 1 featured + 2-4 supporting images
+- **Readability**: Write at 8th-grade level for accessibility
+- **Value**: Every paragraph should provide value to the reader
