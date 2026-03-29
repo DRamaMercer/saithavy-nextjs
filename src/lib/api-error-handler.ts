@@ -104,7 +104,7 @@ export function handleValidationError(
 ): NextResponse<ApiErrorResponse> {
   const requestId = crypto.randomUUID();
 
-  logger.warning(
+  logger.warn(
     `Validation Error: ${context.endpoint}`,
     { ...context, requestId, validationIssues },
   );
@@ -203,7 +203,7 @@ export function handleUnauthorizedError(
 ): NextResponse<ApiErrorResponse> {
   const requestId = crypto.randomUUID();
 
-  logger.warning(
+  logger.warn(
     `Unauthorized Access`,
     { ...(context || {}), requestId },
   );

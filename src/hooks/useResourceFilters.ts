@@ -7,7 +7,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export interface ResourceFilters {
@@ -31,18 +31,13 @@ const DEFAULT_FILTERS: ResourceFilters = {
 export function useResourceFilters(options?: { skipURLSync?: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const { skipURLSync = false } = options || {};
 
   // Initialize filters from URL (check both path params and query params)
   const [filters, setFilters] = useState<ResourceFilters>(() => {
-    // Check if we're on a category page (e.g., /resources/mindful-leadership)
-    const pathname = window.location.pathname;
-    const categoryMatch = pathname.match(/\/resources\/([^/?]+)/);
-
     return {
-      category: categoryMatch
-        ? categoryMatch[1]
-        : searchParams.get("category") || DEFAULT_FILTERS.category,
+      category: searchParams.get("category") || DEFAULT_FILTERS.category,
       type: searchParams.get("type") || DEFAULT_FILTERS.type,
       sort:
         (searchParams.get("sort") as ResourceFilters["sort"]) ||
@@ -52,6 +47,17 @@ export function useResourceFilters(options?: { skipURLSync?: boolean }) {
       page: parseInt(searchParams.get("page") || "1"),
     };
   });
+
+  // Update category from pathname after mount (client-side only)
+  useEffect(() => {
+    const categoryMatch = pathname.match(/\/resources\/([^/?]+)/);
+    if (categoryMatch && categoryMatch[1] !== "category" && categoryMatch[1] !== "all") {
+      setFilters((prev) => ({
+        ...prev,
+        category: categoryMatch[1],
+      }));
+    }
+  }, [pathname]);
 
   // Debounced search query
   const debouncedQuery = useDebounce(filters.q, 300);
@@ -68,7 +74,6 @@ export function useResourceFilters(options?: { skipURLSync?: boolean }) {
       }
 
       // Check if we're on a category page
-      const pathname = window.location.pathname;
       if (pathname !== "/resources" && pathname.startsWith("/resources/")) {
         // On a category page - don't update URL
         return;
@@ -102,7 +107,7 @@ export function useResourceFilters(options?: { skipURLSync?: boolean }) {
 
       router.push(newPath, { scroll: false });
     },
-    [filters, router, skipURLSync],
+    [filters, router, skipURLSync, pathname],
   );
 
   /**
