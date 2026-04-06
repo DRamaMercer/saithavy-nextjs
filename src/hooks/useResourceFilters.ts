@@ -36,15 +36,21 @@ export function useResourceFilters(options?: { skipURLSync?: boolean }) {
 
   // Initialize filters from URL (check both path params and query params)
   const [filters, setFilters] = useState<ResourceFilters>(() => {
+    const sortValue = searchParams.get("sort");
+    const validSortValues: ResourceFilters["sort"][] = ["newest", "popular", "relevance"];
+    
     return {
       category: searchParams.get("category") || DEFAULT_FILTERS.category,
       type: searchParams.get("type") || DEFAULT_FILTERS.type,
       sort:
-        (searchParams.get("sort") as ResourceFilters["sort"]) ||
-        DEFAULT_FILTERS.sort,
+        (sortValue && validSortValues.includes(sortValue as ResourceFilters["sort"])
+          ? sortValue as ResourceFilters["sort"]
+          : DEFAULT_FILTERS.sort),
       q: searchParams.get("q") || DEFAULT_FILTERS.q,
-      tags: searchParams.getAll("tags") || DEFAULT_FILTERS.tags,
-      page: parseInt(searchParams.get("page") || "1"),
+      tags: searchParams.getAll("tags").length > 0 
+        ? searchParams.getAll("tags") as string[] 
+        : DEFAULT_FILTERS.tags,
+      page: parseInt(searchParams.get("page") || "1", 10),
     };
   });
 
@@ -52,6 +58,7 @@ export function useResourceFilters(options?: { skipURLSync?: boolean }) {
   useEffect(() => {
     const categoryMatch = pathname.match(/\/resources\/([^/?]+)/);
     if (categoryMatch && categoryMatch[1] !== "category" && categoryMatch[1] !== "all") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe pattern: updating state based on route change
       setFilters((prev) => ({
         ...prev,
         category: categoryMatch[1],

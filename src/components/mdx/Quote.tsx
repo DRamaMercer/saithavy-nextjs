@@ -16,7 +16,7 @@ export default function Quote({ text, author, source }: QuoteProps) {
   return (
     <blockquote className="my-8 pl-6 border-l-4 border-amber-500 italic">
       <p className="text-lg" style={{ color: "var(--foreground)" }}>
-        "{text}"
+        &ldquo;{text}&rdquo;
       </p>
       {(author || source) && (
         <footer className="mt-4 text-sm font-medium">

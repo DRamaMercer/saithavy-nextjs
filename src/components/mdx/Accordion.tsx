@@ -99,9 +99,10 @@ function Accordion({ items, children, allowMultipleOpen = false }: AccordionProp
         if (!React.isValidElement(item)) return null;
 
         const itemProps = item.props as AccordionItemProps;
+        const itemType = item.type as AccordionItemComponent;
         const isAccordionItem =
-          (item.type as any).displayName === "AccordionItem" ||
-          (item.type as any).name === "AccordionItem" ||
+          itemType?.displayName === "AccordionItem" ||
+          itemType?.name === "AccordionItem" ||
           itemProps.title;
 
         if (!isAccordionItem) return null;

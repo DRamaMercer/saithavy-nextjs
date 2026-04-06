@@ -58,6 +58,7 @@ export default function ProgressBar({
 
       return () => clearInterval(timer);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe: non-animated mode, direct value assignment
       setDisplayValue(clampedValue);
     }
   }, [clampedValue, animated]);

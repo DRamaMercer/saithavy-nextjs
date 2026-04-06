@@ -270,7 +270,7 @@ export function createSecureResponse(
 /**
  * Middleware to add security headers to all responses
  */
-export function securityHeadersMiddleware(request: NextRequest) {
+export function securityHeadersMiddleware(_request: NextRequest) {
   const response = NextResponse.next();
 
   const config = process.env.NODE_ENV === "production" ? defaultSecurityHeaders : developmentSecurityHeaders;

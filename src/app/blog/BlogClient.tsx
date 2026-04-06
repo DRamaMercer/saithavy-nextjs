@@ -18,6 +18,7 @@ export default function BlogClient({ posts, categories }: BlogClientProps) {
 
   // Filter posts by category
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Loading state pattern for better UX
     setIsLoading(true);
     // Simulate loading for better UX
     const timer = setTimeout(() => {
@@ -38,6 +39,7 @@ export default function BlogClient({ posts, categories }: BlogClientProps) {
     const urlCategory = params.get("category");
 
     if (urlCategory && categories.includes(urlCategory)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe: syncing state from URL on mount
       setSelectedCategory(urlCategory);
     }
   }, [categories]);

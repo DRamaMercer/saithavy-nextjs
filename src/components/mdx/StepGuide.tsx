@@ -93,3 +93,5 @@ export function StepGuideStep({
   // The actual rendering is handled by the parent StepGuide
   return <>{children}</>;
 }
+
+StepGuide.Step = StepGuideStep;

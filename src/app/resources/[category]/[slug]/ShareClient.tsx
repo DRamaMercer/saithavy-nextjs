@@ -27,6 +27,7 @@ export default function ShareClient({
   useEffect(() => {
     // Get current URL on client side
     if (typeof window !== "undefined") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe: initializing state from window on mount
       setCurrentUrl(window.location.href);
     }
   }, []);

@@ -9,13 +9,17 @@ import Callout from "@/components/mdx/Callout";
 import Checklist from "@/components/mdx/Checklist";
 import ChecklistItem from "@/components/mdx/ChecklistItem";
 import Accordion, { AccordionItem } from "@/components/mdx/Accordion";
-import Tabs, { Tab } from "@/components/mdx/Tabs";
-import StepGuide from "@/components/mdx/StepGuide";
+const AccordionWithItem = Object.assign(Accordion, { Item: AccordionItem });
+import TabsLib, { Tab } from "@/components/mdx/Tabs";
+const Tabs = Object.assign(TabsLib, { Tab: Tab });
+import StepGuideLib from "@/components/mdx/StepGuide";
 import StepGuideStep from "@/components/mdx/StepGuideStep";
+const StepGuide = Object.assign(StepGuideLib, { Step: StepGuideStep });
 import ImageGallery from "@/components/mdx/ImageGallery";
 import Timeline from "@/components/mdx/Timeline";
 import Quote from "@/components/mdx/Quote";
 import Stats from "@/components/mdx/Stats";
+import Warning from "@/components/mdx/Warning";
 import CodeBlock from "@/components/mdx/CodeBlock";
 import VideoEmbed from "@/components/mdx/VideoEmbed";
 import ProgressBar from "@/components/mdx/ProgressBar";
@@ -23,12 +27,21 @@ import TwoColumn from "@/components/mdx/TwoColumn";
 import ToolRecommendation from "@/components/mdx/ToolRecommendation";
 import StatsHighlight from "@/components/mdx/StatsHighlight";
 import ProTip from "@/components/mdx/ProTip";
+import Comparison from "@/components/mdx/Comparison";
+import ComparisonTable from "@/components/mdx/ComparisonTable";
+import ImageComparison from "@/components/mdx/ImageComparison";
+import TweetEmbed from "@/components/mdx/TweetEmbed";
+import Resource from "@/components/mdx/Resource";
+import IconGrid from "@/components/mdx/IconGrid";
+import QuoteBlock from "@/components/mdx/QuoteBlock";
+import StatsBlock from "@/components/mdx/StatsBlock";
+import Testimonial from "@/components/mdx/Testimonial";
 
 const mdxComponents = {
   Callout,
   Checklist,
   ChecklistItem,
-  Accordion,
+  Accordion: AccordionWithItem,
   AccordionItem,
   Tabs,
   Tab,
@@ -38,6 +51,7 @@ const mdxComponents = {
   Timeline,
   Quote,
   Stats,
+  Warning,
   CodeBlock,
   VideoEmbed,
   ProgressBar,
@@ -45,6 +59,22 @@ const mdxComponents = {
   ToolRecommendation,
   StatsHighlight,
   ProTip,
+  Comparison,
+  ComparisonTable,
+  ImageComparison,
+  TweetEmbed,
+  Resource,
+  IconGrid,
+  QuoteBlock,
+  StatsBlock,
+  Testimonial,
+  // Nested component patterns
+  "Checklist.Item": ChecklistItem,
+  "Checklist.Section": ChecklistItem,
+  "Accordion.Item": AccordionItem,
+  "Tabs.Tab": Tab,
+  "Tabs.Panel": Tab,
+  "StepGuide.Step": StepGuideStep,
 };
 
 interface BlogPostPageProps {

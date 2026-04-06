@@ -7,7 +7,7 @@ interface ChecklistItem {
   id: string;
   text: string;
   checked?: boolean;
-  subitems?: ChecklistItem[];
+  subitems?: (ChecklistItem | string)[];
 }
 
 interface ChecklistProps {
@@ -19,6 +19,13 @@ interface ChecklistProps {
   allowExport?: boolean;
   exportFormat?: 'text' | 'markdown';
 }
+
+const normalizeItem = (item: ChecklistItem | string, parentId: string, index: number): ChecklistItem => {
+  if (typeof item === 'string') {
+    return { id: `${parentId}-sub-${index}`, text: item };
+  }
+  return item;
+};
 
 export default function Checklist({
   title,
@@ -32,12 +39,12 @@ export default function Checklist({
   const [checkedStates, setCheckedStates] = useState<Record<string, boolean>>({});
   const [showMenu, setShowMenu] = useState(false);
 
-  // Load saved state from localStorage if storageKey is provided
   useEffect(() => {
     if (storageKey && typeof window !== "undefined") {
       try {
         const saved = localStorage.getItem(storageKey);
         if (saved && typeof saved === "string") {
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe: loading persisted state from localStorage
           setCheckedStates(JSON.parse(saved));
         }
       } catch (error) {
@@ -46,13 +53,14 @@ export default function Checklist({
     }
   }, [storageKey]);
 
-  // Count all items including subitems
   const getAllItems = (items: ChecklistItem[]): ChecklistItem[] => {
     const all: ChecklistItem[] = [];
     items.forEach(item => {
       all.push(item);
       if (item.subitems) {
-        all.push(...item.subitems);
+        item.subitems.forEach((sub, idx) => {
+          all.push(normalizeItem(sub, item.id, idx));
+        });
       }
     });
     return all;
@@ -117,9 +125,10 @@ export default function Checklist({
         const isChecked = checkedStates[item.id] || item.checked;
         markdown += `- [${isChecked ? 'x' : ' '}] ${item.text}\n`;
         if (item.subitems) {
-          item.subitems.forEach(sub => {
-            const isSubChecked = checkedStates[sub.id] || sub.checked;
-            markdown += `  - [${isSubChecked ? 'x' : ' '}] ${sub.text}\n`;
+          item.subitems.forEach((sub, idx) => {
+            const normalized = normalizeItem(sub, item.id, idx);
+            const isSubChecked = checkedStates[normalized.id] || normalized.checked;
+            markdown += `  - [${isSubChecked ? 'x' : ' '}] ${normalized.text}\n`;
           });
         }
       });
@@ -137,9 +146,10 @@ export default function Checklist({
         const isChecked = checkedStates[item.id] || item.checked;
         text += `[${isChecked ? 'X' : ' '}] ${item.text}\n`;
         if (item.subitems) {
-          item.subitems.forEach(sub => {
-            const isSubChecked = checkedStates[sub.id] || sub.checked;
-            text += `  [${isSubChecked ? 'X' : ' '}] ${sub.text}\n`;
+          item.subitems.forEach((sub, idx) => {
+            const normalized = normalizeItem(sub, item.id, idx);
+            const isSubChecked = checkedStates[normalized.id] || normalized.checked;
+            text += `  [${isSubChecked ? 'X' : ' '}] ${normalized.text}\n`;
           });
         }
       });
@@ -249,18 +259,19 @@ export default function Checklist({
                 </span>
                 {hasSubitems && (
                   <ul className="ml-6 mt-2 space-y-1">
-                    {item.subitems!.map((sub) => {
-                      const isSubChecked = checkedStates[sub.id] || sub.checked || false;
+                    {item.subitems!.map((sub, idx) => {
+                      const normalized = normalizeItem(sub, item.id, idx);
+                      const isSubChecked = checkedStates[normalized.id] || normalized.checked || false;
                       return (
-                        <li key={sub.id} className="flex items-start gap-2">
+                        <li key={normalized.id} className="flex items-start gap-2">
                           <input
                             type="checkbox"
                             className="mt-0.5 w-3.5 h-3.5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                             checked={isSubChecked}
-                            onChange={() => handleToggle(sub.id)}
+                            onChange={() => handleToggle(normalized.id)}
                           />
                           <span className={`text-xs ${isSubChecked ? 'line-through text-gray-500' : 'text-gray-600'}`}>
-                            {sub.text}
+                            {normalized.text}
                           </span>
                         </li>
                       );

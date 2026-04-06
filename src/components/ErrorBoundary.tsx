@@ -40,8 +40,11 @@ export class ErrorBoundary extends React.Component<Props, State> {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
 
     // Log to external service if available
-    if (typeof window !== "undefined" && (window as any).logError) {
-      (window as any).logError(error, errorInfo);
+    if (typeof window !== "undefined") {
+      const win = window as Window & { logError?: (error: Error, errorInfo: React.ErrorInfo) => void };
+      if (win.logError) {
+        win.logError(error, errorInfo);
+      }
     }
   }
 

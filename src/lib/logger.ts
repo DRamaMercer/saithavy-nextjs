@@ -70,8 +70,9 @@ function isDevelopment(): boolean {
 /**
  * Check if running in Edge Runtime
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isEdgeRuntime(): boolean {
-  // @ts-ignore - Edge Runtime check
+  // @ts-expect-error - Edge Runtime check
   return typeof EdgeRuntime !== "undefined" && EdgeRuntime.isEdgeRuntime;
 }
 
