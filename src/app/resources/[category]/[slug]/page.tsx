@@ -12,6 +12,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import dynamic from "next/dynamic";
 import {
   getResourceContent,
   resourceContentExists,
@@ -26,6 +27,29 @@ import { logger } from "@/lib/logger";
 import DownloadClient from "./DownloadClient";
 import ShareClient from "./ShareClient";
 import ScrollToTop from "@/components/ScrollToTop";
+
+const BurnoutGuideTabs = dynamic(
+  () => import("@/components/assessment/BurnoutGuideTabs"),
+  {
+    loading: () => (
+      <div className="max-w-2xl mx-auto animate-pulse py-12">
+        <div className="flex gap-2 mb-8">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-12 w-28 bg-slate-200 dark:bg-slate-700 rounded-xl" />
+          ))}
+        </div>
+        <div className="rounded-2xl p-8 shadow-lg bg-white dark:bg-slate-800">
+          <div className="h-8 w-64 bg-slate-200 dark:bg-slate-700 rounded mb-6" />
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-12 bg-slate-200 dark:bg-slate-700 rounded" />
+            ))}
+          </div>
+        </div>
+      </div>
+    ),
+  },
+);
 
 // ISR: Revalidate every hour for resource detail updates
 export const revalidate = 3600;
@@ -533,7 +557,7 @@ export default async function ResourceDetailPage({
           {/* Content */}
           {contentWithMetadata ? (
             <article
-              className="prose prose-lg max-w-none
+              className="prose prose-lg dark:prose-invert max-w-none
             prose-headings:font-poppins
             prose-headings:font-bold
             prose-h1:text-3xl
@@ -652,6 +676,27 @@ export default async function ResourceDetailPage({
                   </li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {/* Interactive Guide (for burnout prevention resource) */}
+          {slug === "burnout-prevention-for-leaders-checklist" && (
+            <section className="mt-16" id="interactive-guide">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-sm font-medium mb-4">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                  Interactive Guide
+                </div>
+                <h2 className="text-3xl font-bold text-[var(--heading)] font-poppins mb-4">
+                  Your Burnout Prevention Toolkit
+                </h2>
+                <p className="text-lg text-[var(--foreground)] max-w-2xl mx-auto">
+                  Take the assessment to discover your risk zone, then explore each pillar to build your personalized prevention plan.
+                </p>
+              </div>
+              <BurnoutGuideTabs />
             </section>
           )}
 

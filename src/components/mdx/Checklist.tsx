@@ -166,10 +166,10 @@ export default function Checklist({
   };
 
   return (
-    <div className="my-6 p-4 rounded-lg border border-gray-200 bg-gray-50">
+    <div className="my-6 p-4 rounded-lg" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
       <div className="flex items-center justify-between mb-3">
         {title && (
-          <h4 className="font-semibold text-gray-900">{title}</h4>
+          <h4 className="font-semibold" style={{ color: 'var(--heading)' }}>{title}</h4>
         )}
         <div className="flex items-center gap-2">
           {showProgress && totalCount > 0 && (
@@ -254,7 +254,7 @@ export default function Checklist({
                 )}
               </div>
               <div className="flex-1">
-                <span className={`text-sm ${isChecked ? 'line-through text-gray-500' : 'text-gray-700'}`}>
+                <span className={`text-sm ${isChecked ? 'line-through opacity-50' : ''}`} style={{ color: 'var(--foreground)' }}>
                   {item.text}
                 </span>
                 {hasSubitems && (
@@ -270,7 +270,7 @@ export default function Checklist({
                             checked={isSubChecked}
                             onChange={() => handleToggle(normalized.id)}
                           />
-                          <span className={`text-xs ${isSubChecked ? 'line-through text-gray-500' : 'text-gray-600'}`}>
+                          <span className={`text-xs ${isSubChecked ? 'line-through opacity-50' : ''}`} style={{ color: 'var(--foreground)' }}>
                             {normalized.text}
                           </span>
                         </li>

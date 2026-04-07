@@ -60,7 +60,8 @@ interface LeadMagnetHeroProps {
   subtitle: string;
   description: string;
   primaryButtonText: string;
-  primaryButtonAction: () => void;
+  primaryButtonAction?: () => void;
+  primaryButtonHref?: string;
   secondaryButtonText?: string;
   stats?: {
     leaders: number;
@@ -80,6 +81,7 @@ export default function LeadMagnetHero({
   description,
   primaryButtonText,
   primaryButtonAction,
+  primaryButtonHref,
   secondaryButtonText,
   stats = { leaders: 15000, rating: 4.9 },
   colors,
@@ -162,20 +164,37 @@ export default function LeadMagnetHero({
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={primaryButtonAction}
-              className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl"
-              style={{ backgroundColor: colors.primary }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.9";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
-              }}
-            >
-              {primaryButtonText}
-              <ArrowRight className="w-5 h-5" />
-            </button>
+            {primaryButtonHref ? (
+              <a
+                href={primaryButtonHref}
+                className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl"
+                style={{ backgroundColor: colors.primary }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.9";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                }}
+              >
+                {primaryButtonText}
+                <ArrowRight className="w-5 h-5" />
+              </a>
+            ) : (
+              <button
+                onClick={primaryButtonAction}
+                className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all shadow-lg hover:shadow-xl"
+                style={{ backgroundColor: colors.primary }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.9";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                }}
+              >
+                {primaryButtonText}
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            )}
             {secondaryButtonText && (
               <a
                 href="#download-form"

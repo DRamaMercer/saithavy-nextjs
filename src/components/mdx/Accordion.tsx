@@ -50,7 +50,7 @@ const sizeClasses = {
 };
 
 function resolveDefaultOpen(defaultOpen: number | number[] | undefined): Set<number> {
-  if (defaultOpen === undefined) return new Set();
+  if (defaultOpen === undefined) return new Set([0]); // Default: first item open
   if (Array.isArray(defaultOpen)) return new Set(defaultOpen);
   return new Set([defaultOpen]);
 }
