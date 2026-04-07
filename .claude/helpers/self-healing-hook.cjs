@@ -186,6 +186,13 @@ function extractDependencyName(errorOutput) {
   return null;
 }
 
+// Check if a module path is a path alias (not an npm package)
+function isPathAlias(moduleName) {
+  if (!moduleName) return false;
+  // Common path aliases: @/, @components/, @lib/, etc.
+  return moduleName.startsWith('@/') || moduleName.startsWith('./') || moduleName.startsWith('../') || moduleName.startsWith('src/');
+}
+
 // Extract port from error
 function extractPort(errorOutput) {
   const match = errorOutput.match(/:(\d{4,5})/);
@@ -199,6 +206,15 @@ const RECOVERY_STRATEGIES = {
     const dep = extractDependencyName(errorOutput);
     if (!dep) {
       console.log(`[INFO] Could not extract dependency name from error`);
+      return false;
+    }
+
+    // Check if it's a path alias (not an npm package)
+    if (isPathAlias(dep)) {
+      console.log(`[INFO] Path alias detected: ${dep}`);
+      console.log(`[INFO] This is a missing file/component, not an npm package`);
+      console.log(`[INFO] Recommend: Spawn agent to create missing component or fix import path`);
+      logRecovery(errorInfo.type, 'path_alias_detected', false, { module: dep });
       return false;
     }
 
@@ -361,9 +377,9 @@ const handlers = {
   },
 
   'learn': () => {
-    const errorType = process.env.ERROR_TYPE || process.argv[2];
-    const pattern = process.env.ERROR_PATTERN || process.argv[3];
-    const recovery = process.env.ERROR_RECOVERY || process.argv[4];
+    const errorType = process.env.ERROR_TYPE || process.argv[3];
+    const pattern = process.env.ERROR_PATTERN || process.argv[4];
+    const recovery = process.env.ERROR_RECOVERY || process.argv[5];
 
     if (!errorType || !pattern) {
       console.log('[INFO] Usage: learn <errorType> <pattern> [recovery]');
