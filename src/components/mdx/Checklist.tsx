@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MoreVertical, Download, Check, ChevronDown, ChevronRight } from "lucide-react";
+import { MoreVertical, Download, Check, ChevronDown } from "lucide-react";
 
 interface ChecklistItem {
   id: string;

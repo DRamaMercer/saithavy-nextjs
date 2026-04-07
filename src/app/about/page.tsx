@@ -1,9 +1,28 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import MissionSection from "@/components/sections/MissionSection";
 import TimelineSection from "@/components/sections/TimelineSection";
 import ValuesSection from "@/components/sections/ValuesSection";
 import ServicesSection from "@/components/sections/ServicesSection";
-import ContactSection from "@/components/sections/ContactSection";
+
+const ContactSection = dynamic(
+  () => import("@/components/sections/ContactSection"),
+  {
+    loading: () => (
+      <section className="py-20">
+        <div className="max-w-2xl mx-auto px-4 animate-pulse">
+          <div className="h-10 w-48 bg-gray-200 dark:bg-gray-700 rounded mx-auto mb-8" />
+          <div className="space-y-4">
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="h-12 w-32 bg-gray-200 dark:bg-gray-700 rounded" />
+          </div>
+        </div>
+      </section>
+    ),
+  },
+);
 
 // ISR: Revalidate every 24 hours (rarely changes)
 export const revalidate = 86400;

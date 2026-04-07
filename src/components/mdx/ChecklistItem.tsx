@@ -21,9 +21,9 @@ interface ChecklistItemProps {
  * </Checklist>
  */
 export default function ChecklistItem({
-  id,
+  id: _id,
   text,
-  checked = false,
+  checked: _checked = false,
 }: ChecklistItemProps): React.JSX.Element {
   // This component is a simple wrapper - the actual rendering is handled by the parent Checklist component
   return <>{text}</>;

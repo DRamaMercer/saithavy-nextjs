@@ -39,7 +39,7 @@ export function registerCoreServices(): void {
  * Register test services (useful for testing)
  */
 export function registerTestServices(): void {
-  const container = getContainer();
+  const _container = getContainer();
 
   // Override with mock implementations if needed
   // container.registerOrUpdate(ServiceKeys.ContactRepository, () => new MockContactRepository());

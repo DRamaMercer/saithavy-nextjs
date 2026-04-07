@@ -63,7 +63,7 @@ export default function EmailCaptureForm({
           window.location.href = redirectPath;
         }, 2000);
       }
-    } catch (error) {
+    } catch (_error) {
       clientLogger.error(
         "Email capture request failed",
         { component: "EmailCaptureForm", leadMagnet },

@@ -79,7 +79,7 @@ const LEAD_MAGNET_MAPPING: Record<string, LeadMagnetConfig> = {
 
 export default function LeadMagnetSpotlight({
   categoryId,
-  categoryName,
+  categoryName: _categoryName,
 }: LeadMagnetSpotlightProps) {
   const config = LEAD_MAGNET_MAPPING[categoryId];
 

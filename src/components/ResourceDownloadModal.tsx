@@ -98,7 +98,7 @@ const ResourceDownloadModal: React.FC<ResourceDownloadModalProps> = ({
         setTimeout(() => {
           onDownload(resource, format);
         }, 500);
-      } catch (err) {
+      } catch (_err) {
         setIsLoading(false);
         setError("Something went wrong. Please try again.");
         clientLogger.error(

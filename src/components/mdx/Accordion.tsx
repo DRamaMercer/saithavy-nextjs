@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, ReactNode } from "react";
 
 interface AccordionItemData {
   id: string;
@@ -37,7 +37,7 @@ interface AccordionItemComponent extends React.FunctionComponent<AccordionItemPr
   displayName?: string;
 }
 
-function AccordionItem({ title, children }: AccordionItemProps): React.JSX.Element {
+function AccordionItem({ title: _title, children }: AccordionItemProps): React.JSX.Element {
   // This is just a placeholder component for type checking
   // The actual rendering is handled by the parent Accordion
   return <>{children}</>;

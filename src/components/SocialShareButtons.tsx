@@ -109,7 +109,7 @@ export default function SocialShareButtons({
         setCopied(false);
         setShowToast(false);
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
       clientLogger.error(
         "Failed to copy URL to clipboard",
         { component: "SocialShareButtons", url },

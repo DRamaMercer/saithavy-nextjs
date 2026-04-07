@@ -1,5 +1,3 @@
-"use client";
-
 import React, { ReactNode } from "react";
 
 interface Step {
@@ -279,7 +277,7 @@ export default function StepGuide({
             if (React.isValidElement(step)) {
               const stepProps = step.props as StepGuideStepProps;
               const stepBody = getStepBody(stepProps);
-              const isActive = activeStep !== undefined && activeStep === index;
+              const _isActive = activeStep !== undefined && activeStep === index;
               return (
                 <li key={index} className={stepItemClass[variant]}>
                   <span
@@ -320,9 +318,9 @@ export default function StepGuide({
 }
 
 export function StepGuideStep({
-  title,
+  title: _title,
   children,
-  estimatedTime,
+  estimatedTime: _estimatedTime,
 }: StepGuideStepProps): React.JSX.Element {
   // This is just a placeholder component for type checking
   // The actual rendering is handled by the parent StepGuide

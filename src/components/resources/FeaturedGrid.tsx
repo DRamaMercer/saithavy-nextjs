@@ -8,7 +8,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Resource } from "@/types/resources";
 import ResourcePreviewModal from "./ResourcePreviewModal";
 

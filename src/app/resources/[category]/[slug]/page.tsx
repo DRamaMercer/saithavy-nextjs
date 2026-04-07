@@ -23,7 +23,6 @@ import {
 } from "@/lib/resourcesData";
 import { Resource } from "@/types/resources";
 import { logger } from "@/lib/logger";
-import ResourceDownloadModal from "@/components/ResourceDownloadModal";
 import DownloadClient from "./DownloadClient";
 import ShareClient from "./ShareClient";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -52,7 +51,7 @@ export async function generateStaticParams() {
  * Generate SEO-optimized description
  */
 function generateSeoDescription(resource: Resource): string {
-  const { title, type, description, targetAudience, whatYoullLearn } = resource;
+  const { title, type, description, targetAudience, whatYoullLearn: _whatYoullLearn } = resource;
 
   // Build compelling description with benefit statement
   let seoDesc = "";

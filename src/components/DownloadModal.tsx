@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { z } from "zod";
 import { X, Mail, Download, CheckCircle2 } from "lucide-react";
 import { Resource } from "@/types/resources";
 import { FocusTrap } from "focus-trap-react";

@@ -21,9 +21,9 @@ interface StepGuideStepProps {
  * </StepGuide>
  */
 export default function StepGuideStep({
-  title,
+  title: _title,
   content,
-  estimatedTime,
+  estimatedTime: _estimatedTime,
 }: StepGuideStepProps): React.JSX.Element {
   // This component is a simple wrapper - the actual rendering is handled by the parent StepGuide component
   return <>{content}</>;

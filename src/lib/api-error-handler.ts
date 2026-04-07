@@ -229,7 +229,7 @@ export function handleUnauthorizedError(
  */
 function getUserFacingErrorMessage(
   status: number,
-  internalMessage: string,
+  _internalMessage: string,
 ): string {
   // Map status codes to user-friendly messages
   const statusMessages: Record<number, string> = {

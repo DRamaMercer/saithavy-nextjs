@@ -17,7 +17,7 @@ export default function ContactSection() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid, isDirty },
+    formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     mode: "onTouched", // Validate on field blur for better UX

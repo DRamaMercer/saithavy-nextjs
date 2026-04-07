@@ -24,7 +24,7 @@ export function useResourceSave() {
         const saved = JSON.parse(stored) as string[];
         setSavedResources(new Set(saved));
       }
-    } catch (error) {
+    } catch (_error) {
       clientLogger.error("Failed to load saved resources", {});
     }
   }, []);

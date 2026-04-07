@@ -45,7 +45,7 @@ export async function validateApiKey(
     // Hash the API key for comparison using secure SHA-256
     // Note: Database schema needs to be updated to include 'salt' column
     // For now, we'll use a compatibility check
-    const { hash: keyHash, salt } = await hashApiKey(apiKey);
+    const { hash: keyHash, salt: _salt } = await hashApiKey(apiKey);
 
     const { data: keyData, error } = await supabase
       .from("api_keys")

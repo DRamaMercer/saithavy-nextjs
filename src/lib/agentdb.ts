@@ -62,9 +62,9 @@ export interface SearchOptions {
 export async function initAgentDB(config: AgentDBConfig = {}): Promise<AgentDBClient> {
   logger.info("AgentDB: Initializing", { config });
 
-  const dbPath = config.dbPath || process.env.AGENTDB_PATH || ".agentdb/reasoningbank.db";
-  const enableLearning = config.enableLearning ?? true;
-  const cacheSize = config.cacheSize ?? 2000;
+  const _dbPath = config.dbPath || process.env.AGENTDB_PATH || ".agentdb/reasoningbank.db";
+  const _enableLearning = config.enableLearning ?? true;
+  const _cacheSize = config.cacheSize ?? 2000;
 
   // Note: In production, this would initialize the actual database
   // For now, we use MCP tools through the API layer

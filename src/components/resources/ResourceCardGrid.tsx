@@ -9,7 +9,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Bookmark, Download, Clock, Target } from "lucide-react";
+import { Bookmark, Clock, Target } from "lucide-react";
 import { useResourceSave } from "@/hooks/useResourceSave";
 import { Resource } from "@/types/resources";
 import Pagination from "./Pagination";
@@ -73,7 +73,7 @@ export default function ResourceCardGrid({
         ...prev,
         [resourceSlug]: newState,
       }));
-    } catch (error) {
+    } catch (_error) {
       clientLogger.error(
         "Failed to save resource",
         { component: "ResourceCardGrid", resourceSlug },

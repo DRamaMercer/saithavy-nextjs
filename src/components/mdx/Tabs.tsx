@@ -131,7 +131,7 @@ function Tabs({
     }
   };
 
-  const getTabButtonClasses = (isActive: boolean) => {
+  const getTabButtonClasses = (_isActive: boolean) => {
     const base = `px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
       fullWidth ? 'flex-1 text-center' : ''
     }`;

@@ -6,7 +6,6 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getResourceBySlug } from "@/lib/resourcesData";
 import { getResourceContent } from "@/lib/resourceContent";
 import { logger } from "@/lib/logger";
 import type { Resource } from "@/types/resources";

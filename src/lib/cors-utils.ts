@@ -209,7 +209,7 @@ export function corsMiddleware(
   request: NextRequest,
   config?: CORSConfig,
 ): NextResponse | null {
-  const origin = request.headers.get("origin");
+  const _origin = request.headers.get("origin");
 
   // Handle preflight requests
   if (request.method === "OPTIONS") {
