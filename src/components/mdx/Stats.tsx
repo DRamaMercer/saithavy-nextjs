@@ -7,7 +7,9 @@ interface StatItem {
 
 interface StatsProps {
   title?: string;
-  items: StatItem[];
+  items?: StatItem[];
+  /** Alias for items */
+  stats?: StatItem[];
 }
 
 /**
@@ -18,9 +20,17 @@ interface StatsProps {
  *   { label: "Users", value: "10K+" },
  *   { label: "Revenue", value: "$1M" }
  * ]} />
+ *
+ * @example
+ * <Stats stats={[
+ *   { label: "Users", value: "10K+" },
+ *   { label: "Revenue", value: "$1M" }
+ * ]} />
  */
-export default function Stats({ title, items }: StatsProps) {
-  if (!items || items.length === 0) {
+export default function Stats({ title, items, stats }: StatsProps) {
+  const data = items || stats || [];
+
+  if (!data || data.length === 0) {
     return <div>No stats available</div>;
   }
 
@@ -32,10 +42,11 @@ export default function Stats({ title, items }: StatsProps) {
         </h3>
       )}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {items.map((item, index) => (
+        {data.map((item, index) => (
           <div
             key={index}
-            className="text-center p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
+            className="text-center p-4 rounded-lg"
+            style={{ background: "var(--surface)" }}
           >
             <div
               className="text-3xl font-bold mb-2"
