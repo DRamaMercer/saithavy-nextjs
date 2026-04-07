@@ -72,7 +72,7 @@ describe('Analytics Library', () => {
 
       trackEvent('dev_event', { test: true });
 
-      expect(clientLogger.info).toHaveBeenCalledWith('[Analytics]', { event: 'dev_event', test: true });
+      expect(clientLogger.info).toHaveBeenCalledWith('[Analytics]', { event: 'dev_event', params: { test: true } });
     });
 
     it('should not log events in production', async () => {

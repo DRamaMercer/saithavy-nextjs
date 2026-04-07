@@ -7,20 +7,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { POST } from '@/app/api/contact/route';
 import { NextRequest } from 'next/server';
 
-// Mock Resend at top level
-vi.mock('resend', () => ({
-  Resend: vi.fn().mockImplementation(() => ({
-    emails: {
-      send: vi.fn(),
-    },
-  })),
-}));
-
-// Mock rate limiter at top level
-vi.mock('@/lib/di/types', () => ({
-  getService: vi.fn(() => ({
+// Mock DI services at top level
+vi.mock('@/lib/di/services', () => ({
+  resolveRateLimiter: vi.fn().mockResolvedValue({
     checkLimit: vi.fn().mockResolvedValue({ success: true, limit: 10, remaining: 9, reset: Date.now() + 3600000 }),
-  })),
+  }),
+  resolveContactRepository: vi.fn().mockReturnValue({
+    save: vi.fn().mockResolvedValue(undefined),
+  }),
 }));
 
 // Mock logger at top level
@@ -54,10 +48,12 @@ describe('Contact API', () => {
   describe('POST /api/contact', () => {
     it('should accept valid contact form submission', async () => {
       const validData = {
-        name: 'John Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'john@example.com',
-        subject: 'Test Subject',
+        interest: 'ai-consulting',
         message: 'This is a test message with sufficient length.',
+        honeypot: '',
       };
 
       mockRequest = createMockRequest(validData);
@@ -66,13 +62,13 @@ describe('Contact API', () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.message).toBe('Message sent successfully');
+      expect(data.message).toBe('Thank you! Your message has been received.');
     });
 
     it('should reject missing required fields', async () => {
       const invalidData = {
-        name: 'John Doe',
-        // Missing email, subject, message
+        firstName: 'John',
+        // Missing lastName, email, interest, message, honeypot
       };
 
       mockRequest = createMockRequest(invalidData);
@@ -86,10 +82,12 @@ describe('Contact API', () => {
 
     it('should reject invalid email format', async () => {
       const invalidData = {
-        name: 'John Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'not-an-email',
-        subject: 'Test',
+        interest: 'ai-consulting',
         message: 'Test message',
+        honeypot: '',
       };
 
       mockRequest = createMockRequest(invalidData);
@@ -102,10 +100,12 @@ describe('Contact API', () => {
 
     it('should reject short message', async () => {
       const invalidData = {
-        name: 'John Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'john@example.com',
-        subject: 'Test',
+        interest: 'ai-consulting',
         message: 'Short', // Too short
+        honeypot: '',
       };
 
       mockRequest = createMockRequest(invalidData);
@@ -118,10 +118,12 @@ describe('Contact API', () => {
 
     it('should reject long name', async () => {
       const invalidData = {
-        name: 'A'.repeat(101), // Too long
+        firstName: 'A'.repeat(51), // Too long (max 50)
+        lastName: 'Doe',
         email: 'john@example.com',
-        subject: 'Test',
+        interest: 'ai-consulting',
         message: 'This is a test message with sufficient length.',
+        honeypot: '',
       };
 
       mockRequest = createMockRequest(invalidData);
@@ -133,38 +135,41 @@ describe('Contact API', () => {
     });
 
     it('should handle rate limiting', async () => {
-      // This test would require mocking the rate limiter to return limit exceeded
-      // For now, we'll test the structure exists
       const validData = {
-        name: 'John Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'john@example.com',
-        subject: 'Test Subject',
+        interest: 'ai-consulting',
         message: 'This is a test message with sufficient length.',
+        honeypot: '',
       };
 
       mockRequest = createMockRequest(validData);
 
-      // Mock getService to return rate limit exceeded
-      const { getService } = await import('@/lib/di/types');
-      vi.mocked(getService).mockReturnValue({
-        checkLimit: vi.fn().mockResolvedValue({ success: false, limit: 10, remaining: 0, reset: Date.now() + 3600000 }),
-      } as any);
+      // Override the rate limiter mock to return limit exceeded for this test only
+      const diServices = await import('@/lib/di/services');
+      vi.mocked(diServices.resolveRateLimiter)
+        .mockResolvedValueOnce({
+          checkLimit: vi.fn().mockResolvedValue({ success: false, limit: 10, remaining: 0, reset: Date.now() + 3600000 }),
+        } as any);
 
       const response = await POST(mockRequest);
       const data = await response.json();
 
+      expect(response.status).toBe(429);
       expect(data.success).toBe(false);
-      // Should indicate rate limiting
     });
   });
 
   describe('Input Sanitization', () => {
     it('should sanitize HTML in message', async () => {
       const dataWithHtml = {
-        name: 'John Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'john@example.com',
-        subject: 'Test',
+        interest: 'ai-consulting',
         message: '<script>alert("xss")</script> Test message',
+        honeypot: '',
       };
 
       mockRequest = createMockRequest(dataWithHtml);
@@ -176,10 +181,12 @@ describe('Contact API', () => {
 
     it('should handle SQL injection attempts', async () => {
       const sqlInjectionData = {
-        name: "John'; DROP TABLE users; --",
+        firstName: "John'; DROP TABLE users; --",
+        lastName: 'Doe',
         email: 'john@example.com',
-        subject: 'Test',
+        interest: 'ai-consulting',
         message: 'Test message',
+        honeypot: '',
       };
 
       mockRequest = createMockRequest(sqlInjectionData);
@@ -204,29 +211,30 @@ describe('Contact API', () => {
       expect(response.status).toBe(400);
     });
 
-    it('should handle email service failures', async () => {
+    it('should handle service failures', async () => {
       const validData = {
-        name: 'John Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'john@example.com',
-        subject: 'Test',
+        interest: 'ai-consulting',
         message: 'Test message',
+        honeypot: '',
       };
 
       mockRequest = createMockRequest(validData);
 
-      // Mock Resend to throw error
-      const { Resend } = await import('resend');
-      vi.mocked(Resend).mockImplementation(() => ({
-        emails: {
-          send: vi.fn().mockRejectedValue(new Error('Email service down')),
-        },
-      } as any));
+      // Mock repository to throw error
+      const { resolveContactRepository } = await import('@/lib/di/services');
+      vi.mocked(resolveContactRepository).mockReturnValueOnce({
+        save: vi.fn().mockRejectedValue(new Error('Service down')),
+      } as any);
 
       const response = await POST(mockRequest);
       const data = await response.json();
 
+      expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.error).toContain('email');
+      expect(data.error).toBeDefined();
     });
   });
 });

@@ -8,11 +8,13 @@ import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/re
 import userEvent from '@testing-library/user-event';
 import { BookOpen, Award } from 'lucide-react';
 
-// Mock resourcesData
-const mockCategories = [
-  { id: 'all', name: 'All Resources', description: 'Browse all resources', icon: 'Grid', gradient: 'from-blue-500 to-cyan-500', resourceCount: 83 },
-  { id: 'mindful-leadership', name: 'Mindful Leadership', description: 'Leadership resources', icon: 'Brain', gradient: 'from-purple-500 to-pink-500', resourceCount: 18 },
-];
+// Mock resourcesData (hoisted variables for vi.mock)
+const { mockCategories } = vi.hoisted(() => ({
+  mockCategories: [
+    { id: 'all', name: 'All Resources', description: 'Browse all resources', icon: 'Grid', gradient: 'from-blue-500 to-cyan-500', resourceCount: 83 },
+    { id: 'mindful-leadership', name: 'Mindful Leadership', description: 'Leadership resources', icon: 'Brain', gradient: 'from-purple-500 to-pink-500', resourceCount: 18 },
+  ],
+}));
 
 vi.mock('@/lib/resourcesData', () => ({
   resources: [],
@@ -35,6 +37,12 @@ vi.mock('next/link', () => ({
   default: ({ children, href, ...props }: { children: React.ReactNode; href: string; [key: string]: unknown }) => (
     <a href={href} {...props}>{children}</a>
   ),
+}));
+
+// Mock focus-trap-react (requires DOM features not available in jsdom)
+vi.mock('focus-trap-react', () => ({
+  FocusTrap: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Lazy load components after mocks are set up
@@ -252,7 +260,7 @@ describe('CategoryFilter Component', () => {
         />
       );
 
-      categories.forEach((category) => {
+      mockCategories.forEach((category) => {
         expect(screen.getByText(category.name)).toBeInTheDocument();
       });
     });
@@ -291,7 +299,7 @@ describe('CategoryFilter Component', () => {
       );
 
       const leadershipButton = screen.getByText('Mindful Leadership').closest('button');
-      expect(leadershipButton?.className).toContain('bg-');
+      expect(leadershipButton?.className).toContain('shadow-lg');
     });
 
     it('should not highlight inactive categories', () => {
@@ -303,7 +311,7 @@ describe('CategoryFilter Component', () => {
       );
 
       const leadershipButton = screen.getByText('Mindful Leadership').closest('button');
-      expect(leadershipButton?.className).not.toContain('bg-amber-600');
+      expect(leadershipButton?.className).not.toContain('shadow-lg');
     });
   });
 

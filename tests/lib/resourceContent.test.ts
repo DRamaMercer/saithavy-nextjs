@@ -4,12 +4,28 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import fs from 'fs';
 import path from 'path';
 
-// Mock fs module at top level
-vi.mock('fs');
-vi.mock('path');
+// Mock gray-matter with a simple frontmatter parser
+vi.mock('gray-matter', () => ({
+  default: vi.fn((content: string) => {
+    if (!content || content.trim() === '') {
+      return { data: {}, content: '' };
+    }
+    const fmMatch = content.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+    if (fmMatch) {
+      const data: Record<string, string> = {};
+      fmMatch[1].split('\n').forEach((line: string) => {
+        const [key, ...valueParts] = line.split(':');
+        if (key && valueParts.length > 0) {
+          data[key.trim()] = valueParts.join(':').trim();
+        }
+      });
+      return { data, content: fmMatch[2] };
+    }
+    return { data: {}, content };
+  }),
+}));
 
 // Mock logger at top level
 vi.mock('@/lib/logger', () => ({
@@ -19,6 +35,27 @@ vi.mock('@/lib/logger', () => ({
     warn: vi.fn(),
   },
 }));
+
+// Mock fs with importOriginal to preserve the module structure
+vi.mock('fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('fs')>();
+  return {
+    ...actual,
+    default: {
+      ...actual,
+      existsSync: vi.fn(),
+      readFileSync: vi.fn(),
+    },
+    existsSync: vi.fn(),
+    readFileSync: vi.fn(),
+  };
+});
+
+// Import fs after mocking to get the mock functions
+import fs from 'fs';
+
+const mockExistsSync = vi.mocked(fs.existsSync);
+const mockReadFileSync = vi.mocked(fs.readFileSync);
 
 describe('Resource Content Loading', () => {
   const mockResource = {
@@ -40,33 +77,14 @@ describe('Resource Content Loading', () => {
   });
 
   afterEach(() => {
-    // Clear cache between tests
     vi.resetModules();
   });
 
   describe('getResourceContent', () => {
     it('should load resource content from file system', async () => {
-      const mockContent = '# Test Content\n\nThis is test content.';
-      const mockMatter = {
-        content: mockContent,
-        data: {
-          title: 'Test Resource',
-          date: '2024-01-01',
-          author: 'Test Author',
-        },
-      };
-
-      vi.doMock('gray-matter', () => ({
-        default: vi.fn(() => mockMatter),
-      }));
-
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      // Mock fs.existsSync to return true
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-
-      // Mock fs.readFileSync to return content
-      vi.mocked(fs.readFileSync).mockReturnValue('---\ntitle: Test\n---\n# Content');
+      mockReadFileSync.mockReturnValue('---\ntitle: Test\n---\n# Content' as any);
 
       const result = await getResourceContent(mockResource as any);
 
@@ -78,8 +96,7 @@ describe('Resource Content Loading', () => {
     it('should cache loaded content', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue('---\ntitle: Test\n---\n# Content');
+      mockReadFileSync.mockReturnValue('---\ntitle: Test\n---\n# Content' as any);
 
       // First call
       await getResourceContent(mockResource as any);
@@ -88,13 +105,15 @@ describe('Resource Content Loading', () => {
       await getResourceContent(mockResource as any);
 
       // Should only read file once due to caching
-      expect(fs.readFileSync).toHaveBeenCalledTimes(1);
+      expect(mockReadFileSync).toHaveBeenCalledTimes(1);
     });
 
     it('should throw error if content file not found', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(false);
+      mockReadFileSync.mockImplementation(() => {
+        throw new Error('ENOENT: no such file or directory');
+      });
 
       await expect(getResourceContent(mockResource as any)).rejects.toThrow();
     });
@@ -102,23 +121,22 @@ describe('Resource Content Loading', () => {
     it('should parse frontmatter metadata', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue(
-        '---\ntitle: Test Title\ndate: 2024-01-01\nauthor: Test Author\n---\n# Content'
+      mockReadFileSync.mockReturnValue(
+        '---\ntitle: Test Title\ndescription: A test description\ncategory: test-category\n---\n# Content' as any
       );
 
       const result = await getResourceContent(mockResource as any);
 
       expect(result.metadata).toHaveProperty('title');
-      expect(result.metadata).toHaveProperty('date');
-      expect(result.metadata).toHaveProperty('author');
+      expect(result.metadata.title).toBe('Test Title');
+      expect(result.metadata).toHaveProperty('description');
+      expect(result.metadata).toHaveProperty('category');
     });
 
     it('should handle empty content files', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue('');
+      mockReadFileSync.mockReturnValue('' as any);
 
       const result = await getResourceContent(mockResource as any);
 
@@ -128,8 +146,7 @@ describe('Resource Content Loading', () => {
     it('should handle malformed frontmatter', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue('Invalid frontmatter\n# Content');
+      mockReadFileSync.mockReturnValue('Invalid frontmatter\n# Content' as any);
 
       // Should still return content even if frontmatter is invalid
       const result = await getResourceContent(mockResource as any);
@@ -142,8 +159,7 @@ describe('Resource Content Loading', () => {
     it('should invalidate cache after TTL', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue('# Content');
+      mockReadFileSync.mockReturnValue('# Content' as any);
 
       // First call
       await getResourceContent(mockResource as any);
@@ -155,15 +171,14 @@ describe('Resource Content Loading', () => {
       // Second call should bypass expired cache
       await getResourceContent(mockResource as any);
 
-      expect(fs.readFileSync).toHaveBeenCalledTimes(2);
+      expect(mockReadFileSync).toHaveBeenCalledTimes(2);
       vi.useRealTimers();
     });
 
     it('should cache multiple resources separately', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue('# Content');
+      mockReadFileSync.mockReturnValue('# Content' as any);
 
       const resource1 = { ...mockResource, slug: 'resource-1' };
       const resource2 = { ...mockResource, slug: 'resource-2' };
@@ -172,7 +187,7 @@ describe('Resource Content Loading', () => {
       await getResourceContent(resource2 as any);
 
       // Should read file twice (different resources)
-      expect(fs.readFileSync).toHaveBeenCalledTimes(2);
+      expect(mockReadFileSync).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -180,8 +195,7 @@ describe('Resource Content Loading', () => {
     it('should handle file read errors', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockImplementation(() => {
+      mockReadFileSync.mockImplementation(() => {
         throw new Error('File read error');
       });
 
@@ -192,7 +206,9 @@ describe('Resource Content Loading', () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
       const { logger } = await import('@/lib/logger');
 
-      vi.mocked(fs.existsSync).mockReturnValue(false);
+      mockReadFileSync.mockImplementation(() => {
+        throw new Error('File read error');
+      });
 
       try {
         await getResourceContent(mockResource as any);
@@ -208,38 +224,43 @@ describe('Resource Content Loading', () => {
     it('should resolve correct content path', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue('# Content');
-      vi.mocked(path.join).mockReturnValue('/content/resources/mindful-leadership/test-resource.md');
+      mockReadFileSync.mockReturnValue('# Content' as any);
+
+      const joinSpy = vi.spyOn(path, 'join');
 
       await getResourceContent(mockResource as any);
 
-      expect(path.join).toHaveBeenCalledWith(
-        expect.any(String),
-        'content',
-        'resources',
-        'mindful-leadership',
-        'test-resource.md'
-      );
+      // Verify path.join was called with the full path components (last call is the full path)
+      const calls = joinSpy.mock.calls;
+      const lastCall = calls[calls.length - 1];
+      // Full path should contain src/content/resources and the category/slug
+      expect(lastCall).toContain('src');
+      expect(lastCall).toContain('content');
+      expect(lastCall).toContain('resources');
+      const joinedPath = path.join(...lastCall);
+      expect(joinedPath).toContain('mindful-leadership');
+      expect(joinedPath).toContain('test-resource.md');
     });
 
     it('should handle different resource categories', async () => {
       const { getResourceContent } = await import('@/lib/resourceContent');
 
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.readFileSync).mockReturnValue('# Content');
+      mockReadFileSync.mockReturnValue('# Content' as any);
+
+      const joinSpy = vi.spyOn(path, 'join');
 
       const aiResource = { ...mockResource, category: 'ai-automation', slug: 'ai-guide' };
 
       await getResourceContent(aiResource as any);
 
-      expect(path.join).toHaveBeenCalledWith(
-        expect.any(String),
-        'content',
-        'resources',
-        'ai-automation',
-        'ai-guide.md'
-      );
+      const calls = joinSpy.mock.calls;
+      const lastCall = calls[calls.length - 1];
+      expect(lastCall).toContain('src');
+      expect(lastCall).toContain('content');
+      expect(lastCall).toContain('resources');
+      const joinedPath = path.join(...lastCall);
+      expect(joinedPath).toContain('ai-automation');
+      expect(joinedPath).toContain('ai-guide.md');
     });
   });
 });

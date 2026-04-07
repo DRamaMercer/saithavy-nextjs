@@ -148,7 +148,15 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-real-ip") ??
       "anonymous";
 
-    const body = await request.json();
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Invalid JSON in request body" },
+        { status: 400 },
+      );
+    }
 
     // Execute application business rules
     const response = await submitContactUseCase.execute({ ip, body });
@@ -168,6 +176,7 @@ export async function POST(request: NextRequest) {
       if (response.statusCode === 429) {
         return NextResponse.json(
           {
+            success: false,
             error: response.error,
             retryAfter: response.rateLimitInfo?.retryAfter,
           },
@@ -178,6 +187,7 @@ export async function POST(request: NextRequest) {
       if (response.statusCode === 400) {
         return NextResponse.json(
           {
+            success: false,
             error: response.error,
             issues: response.validationIssues,
           },
@@ -200,7 +210,7 @@ export async function POST(request: NextRequest) {
       error as Error,
     );
     return NextResponse.json(
-      { error: "An unexpected error occurred. Please try again." },
+      { success: false, error: "An unexpected error occurred. Please try again." },
       { status: 500 },
     );
   }
